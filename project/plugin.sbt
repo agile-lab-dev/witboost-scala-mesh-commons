@@ -1,0 +1,5 @@
+addSbtPlugin("org.scalameta"   % "sbt-scalafmt"    % "2.4.2")
+addSbtPlugin("org.wartremover" % "sbt-wartremover" % "2.4.15")
+addSbtPlugin("org.scoverage"   % "sbt-scoverage"   % "1.6.1")
+addSbtPlugin("com.eed3si9n"    % "sbt-assembly"    % "1.2.0")
+addSbtPlugin("app.k8ty"        % "gitlab-plugin"   % "0.0.8")

@@ -1,0 +1,80 @@
+include:
+  - project: 'AgileFactory/Witboost.Mesh/witboost.Mesh.CI'
+    ref: 'main'
+    file: 'common/witboost.helm.gitlab-ci.yml'
+
+image: registry.gitlab.com/agilefactory/witboost.mesh/provisioning/cdp/cicd/scala-sbt
+
+stages:
+  - setup
+  - check
+  - test
+  - publish
+
+variables:
+  SBT_OPTS: "-Dsbt.global.base=sbt-cache/sbtboot -Dsbt.boot.directory=sbt-cache/boot -Dsbt.ivy.home=sbt-cache/ivy -Dsbt.ci=true -Dmockserver.logLevel=OFF"
+
+cache:
+  untracked: true
+  paths:
+    - "sbt-cache/ivy/cache"
+    - "sbt-cache/boot"
+    - "sbt-cache/sbtboot"
+
+setup:
+  stage: setup
+  extends: .witboost.helm.base-job
+  cache: []
+  before_script: []
+  script:
+    - !reference [.witboost.helm.clone-scripts, script]
+    - !reference [.witboost.helm.get-version, script]
+    - echo "VERSION=${VERSION}" >> vars.env
+  artifacts:
+    reports:
+      dotenv: vars.env
+
+check:
+  stage: check
+  script:
+    - sbt clean
+    - sbt compile ${SBT_OPTS}
+    - sbt scalafmtSbtCheck scalafmtCheckAll ${SBT_OPTS}
+
+test:
+  stage: test
+  script:
+    - sbt -mem 2048 clean coverage test coverageAggregate ${SBT_OPTS}
+  artifacts:
+    paths:
+      - target/scala-2.13/scoverage-report/*
+      - target/scala-2.13/coverage-report/*
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: target/scala-2.13/coverage-report/cobertura.xml
+      junit:
+        - core/target/test-reports/TEST-*.xml
+        - http/target/test-reports/TEST-*.xml
+        - aws-s3/target/test-reports/TEST-*.xml
+        - aws-iam/target/test-reports/TEST-*.xml
+        - aws-lambda/target/test-reports/TEST-*.xml
+        - aws-lambda-handlers/target/test-reports/TEST-*.xml
+        - aws-secrets/target/test-reports/TEST-*.xml
+        - cdp-de/target/test-reports/TEST-*.xml
+        - cdp-dl/target/test-reports/TEST-*.xml
+        - cdp-dw/target/test-reports/TEST-*.xml
+        - cdp-env/target/test-reports/TEST-*.xml
+        - cdp-iam/target/test-reports/TEST-*.xml
+        - ranger/target/test-reports/TEST-*.xml
+        - repository/target/test-reports/TEST-*.xml
+        - self-service/target/test-reports/TEST-*.xml
+        - self-service-lambda/target/test-reports/TEST-*.xml
+
+publish:
+  stage: publish
+  script:
+    - export ARTIFACT_VERSION=${VERSION}
+    - sbt k8tyGitlabCIPublish ${SBT_OPTS}
+#  rules:
+#    - if: '$CI_COMMIT_TAG != null'
