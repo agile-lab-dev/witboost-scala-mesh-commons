@@ -1,6 +1,6 @@
 # scala-mesh-commons
 
-[![pipeline status](https://gitlab.com/AgileFactory/Witboost.Mesh/Provisioning/CDP-refresh/witboost.mesh.provisioning.commons/badges/develop/pipeline.svg)](https://gitlab.com/AgileFactory/Witboost.Mesh/Provisioning/CDP-refresh/witboost.mesh.provisioning.commons/-/commits/develop) [![coverage report](https://gitlab.com/AgileFactory/Witboost.Mesh/Provisioning/CDP-refresh/witboost.mesh.provisioning.commons/badges/develop/coverage.svg)](https://gitlab.com/AgileFactory/Witboost.Mesh/Provisioning/CDP-refresh/witboost.mesh.provisioning.commons/-/commits/develop)
+[![pipeline status](https://gitlab.com/AgileFactory/Witboost.Mesh/Provisioning/CDP-refresh/witboost.mesh.provisioning.commons/badges/master/pipeline.svg)](https://gitlab.com/AgileFactory/Witboost.Mesh/Provisioning/CDP-refresh/witboost.mesh.provisioning.commons/-/commits/master) [![coverage report](https://gitlab.com/AgileFactory/Witboost.Mesh/Provisioning/CDP-refresh/witboost.mesh.provisioning.commons/badges/master/coverage.svg)](https://gitlab.com/AgileFactory/Witboost.Mesh/Provisioning/CDP-refresh/witboost.mesh.provisioning.commons/-/commits/master)
 
 SBT multi-module project that provide a set of scala_2.13 mesh commons classes
 

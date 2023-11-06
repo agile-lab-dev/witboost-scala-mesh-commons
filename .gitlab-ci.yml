@@ -37,14 +37,13 @@ setup:
 check:
   stage: check
   script:
-    - sbt clean
-    - sbt compile ${SBT_OPTS}
     - sbt scalafmtSbtCheck scalafmtCheckAll ${SBT_OPTS}
 
 test:
   stage: test
   script:
     - sbt -mem 2048 clean coverage test coverageAggregate ${SBT_OPTS}
+  coverage: '/Statement coverage[A-Za-z\.*]\s*:\s*([^%]+)/'
   artifacts:
     paths:
       - target/scala-2.13/scoverage-report/*
@@ -53,23 +52,6 @@ test:
       coverage_report:
         coverage_format: cobertura
         path: target/scala-2.13/coverage-report/cobertura.xml
-      junit:
-        - core/target/test-reports/TEST-*.xml
-        - http/target/test-reports/TEST-*.xml
-        - aws-s3/target/test-reports/TEST-*.xml
-        - aws-iam/target/test-reports/TEST-*.xml
-        - aws-lambda/target/test-reports/TEST-*.xml
-        - aws-lambda-handlers/target/test-reports/TEST-*.xml
-        - aws-secrets/target/test-reports/TEST-*.xml
-        - cdp-de/target/test-reports/TEST-*.xml
-        - cdp-dl/target/test-reports/TEST-*.xml
-        - cdp-dw/target/test-reports/TEST-*.xml
-        - cdp-env/target/test-reports/TEST-*.xml
-        - cdp-iam/target/test-reports/TEST-*.xml
-        - ranger/target/test-reports/TEST-*.xml
-        - repository/target/test-reports/TEST-*.xml
-        - self-service/target/test-reports/TEST-*.xml
-        - self-service-lambda/target/test-reports/TEST-*.xml
 
 publish:
   stage: publish
