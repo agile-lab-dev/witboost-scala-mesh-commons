@@ -14,7 +14,7 @@ trait Dependencies {
   lazy val awsSdkV2Vrs            = "2.17.131"
   lazy val awsLambdaJavaEventsVrs = "2.2.6"
   lazy val awsLambdaJavaCoreVrs   = "1.2.0"
-  lazy val cdpSdkVrs              = "0.9.53"
+  lazy val cdpSdkVrs              = "0.9.96"
 
   lazy val typeSafeConfig      = "com.typesafe"                   % "config"                 % typeSafeConfigVrs
   lazy val typeSafeLogging     = "com.typesafe.scala-logging"    %% "scala-logging"          % typeSafeLoggingVrs

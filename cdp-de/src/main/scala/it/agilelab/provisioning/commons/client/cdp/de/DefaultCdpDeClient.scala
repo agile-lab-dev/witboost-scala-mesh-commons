@@ -8,6 +8,7 @@ import it.agilelab.provisioning.commons.client.cdp.de.wrapper.DeClientWrapper
 /** Default Cdp Data Engineering client implementation
   * @param deClientWrapper: An instance of DeClientWrapper
   */
+
 class DefaultCdpDeClient(deClientWrapper: DeClientWrapper) extends CdpDeClient {
 
   override def describeServiceByName(

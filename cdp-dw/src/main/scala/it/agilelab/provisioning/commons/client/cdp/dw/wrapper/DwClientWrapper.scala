@@ -2,7 +2,7 @@ package it.agilelab.provisioning.commons.client.cdp.dw.wrapper
 
 import com.cloudera.cdp.dw.api.DwClient
 import com.cloudera.cdp.dw.model.{
-  ClusterSummary,
+  ClusterSummaryResponse,
   DescribeClusterRequest,
   ListClustersRequest,
   ListVwsRequest,
@@ -26,13 +26,13 @@ import scala.jdk.CollectionConverters._
 class DwClientWrapper(dwClient: DwClient) {
 
   /** List all Data Warehouse clusters
-    * @return Seq[ClusterSummary]
+    * @return Seq[ClusterSummaryResponse]
     */
-  def listClusters(req: ListClustersRequest): Seq[ClusterSummary] =
+  def listClusters(req: ListClustersRequest): Seq[ClusterSummaryResponse] =
     dwClient.listClusters(req).getClusters.asScala.toSeq
 
   /** List all Data Warehouse clusters
-    * @return Seq[ClusterSummary]
+    * @return Seq[ClusterSummaryResponse]
     */
   def listVws(clusterId: String): Seq[VwSummary] =
     dwClient.listVws(listVwsReq(clusterId)).getVws.asScala.toSeq
@@ -45,9 +45,9 @@ class DwClientWrapper(dwClient: DwClient) {
 
   /** Describe a specific data warehouse cluster
     * @param clusterId: a data warehouse clsuter id
-    * @return ClusterSummary
+    * @return ClusterSummaryResponse
     */
-  def describeCluster(clusterId: String): ClusterSummary =
+  def describeCluster(clusterId: String): ClusterSummaryResponse =
     dwClient.describeCluster(describeClusterReq(clusterId)).getCluster
 
   private def describeClusterReq(clusterId: String): DescribeClusterRequest = {

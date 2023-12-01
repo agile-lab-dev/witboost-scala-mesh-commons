@@ -1,6 +1,6 @@
 package it.agilelab.provisioning.commons.client.cdp.dw
 
-import com.cloudera.cdp.dw.model.{ ClusterSummary, ListClustersRequest, VwSummary }
+import com.cloudera.cdp.dw.model.{ ClusterSummaryResponse, ListClustersRequest, VwSummary }
 import it.agilelab.provisioning.commons.client.cdp.dw.wrapper.DwClientWrapper
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.funsuite.AnyFunSuite
@@ -10,11 +10,11 @@ class DefaultCdpDwClientTest extends AnyFunSuite with MockFactory with CdpDwClie
   val dwClientWrapper: DwClientWrapper = stub[DwClientWrapper]
   val cdpDwClient                      = new DefaultCdpDwClient(dwClientWrapper)
 
-  val clusterSummary1 = new ClusterSummary()
+  val clusterSummary1 = new ClusterSummaryResponse()
   clusterSummary1.setId("1")
   clusterSummary1.setEnvironmentCrn("crn-env1")
 
-  val clusterSummary2 = new ClusterSummary()
+  val clusterSummary2 = new ClusterSummaryResponse()
   clusterSummary2.setId("2")
   clusterSummary2.setEnvironmentCrn("crn-env2")
 
@@ -26,7 +26,7 @@ class DefaultCdpDwClientTest extends AnyFunSuite with MockFactory with CdpDwClie
   vwSummary2.setId("1.2")
   vwSummary2.setName("1.2.name")
 
-  test("findAllClusters return Right(Seq(ClusterSummary))") {
+  test("findAllClusters return Right(Seq(ClusterSummaryResponse))") {
     (dwClientWrapper.listClusters _)
       .when(new ListClustersRequest())
       .returns(Seq(clusterSummary1, clusterSummary2))

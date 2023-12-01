@@ -1,7 +1,7 @@
 package it.agilelab.provisioning.commons.client.cdp.dw
 
 import com.cloudera.cdp.dw.api.DwClientBuilder
-import com.cloudera.cdp.dw.model.{ ClusterSummary, VwSummary }
+import com.cloudera.cdp.dw.model.{ ClusterSummaryResponse, VwSummary }
 import it.agilelab.provisioning.commons.audit.Audit
 import it.agilelab.provisioning.commons.client.cdp.dw.CdpDwClientError.CdpDwClientInitClientError
 import it.agilelab.provisioning.commons.client.cdp.dw.wrapper.DwClientWrapper
@@ -11,17 +11,17 @@ import it.agilelab.provisioning.commons.client.cdp.dw.wrapper.DwClientWrapper
 trait CdpDwClient {
 
   /** Retrieve all DWX Cluster
-    * @return Right(Seq[ClusterSummary]) if all works fine
+    * @return Right(Seq[ClusterSummaryResponse]) if all works fine
     *         Left(CdpDwClientError) otherwise
     */
-  def findAllClusters(): Either[CdpDwClientError, Seq[ClusterSummary]]
+  def findAllClusters(): Either[CdpDwClientError, Seq[ClusterSummaryResponse]]
 
   /** Retrieve a DWX Cluster by name
     * @param crnEnvironment: environment CRN
-    * @return Right(Option[ClusterSummary]) if all works fin
+    * @return Right(Option[ClusterSummaryResponse]) if all works fin
     *         Left(CdpDwClientError) otherwise
     */
-  def findClusterByEnvironmentCrn(crnEnvironment: String): Either[CdpDwClientError, Option[ClusterSummary]]
+  def findClusterByEnvironmentCrn(crnEnvironment: String): Either[CdpDwClientError, Option[ClusterSummaryResponse]]
 
   /** Retrieve all vw of a specific DWX Cluster
     * @param clusterId: DWX Cluster id

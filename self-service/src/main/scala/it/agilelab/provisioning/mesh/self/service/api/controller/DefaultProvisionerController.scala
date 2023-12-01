@@ -76,13 +76,13 @@ class DefaultProvisionerController[DP_SPEC, COMPONENT_SPEC](
     decoderCmp: Decoder[Component[COMPONENT_SPEC]]
   ): Either[ApiError, ProvisioningStatus] =
     for {
-      provisioningDesc     <- fromYml[ProvisioningDescriptor[DP_SPEC]](request.descriptor)
-                                .leftMap(e => validErr(e.show))
-      provisionRequest     <- provisioningDesc.toProvisionRequest[COMPONENT_SPEC].leftMap(e => validErr(e.show))
-      validationResult     <- validationHandler.validate(provisionRequest)
-      unprovisioningStatus <- if (validationResult.valid) provisionHandler.provision(provisionRequest)
-                              else Left(validationResult.error.getOrElse(validErr()))
-    } yield unprovisioningStatus
+      provisioningDesc   <- fromYml[ProvisioningDescriptor[DP_SPEC]](request.descriptor)
+                              .leftMap(e => validErr(e.show))
+      provisionRequest   <- provisioningDesc.toProvisionRequest[COMPONENT_SPEC].leftMap(e => validErr(e.show))
+      validationResult   <- validationHandler.validate(provisionRequest)
+      provisioningStatus <- if (validationResult.valid) provisionHandler.provision(provisionRequest)
+                            else Left(validationResult.error.getOrElse(validErr()))
+    } yield provisioningStatus
 
   /** Retrieve a provision status
     *
