@@ -37,6 +37,10 @@ CI/CD pipeline are executed within GitlabRunner and described on the `.gitlab-ci
 * [**scala-mesh-repository**](./repository/README.md): This library contains a set of scala_2.13 mesh commons classes to interact with repositories.
 * [**scala-mesh-self-service**](./self-service/README.md): This library contains a set of scala_2.13 mesh commons classes to create specific provisioners.
 * [**scala-mesh-self-service-lambda**](./self-service-lambda/README.md): This library contains a set of scala_2.13 mesh classes implementations to create specific provisioners using AWS Lambda.
+* [**scala-mesh-principals-mapping**](./principals-mapping/README.md): This library contains a set of scala_2.13 mesh
+  classes to define a authentication principals mapper trait
+* [**scala-mesh-principals-mapping-samples**](./principals-mapping-samples/README.md): This library contains a set of
+  scala_2.13 mesh classes with basic implementations of the principals mapper trait
 
 ## Getting Started
 
@@ -95,5 +99,7 @@ SBT Dependencies reference
     "it.agilelab.provisioning" %% "scala-mesh-repository" % scalaMeshCoreVersion
     "it.agilelab.provisioning" %% "scala-mesh-self-service" % scalaMeshCoreVersion
     "it.agilelab.provisioning" %% "scala-mesh-self-service-lambda" % scalaMeshCoreVersion
+    "it.agilelab.provisioning" %% "scala-mesh-self-principals-mapping" % scalaMeshCoreVersion
+    "it.agilelab.provisioning" %% "scala-mesh-self-principals-mapping-samples" % scalaMeshCoreVersion
  )
 ```

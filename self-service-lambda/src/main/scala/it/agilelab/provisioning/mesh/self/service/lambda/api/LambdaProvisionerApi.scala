@@ -1,9 +1,14 @@
 package it.agilelab.provisioning.mesh.self.service.lambda.api
 
 import cats.implicits._
+import io.circe.generic.auto._
+import io.circe.{ Decoder, Encoder }
 import it.agilelab.provisioning.aws.handlers.rest.model.Response._
 import it.agilelab.provisioning.aws.handlers.rest.model._
 import it.agilelab.provisioning.aws.lambda.gateway.LambdaGateway
+import it.agilelab.provisioning.commons.principalsmapping.CdpIamPrincipals
+import it.agilelab.provisioning.commons.support.ParserSupport
+import it.agilelab.provisioning.commons.validator.Validator
 import it.agilelab.provisioning.mesh.repository.Repository
 import it.agilelab.provisioning.mesh.self.service.api.controller.ProvisionerController
 import it.agilelab.provisioning.mesh.self.service.api.model.ApiError.{ validErr, SystemError, ValidationError }
@@ -14,10 +19,6 @@ import it.agilelab.provisioning.mesh.self.service.api.model.{ Component, Provisi
 import it.agilelab.provisioning.mesh.self.service.core.model.ProvisionCommand
 import it.agilelab.provisioning.mesh.self.service.core.provisioner.Provisioner
 import it.agilelab.provisioning.mesh.self.service.lambda.core.gateway.AsyncCallLambdaComponentGateway
-import io.circe.generic.auto._
-import io.circe.{ Decoder, Encoder }
-import it.agilelab.provisioning.commons.support.ParserSupport
-import it.agilelab.provisioning.commons.validator.Validator
 
 /** A Lambda Api implementation for the provisioner
   * @param provisioner: an instance of [[ProvisionerController]] that will be used to execute the logic
@@ -26,7 +27,7 @@ import it.agilelab.provisioning.commons.validator.Validator
   * @tparam COMPONENT_SPEC: Component type parameter
   */
 class LambdaProvisionerApi[DP_SPEC, COMPONENT_SPEC](
-  provisioner: ProvisionerController[DP_SPEC, COMPONENT_SPEC],
+  provisioner: ProvisionerController[DP_SPEC, COMPONENT_SPEC, CdpIamPrincipals],
   apiConfig: ApiConfig
 ) extends ParserSupport {
 
@@ -144,7 +145,7 @@ object LambdaProvisionerApi {
     apiConfig: ApiConfig
   )(implicit encoder: Encoder[ProvisionCommand[A, B]]): LambdaProvisionerApi[A, B] =
     new LambdaProvisionerApi[A, B](
-      ProvisionerController.default[A, B](
+      ProvisionerController.defaultNoAcl[A, B](
         validator,
         Provisioner.defaultAsync(
           repository,

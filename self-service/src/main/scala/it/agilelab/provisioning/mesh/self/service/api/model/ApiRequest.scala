@@ -20,4 +20,23 @@ object ApiRequest {
   ) extends ApiRequest
 
   implicit def showProvisioningRequest: Show[ProvisioningRequest] = Show.fromToString[ProvisioningRequest]
+
+  /** Information related to the provisioning workflow of a data product component
+    * @param request Provisioning descriptor of type `COMPONENT_DESCRIPTOR` in YAML format. It had been used to provision the data product component
+    * @param result Result message (e.g. a provisiong error or a success message returned by the specific provisioner in the ProvisioningStatus
+    */
+  final case class ProvisionInfo(
+    request: String,
+    result: String
+  )
+
+  /** An update acl request containing the list of refs and the provisioning info
+    * @param refs Identities (i.e. users and groups) involved in the ACL update request
+    * @param provisionInfo Information related to the provisioning workflow
+    */
+  final case class UpdateAclRequest(
+    refs: Seq[String],
+    provisionInfo: ProvisionInfo
+  ) extends ApiRequest
+
 }

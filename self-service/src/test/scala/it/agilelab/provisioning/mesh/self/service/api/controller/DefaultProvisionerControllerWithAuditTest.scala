@@ -1,22 +1,28 @@
 package it.agilelab.provisioning.mesh.self.service.api.controller
 
-import it.agilelab.provisioning.mesh.self.service.api.model.ApiError.{ sysErr, SystemError }
-import it.agilelab.provisioning.mesh.self.service.api.model.ApiRequest.ProvisioningRequest
-import it.agilelab.provisioning.mesh.self.service.api.model.ApiResponse.Status.{ COMPLETED, RUNNING }
-import it.agilelab.provisioning.mesh.self.service.api.model.ApiResponse.{ valid, ProvisioningStatus, ValidationResult }
-import it.agilelab.provisioning.mesh.self.service.api.model.{ Component, ProvisionRequest, ProvisioningDescriptor }
 import io.circe.Decoder
 import io.circe.generic.auto._
 import it.agilelab.provisioning.commons.audit.Audit
+import it.agilelab.provisioning.commons.principalsmapping.CdpIamPrincipals
+import it.agilelab.provisioning.mesh.self.service.api.model.ApiError.{ sysErr, SystemError }
+import it.agilelab.provisioning.mesh.self.service.api.model.ApiRequest.{
+  ProvisionInfo,
+  ProvisioningRequest,
+  UpdateAclRequest
+}
+import it.agilelab.provisioning.mesh.self.service.api.model.ApiResponse.Status.{ COMPLETED, RUNNING }
+import it.agilelab.provisioning.mesh.self.service.api.model.ApiResponse.{ valid, ProvisioningStatus, ValidationResult }
+import it.agilelab.provisioning.mesh.self.service.api.model.{ Component, ProvisioningDescriptor }
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.funsuite.AnyFunSuite
 
 class DefaultProvisionerControllerWithAuditTest extends AnyFunSuite with MockFactory {
 
-  val audit: Audit                                                     = mock[Audit]
-  val baseProvisionerController: ProvisionerController[String, String] = mock[ProvisionerController[String, String]]
+  val audit: Audit                                                                       = mock[Audit]
+  val baseProvisionerController: ProvisionerController[String, String, CdpIamPrincipals] =
+    mock[ProvisionerController[String, String, CdpIamPrincipals]]
 
-  val provisionerController = new DefaultProvisionerControllerWithAudit[String, String](
+  val provisionerController = new DefaultProvisionerControllerWithAudit[String, String, CdpIamPrincipals](
     baseProvisionerController,
     audit
   )
@@ -59,6 +65,9 @@ class DefaultProvisionerControllerWithAuditTest extends AnyFunSuite with MockFac
       |  specific: update
       |""".stripMargin
   )
+
+  val refs             = List("user:user1_agilelab.it", "user:user2_agilelab.it")
+  val updateAclRequest = UpdateAclRequest(refs, ProvisionInfo(request.descriptor, "response"))
 
   test("validate call info on success") {
     (baseProvisionerController
@@ -195,4 +204,41 @@ class DefaultProvisionerControllerWithAuditTest extends AnyFunSuite with MockFac
     val expected = Left(sysErr("error"))
     assert(actual == expected)
   }
+
+  test("updateAcl call info on success") {
+    (baseProvisionerController
+      .updateAcl(_: UpdateAclRequest)(_: Decoder[ProvisioningDescriptor[String]], _: Decoder[Component[String]]))
+      .expects(*, *, *)
+      .once()
+      .returns(Right(ProvisioningStatus("x", RUNNING, None)))
+
+    (audit.info _)
+      .expects("Update ACL completed successfully")
+      .once()
+
+    val actual   = provisionerController.updateAcl(
+      updateAclRequest
+    )
+    val expected = Right(ProvisioningStatus("x", RUNNING, None))
+    assert(actual == expected)
+  }
+
+  test("updateAcl call error on failure") {
+    (baseProvisionerController
+      .updateAcl(_: UpdateAclRequest)(_: Decoder[ProvisioningDescriptor[String]], _: Decoder[Component[String]]))
+      .expects(*, *, *)
+      .once()
+      .returns(Left(sysErr("error")))
+
+    (audit.error _)
+      .expects("Update ACL failed. Details: SystemError(error)")
+      .once()
+
+    val actual   = provisionerController.updateAcl(
+      updateAclRequest
+    )
+    val expected = Left(sysErr("error"))
+    assert(actual == expected)
+  }
+
 }

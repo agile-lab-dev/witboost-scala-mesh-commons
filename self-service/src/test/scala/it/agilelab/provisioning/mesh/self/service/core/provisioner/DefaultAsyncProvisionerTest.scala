@@ -13,17 +13,19 @@ import it.agilelab.provisioning.mesh.self.service.api.model.{ DataProduct, Provi
 import it.agilelab.provisioning.mesh.self.service.core.gateway.{ ComponentGateway, ComponentGatewayError }
 import it.agilelab.provisioning.mesh.self.service.core.model.ProvisionCommand
 import io.circe.Json
+import it.agilelab.provisioning.commons.principalsmapping.CdpIamPrincipals
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.funsuite.AnyFunSuite
 
 class DefaultAsyncProvisionerTest extends AnyFunSuite with MockFactory {
 
-  val componentGateway: ComponentGateway[String, String, String]           =
-    mock[ComponentGateway[String, String, String]]
-  val provisioningStatusRepo: Repository[ProvisioningStatus, String, Unit] =
+  val componentGateway: ComponentGateway[String, String, String, CdpIamPrincipals] =
+    mock[ComponentGateway[String, String, String, CdpIamPrincipals]]
+  val provisioningStatusRepo: Repository[ProvisioningStatus, String, Unit]         =
     mock[Repository[ProvisioningStatus, String, Unit]]
 
-  val provisioner = new DefaultAsyncProvisioner[String, String, String](provisioningStatusRepo, componentGateway)
+  val provisioner =
+    new DefaultAsyncProvisioner[String, String, String, CdpIamPrincipals](provisioningStatusRepo, componentGateway)
 
   val request: ProvisionRequest[String, String] = ProvisionRequest(
     DataProduct[String](
@@ -33,6 +35,8 @@ class DefaultAsyncProvisionerTest extends AnyFunSuite with MockFactory {
       environment = "my-dp-environment",
       version = "my-dp-version",
       dataProductOwner = "my-dp-owner",
+      devGroup = "dev-group",
+      ownerGroup = "owner-group",
       specific = "my-dp-specific",
       components = Seq.empty[Json]
     ),

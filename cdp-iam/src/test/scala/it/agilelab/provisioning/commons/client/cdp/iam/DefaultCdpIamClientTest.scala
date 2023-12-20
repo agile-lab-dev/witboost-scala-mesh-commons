@@ -769,4 +769,178 @@ class DefaultCdpIamClientTest extends AnyFunSuite with MockFactory with CdpIamCl
     )
   }
 
+  test("get UserByWorkloadUsername return Right(Some(User))") {
+    val response1 = new ListUsersResponse()
+    val user1     = new User()
+    user1.setWorkloadUsername("user-1")
+    val user2     = new User()
+    user2.setWorkloadUsername("user-2")
+    response1.setUsers(util.Arrays.asList(user1, user2))
+    response1.setNextToken("next-token-1")
+    val request1  = new ListUsersRequest()
+
+    val response2 = new ListUsersResponse()
+    val user3     = new User()
+    user3.setWorkloadUsername("user-3")
+    val user4     = new User()
+    user4.setWorkloadUsername("user-4")
+    response2.setUsers(util.Arrays.asList(user3, user4))
+    response2.setNextToken("next-token-2")
+    val request2  = new ListUsersRequest()
+    request2.setStartingToken("next-token-1")
+
+    val response3 = new ListUsersResponse()
+    val user5     = new User()
+    user5.setWorkloadUsername("user-5")
+    val user6     = new User()
+    user6.setWorkloadUsername("user-6")
+    response3.setUsers(util.Arrays.asList(user5, user6))
+    response3.setNextToken(null)
+    val request3  = new ListUsersRequest()
+    request3.setStartingToken("next-token-2")
+
+    inSequence(
+      (wrapper.listUsers _)
+        .when(request1)
+        .returns(response1),
+      (wrapper.listUsers _)
+        .when(request2)
+        .returns(response2),
+      (wrapper.listUsers _)
+        .when(request3)
+        .returns(response3)
+    )
+
+    val actual = client.getUserByWorkloadUsername("user-5")
+    assert(actual == Right(Some(user5)))
+  }
+
+  test("get UserByWorkloadUsername return Left(CdpIamClientError)") {
+    (wrapper.listUsers _)
+      .when(new ListUsersRequest())
+      .throws(
+        new CdpServiceException(
+          "requestId",
+          500,
+          Map("" -> util.Arrays.asList("")).asJava,
+          "statusCode",
+          "statusMessage"
+        )
+      )
+
+    val actual = client.getUserByWorkloadUsername("user.name")
+    assertGetUserErr(
+      actual,
+      "user.name",
+      "com.cloudera.cdp.CdpServiceException: 500: statusCode: statusMessage requestId"
+    )
+  }
+
+  test("get UserByWorkloadUsername return Right(None)") {
+    val response1 = new ListUsersResponse()
+    val user1     = new User()
+    user1.setWorkloadUsername("user-1")
+    val user2     = new User()
+    user2.setWorkloadUsername("user-2")
+    response1.setUsers(util.Arrays.asList(user1, user2))
+    response1.setNextToken("next-token-1")
+    val request1  = new ListUsersRequest()
+
+    val response2 = new ListUsersResponse()
+    val user3     = new User()
+    user3.setWorkloadUsername("user-3")
+    val user4     = new User()
+    user4.setWorkloadUsername("user-4")
+    response2.setUsers(util.Arrays.asList(user3, user4))
+    response2.setNextToken("next-token-2")
+    val request2  = new ListUsersRequest()
+    request2.setStartingToken("next-token-1")
+
+    val response3 = new ListUsersResponse()
+    val user5     = new User()
+    user5.setWorkloadUsername("user-5")
+    val user6     = new User()
+    user6.setWorkloadUsername("user-6")
+    response3.setUsers(util.Arrays.asList(user5, user6))
+    response3.setNextToken(null)
+    val request3  = new ListUsersRequest()
+    request3.setStartingToken("next-token-2")
+
+    inSequence(
+      (wrapper.listUsers _)
+        .when(request1)
+        .returns(response1),
+      (wrapper.listUsers _)
+        .when(request2)
+        .returns(response2),
+      (wrapper.listUsers _)
+        .when(request3)
+        .returns(response3)
+    )
+
+    val actual = client.getUserByWorkloadUsername("user.name")
+    assert(actual == Right(None))
+  }
+
+  test("get User return Right(Some(User))") {
+    val req = new GetUserRequest()
+    req.setUserId("user.name")
+
+    val user     = new User()
+    user.setUserId("user.name")
+    val response = new GetUserResponse()
+
+    response.setUser(user)
+
+    (wrapper.getUser _)
+      .when(req)
+      .returns(response)
+
+    val actual = client.getUser("user.name")
+    assert(actual == Right(Some(user)))
+  }
+
+  test("get User return Left(CdpIamClientError)") {
+    val req = new GetUserRequest()
+    req.setUserId("user.name")
+
+    (wrapper.getUser _)
+      .when(req)
+      .throws(
+        new CdpServiceException(
+          "requestId",
+          500,
+          Map("" -> util.Arrays.asList("")).asJava,
+          "statusCode",
+          "statusMessage"
+        )
+      )
+
+    val actual = client.getUser("user.name")
+    assertGetUserErr(
+      actual,
+      "user.name",
+      "com.cloudera.cdp.CdpServiceException: 500: statusCode: statusMessage requestId"
+    )
+  }
+
+  test("get User return Right(None)") {
+    val req = new GetUserRequest()
+    req.setUserId("user.name")
+
+    (wrapper.getUser _)
+      .when(req)
+      .throws(
+        new CdpServiceException(
+          "requestId",
+          404,
+          Map("" -> util.Arrays.asList("")).asJava,
+          "statusCode",
+          "statusMessage"
+        )
+      )
+
+    val actual = client.getUser("user.name")
+    assert(actual == Right(None))
+  }
 }

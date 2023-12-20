@@ -1,0 +1,3 @@
+it.agilelab.provisioning.commons.principalsmapping.impl.identity.IdentityPrincipalsMapperFactory
+it.agilelab.provisioning.commons.principalsmapping.impl.identity.ErrorPrincipalsMapperFactory
+it.agilelab.provisioning.commons.principalsmapping.impl.freeipa.FreeIpaIdentityPrincipalsMapperFactory

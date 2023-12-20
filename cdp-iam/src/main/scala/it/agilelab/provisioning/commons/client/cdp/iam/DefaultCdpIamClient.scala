@@ -11,7 +11,7 @@ import scala.jdk.CollectionConverters._
 class DefaultCdpIamClient(iamClientWrapper: CdpIamClientWrapper) extends CdpIamClient {
 
   override def getMachineUser(machineUserName: String): Either[CdpIamClientError, Option[MachineUser]]              =
-    try Right(recursivelyFindUser(machineUserName, None))
+    try Right(recursivelyFindMachineUser(machineUserName, None))
     catch { case e: Throwable => Left(GetMachineUserErr(machineUserName, e)) }
 
   override def createMachineUser(machineUserName: String): Either[CdpIamClientError, MachineUser]                   =
@@ -150,6 +150,42 @@ class DefaultCdpIamClient(iamClientWrapper: CdpIamClientWrapper) extends CdpIamC
       case e: Throwable => Left(DestroyGroupErr(groupName, e))
     }
 
+  override def getUser(userId: String): Either[CdpIamClientError, Option[User]] =
+    try {
+      val req = new GetUserRequest()
+      req.setUserId(userId)
+      Right(Some(iamClientWrapper.getUser(req).getUser))
+    } catch {
+      case e: CdpServiceException if e.getHttpCode == 404 => Right(None)
+      case e: Throwable                                   => Left(GetUserErr(userId, e))
+    }
+
+  override def getUserByWorkloadUsername(workloadUserName: String): Either[CdpIamClientError, Option[User]] =
+    try Right(recursivelyFindUser(workloadUserName, None))
+    catch {
+      case e: CdpServiceException if e.getHttpCode == 404 => Right(None)
+      case e: Throwable                                   => Left(GetUserErr(workloadUserName, e))
+    }
+
+  @tailrec
+  private def recursivelyFindUser(
+    workloadUserName: String,
+    token: Option[String]
+  ): Option[User] = {
+    val req        = listUsersRequest(token)
+    val res        = iamClientWrapper.listUsers(req)
+    val userOption = res.getUsers.asScala.toSeq.find(mu => mu.getWorkloadUsername == workloadUserName)
+    if (res.getNextToken == null || userOption.isDefined) userOption
+    else recursivelyFindUser(workloadUserName, Some(res.getNextToken))
+  }
+
+  private def listUsersRequest(token: Option[String]): ListUsersRequest =
+    token.map { t =>
+      val req = new ListUsersRequest()
+      req.setStartingToken(t)
+      req
+    }.getOrElse(new ListUsersRequest())
+
   @tailrec
   private def recursivelyListResourceRolesInGroup(
     groupName: String,
@@ -206,7 +242,7 @@ class DefaultCdpIamClient(iamClientWrapper: CdpIamClientWrapper) extends CdpIamC
     }.getOrElse(new ListGroupsRequest())
 
   @tailrec
-  private def recursivelyFindUser(
+  private def recursivelyFindMachineUser(
     user: String,
     token: Option[String]
   ): Option[MachineUser] = {
@@ -214,7 +250,7 @@ class DefaultCdpIamClient(iamClientWrapper: CdpIamClientWrapper) extends CdpIamC
     val res        = iamClientWrapper.listMachineUsers(req)
     val userOption = res.getMachineUsers.asScala.toSeq.find(mu => mu.getMachineUserName == user)
     if (res.getNextToken == null || userOption.isDefined) userOption
-    else recursivelyFindUser(user, Some(res.getNextToken))
+    else recursivelyFindMachineUser(user, Some(res.getNextToken))
   }
 
   private def listMachineUsersRequest(token: Option[String]): ListMachineUsersRequest =

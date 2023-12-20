@@ -6,6 +6,7 @@ import it.agilelab.provisioning.mesh.self.service.api.model.ApiRequest.Provision
 import it.agilelab.provisioning.mesh.self.service.api.model.ApiResponse.{ ProvisioningStatus, ValidationResult }
 import it.agilelab.provisioning.mesh.self.service.api.model.{
   ApiError,
+  ApiRequest,
   ApiResponse,
   Component,
   ProvisionRequest,
@@ -13,6 +14,7 @@ import it.agilelab.provisioning.mesh.self.service.api.model.{
 }
 import io.circe.Decoder
 import it.agilelab.provisioning.commons.audit.Audit
+import it.agilelab.provisioning.commons.principalsmapping.CdpIamPrincipals
 
 /** Default ProvisionerController with Audit enabled
   * @param provisionerController: A [[ProvisionerController]] that execute the logic
@@ -20,10 +22,10 @@ import it.agilelab.provisioning.commons.audit.Audit
   * @tparam DP_SPEC: DataProduct type parameter
   * @tparam COMPONENT_SPEC: Component type parameter
   */
-class DefaultProvisionerControllerWithAudit[DP_SPEC, COMPONENT_SPEC](
-  provisionerController: ProvisionerController[DP_SPEC, COMPONENT_SPEC],
+class DefaultProvisionerControllerWithAudit[DP_SPEC, COMPONENT_SPEC, PRINCIPAL <: CdpIamPrincipals](
+  provisionerController: ProvisionerController[DP_SPEC, COMPONENT_SPEC, PRINCIPAL],
   audit: Audit
-) extends ProvisionerController[DP_SPEC, COMPONENT_SPEC] {
+) extends ProvisionerController[DP_SPEC, COMPONENT_SPEC, PRINCIPAL] {
 
   /** Validate a [[ProvisioningRequest]]
     *
@@ -108,6 +110,31 @@ class DefaultProvisionerControllerWithAudit[DP_SPEC, COMPONENT_SPEC](
     result match {
       case Right(_) => audit.info("Unprovision completed successfully")
       case Left(e)  => audit.error(show"Unprovision failed. Details: $e")
+    }
+    result
+  }
+
+  /** Updates the ACL of a component based on a [[UpdateAclRequest]]
+    *
+    * Decode the yaml descriptor and executes the update ACL of the received refs
+    *
+    * @param updateAclRequest : an instance of [[ProvisioningRequest]]
+    * @return Right([[ProvisioningStatus]]) if the update ACL process complete without any side effect
+    *         * A Right(ProvisioningStatus(RUNNING,None)) is returned in case of async update ACL
+    *         * A Right(ProvisioningStatus(COMPLETED,Some("res")) is returned in case of sync update ACL
+    *         * A Right(ProvsiioningStatus(FAILED,Some("err")) is returned in case of sync update ACL failure
+    *         Left([[ApiError]])
+    *         * A Left(SystemError("errors")) is returned in case of side effect during the update ACL process
+    *         * A Left(ValidationError(["my-errors"]) is returned in case of validation issue
+    */
+  override def updateAcl(updateAclRequest: ApiRequest.UpdateAclRequest)(implicit
+    decoderPd: Decoder[ProvisioningDescriptor[DP_SPEC]],
+    decoderCmp: Decoder[Component[COMPONENT_SPEC]]
+  ): Either[ApiError, ProvisioningStatus] = {
+    val result = provisionerController.updateAcl(updateAclRequest)
+    result match {
+      case Right(_) => audit.info("Update ACL completed successfully")
+      case Left(e)  => audit.error(show"Update ACL failed. Details: $e")
     }
     result
   }

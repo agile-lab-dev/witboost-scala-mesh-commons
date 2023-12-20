@@ -106,4 +106,82 @@ class DefaultRangerClientWithAudit(
       case Left(l)  => audit.error(show"$action failed. Details: $l")
     }
 
+  // --------------------------------
+  // Roles methods
+  // --------------------------------
+
+  /** Retrieve a specific role by ID
+    *
+    * @param id : roleId
+    * @return Right(Some(RangerRole)) if role exists
+    *         Right(None) if role does not exists
+    *         Left(RangerClientError) in case of error
+    */
+  override def findRoleById(id: Int): Either[RangerClientError, Option[RangerRole]] = {
+    val action = s"FindRoleById(${id.toString})"
+    audit.info(INFO_MSG.format(action))
+    val result = defaultRangerClient.findRoleById(id)
+    auditWithinResult(result, action)
+    result
+  }
+
+  /** Retrieve a specific role by service name and role name
+    *
+    * @param service : Service name
+    * @param name    : Role name
+    * @return Right(Some(RangerRole)) if role exists
+    *         Right(None) if role does not exists
+    *         Left(RangerClientError) in case of error
+    */
+  override def findRoleByName(
+    name: String
+  ): Either[RangerClientError, Option[RangerRole]] = {
+    val action = s"FindRoleByName(name=$name)"
+    audit.info(INFO_MSG.format(action))
+    val result = defaultRangerClient.findRoleByName(name)
+    auditWithinResult(result, action)
+    result
+  }
+
+  /** Create a new RangerRole
+    *
+    * @param role : RangerRole definition
+    * @return Right(RangerRole) if all works fine
+    *         Left(RangerClientError) otherwise
+    */
+  override def createRole(role: RangerRole): Either[RangerClientError, RangerRole] = {
+    val action = s"CreateRole(${role.toString})"
+    audit.info(INFO_MSG.format(action))
+    val result = defaultRangerClient.createRole(role)
+    auditWithinResult(result, action)
+    result
+  }
+
+  /** Update an existing RangerRole
+    *
+    * @param role : RangerRole definition
+    * @return Right(RangerRole) if all works fine
+    *         Left(RangerClientError) otherwise
+    */
+  override def updateRole(role: RangerRole): Either[RangerClientError, RangerRole] = {
+    val action = s"UpdateRole(${role.toString})"
+    audit.info(INFO_MSG.format(action))
+    val result = defaultRangerClient.updateRole(role)
+    auditWithinResult(result, action)
+    result
+  }
+
+  /** Delete an existing RangerRole
+    *
+    * @param role : RangerRole definition
+    * @return Right() if all works fine
+    *         Left(RangerClientError) otherwise
+    */
+  override def deleteRole(role: RangerRole): Either[RangerClientError, Unit] = {
+    val action = s"DeleteRole(${role.toString})"
+    audit.info(INFO_MSG.format(action))
+    val result = defaultRangerClient.deleteRole(role)
+    auditWithinResult(result, action)
+    result
+  }
 }

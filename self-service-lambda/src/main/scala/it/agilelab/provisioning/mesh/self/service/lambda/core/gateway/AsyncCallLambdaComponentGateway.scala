@@ -1,13 +1,13 @@
 package it.agilelab.provisioning.mesh.self.service.lambda.core.gateway
 
 import cats.implicits.{ showInterpolator, toBifunctorOps }
+import io.circe.Encoder
 import it.agilelab.provisioning.aws.lambda.gateway.LambdaGateway
 import it.agilelab.provisioning.aws.lambda.gateway.LambdaGatewayError._
-import it.agilelab.provisioning.mesh.self.service.core.gateway.{ ComponentGateway, ComponentGatewayError }
+import it.agilelab.provisioning.mesh.self.service.core.gateway.{ ComponentGatewayError, PermissionlessComponentGateway }
 import it.agilelab.provisioning.mesh.self.service.core.model.ProvisionCommand
 import it.agilelab.provisioning.mesh.self.service.lambda.core.model.ComponentOperation._
 import it.agilelab.provisioning.mesh.self.service.lambda.core.model.ComponentServiceCommand
-import io.circe.Encoder
 
 /** A ComponentGateway implementation that is used from the LambdaApi.
   * It basically invoke another lambda function with the provided [[ProvisionCommand]].
@@ -23,7 +23,7 @@ class AsyncCallLambdaComponentGateway[DP_SPEC, COMPONENT_SPEC](
   unprovisionLambdaFunction: String
 )(implicit
   encoder: Encoder[ComponentServiceCommand[DP_SPEC, COMPONENT_SPEC]]
-) extends ComponentGateway[DP_SPEC, COMPONENT_SPEC, Unit] {
+) extends PermissionlessComponentGateway[DP_SPEC, COMPONENT_SPEC, Unit] {
 
   /** Invoke the lambda function configured as async lambda function provisioning service.
     * @param provisionCommand: A ProvisionCommand that should be send to the invoked lambda

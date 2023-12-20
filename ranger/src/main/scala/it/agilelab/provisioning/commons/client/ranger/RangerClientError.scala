@@ -2,7 +2,7 @@ package it.agilelab.provisioning.commons.client.ranger
 
 import cats.Show
 import cats.implicits._
-import it.agilelab.provisioning.commons.client.ranger.model.{ RangerPolicy, RangerSecurityZone }
+import it.agilelab.provisioning.commons.client.ranger.model.{ RangerPolicy, RangerRole, RangerSecurityZone }
 import it.agilelab.provisioning.commons.http.HttpErrors
 
 sealed trait RangerClientError extends Exception with Product with Serializable
@@ -22,6 +22,13 @@ object RangerClientError {
   final case class CreateSecurityZoneEmptyResponseErr(securityZone: RangerSecurityZone)       extends RangerClientError
   final case class FindAllServicesErr(error: HttpErrors)                                      extends RangerClientError
   final case class DeletePolicyErr(policy: RangerPolicy, error: HttpErrors)                   extends RangerClientError
+  final case class FindRoleByIdErr(roleId: Int, error: HttpErrors)                            extends RangerClientError
+  final case class FindRoleByNameErr(roleName: String, error: HttpErrors)                     extends RangerClientError
+  final case class CreateRoleErr(role: RangerRole, error: HttpErrors)                         extends RangerClientError
+  final case class CreateRoleEmptyResponseErr(role: RangerRole)                               extends RangerClientError
+  final case class UpdateRoleErr(role: RangerRole, error: HttpErrors)                         extends RangerClientError
+  final case class UpdateRoleEmptyResponseErr(role: RangerRole)                               extends RangerClientError
+  final case class DeleteRoleErr(role: RangerRole, error: HttpErrors)                         extends RangerClientError
 
   implicit val showRangerClientError: Show[RangerClientError] = Show.show {
     case e: FindPolicyByIdErr                  => show"FindPolicyByIdErr(${e.policyId},${e.error})"
@@ -37,6 +44,13 @@ object RangerClientError {
     case e: CreateSecurityZoneEmptyResponseErr => show"CreateSecurityZoneEmptyResponseErr(${e.securityZone.toString})"
     case e: FindAllServicesErr                 => show"FindAllServicesErr(${e.error})"
     case e: DeletePolicyErr                    => show"DeletePolicyErr(${e.policy.toString},${e.error})"
+    case e: FindRoleByIdErr                    => show"FindRoleByIdErr(${e.roleId},${e.error})"
+    case e: FindRoleByNameErr                  => show"FindRoleByNameErr(${e.roleName},${e.error})"
+    case e: CreateRoleErr                      => show"CreateRoleErr(${e.role.toString},${e.error})"
+    case e: CreateRoleEmptyResponseErr         => show"CreateRoleEmptyResponseErr(${e.role.toString})"
+    case e: UpdateRoleErr                      => show"UpdateRoleErr(${e.role.toString},${e.error})"
+    case e: UpdateRoleEmptyResponseErr         => show"UpdateRoleEmptyResponseErr(${e.role.toString})"
+    case e: DeleteRoleErr                      => show"DeleteRoleErr(${e.role.toString},${e.error})"
   }
 
 }

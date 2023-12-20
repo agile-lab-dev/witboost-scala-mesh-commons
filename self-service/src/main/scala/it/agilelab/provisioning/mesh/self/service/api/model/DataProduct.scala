@@ -9,6 +9,8 @@ final case class DataProduct[SPECIFIC](
   environment: String,
   version: String,
   dataProductOwner: String,
+  devGroup: String,
+  ownerGroup: String,
   specific: SPECIFIC,
   components: Seq[Json]
 )

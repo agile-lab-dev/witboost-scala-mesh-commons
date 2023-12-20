@@ -25,6 +25,8 @@ Production code dependency:
 
 * **scala-mesh-core**: internal core library that provide useful stuff, parsing, cats extension and so on.
 * **scala-mesh-repository**: This library contains a set of scala_2.13 mesh commons classes to interact with repositories.
+* **scala-mesh-principals-mapping**: library with the trait definition of the mapper interface
+* **scala-mesh-principals-mapping-samples** This library contains a set of scala_2.13 mesh classes with basic implementations of the principals mapper trait
 
 Test code dependency:
 

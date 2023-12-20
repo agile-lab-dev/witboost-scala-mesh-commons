@@ -24,6 +24,8 @@ class DefaultValidationHandlerTest extends AnyFunSuite with MockFactory {
       environment = "my-dp-environment",
       version = "my-dp-version",
       dataProductOwner = "my-dp-owner",
+      devGroup = "dev-group",
+      ownerGroup = "owner-group",
       specific = "my-dp-specific",
       components = Seq.empty[Json]
     ),

@@ -10,17 +10,18 @@ import it.agilelab.provisioning.mesh.self.service.core.gateway.{ ComponentGatewa
 import it.agilelab.provisioning.mesh.self.service.core.model.ProvisionCommand
 import io.circe.Json
 import io.circe.generic.auto._
+import it.agilelab.provisioning.commons.principalsmapping.CdpIamPrincipals
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.funsuite.AnyFunSuite
 
 class LambdaComponentGatewayServiceTest extends AnyFunSuite with MockFactory {
 
-  val componentGateway: ComponentGateway[String, String, String] =
-    mock[ComponentGateway[String, String, String]]
-  val repository: Repository[ProvisioningStatus, String, Unit]   =
+  val componentGateway: ComponentGateway[String, String, String, CdpIamPrincipals] =
+    mock[ComponentGateway[String, String, String, CdpIamPrincipals]]
+  val repository: Repository[ProvisioningStatus, String, Unit]                     =
     mock[Repository[ProvisioningStatus, String, Unit]]
-  val asyncLambdaComponentGateway                                =
-    new LambdaComponentGatewayService[String, String, String](
+  val asyncLambdaComponentGateway                                                  =
+    new LambdaComponentGatewayService[String, String, String, CdpIamPrincipals](
       repository,
       componentGateway
     )
@@ -42,6 +43,8 @@ class LambdaComponentGatewayServiceTest extends AnyFunSuite with MockFactory {
       |        "version" : "my-dp-version",
       |        "kind" : "my-dp-kind",
       |        "dataProductOwner" : "my-dp-owner",
+      |        "devGroup": "dev-group",
+      |        "ownerGroup": "owner-group",
       |        "dataProductOwnerDisplayName" : "my-dp-owner-display-name",
       |        "email" : "my-dp-email",
       |        "informationSLA" : "my-dp-information-SLA",
@@ -96,6 +99,8 @@ class LambdaComponentGatewayServiceTest extends AnyFunSuite with MockFactory {
       |        "version" : "my-dp-version",
       |        "kind" : "my-dp-kind",
       |        "dataProductOwner" : "my-dp-owner",
+      |        "devGroup": "dev-group",
+      |        "ownerGroup": "owner-group",
       |        "dataProductOwnerDisplayName" : "my-dp-owner-display-name",
       |        "email" : "my-dp-email",
       |        "informationSLA" : "my-dp-information-SLA",
@@ -144,6 +149,8 @@ class LambdaComponentGatewayServiceTest extends AnyFunSuite with MockFactory {
           environment = "my-dp-environment",
           version = "my-dp-version",
           dataProductOwner = "my-dp-owner",
+          devGroup = "dev-group",
+          ownerGroup = "owner-group",
           specific = "my-dp-specific",
           components = Seq.empty[Json]
         ),
@@ -161,9 +168,10 @@ class LambdaComponentGatewayServiceTest extends AnyFunSuite with MockFactory {
 
   test("default") {
     val repository       = mock[Repository[ProvisioningStatus, String, Unit]]
-    val componentGateway = mock[ComponentGateway[String, String, String]]
-    val actual           = LambdaComponentGatewayService.default[String, String, String](repository, componentGateway)
-    assert(actual.isInstanceOf[LambdaComponentGatewayService[String, String, String]])
+    val componentGateway = mock[ComponentGateway[String, String, String, CdpIamPrincipals]]
+    val actual           =
+      LambdaComponentGatewayService.default[String, String, String, CdpIamPrincipals](repository, componentGateway)
+    assert(actual.isInstanceOf[LambdaComponentGatewayService[String, String, String, CdpIamPrincipals]])
   }
 
   test("handle CREATE OP success create and update provision information") {

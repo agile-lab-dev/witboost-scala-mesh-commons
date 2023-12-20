@@ -1,7 +1,7 @@
 package it.agilelab.provisioning.commons.client.cdp.iam
 
 import com.cloudera.cdp.iam.api.IamClientBuilder
-import com.cloudera.cdp.iam.model.{ Group, MachineUser, ResourceAssignment }
+import com.cloudera.cdp.iam.model.{ Group, MachineUser, ResourceAssignment, User }
 import it.agilelab.provisioning.commons.audit.Audit
 import it.agilelab.provisioning.commons.client.cdp.iam.CdpIamClientError.CdpIamClientInitError
 import it.agilelab.provisioning.commons.client.cdp.iam.model.AccessKeyCredential
@@ -125,6 +125,18 @@ trait CdpIamClient {
     *         Left(CdpIamClientError) otherwise
     */
   def destroyGroup(groupName: String): Either[CdpIamClientError, Unit]
+
+  /** Gets user by searching it through its workload username
+    * @param workloadUserName Workload username
+    * @return Either an error if something goes wrong, or an Option with the resulting user if it exists
+    */
+  def getUserByWorkloadUsername(workloadUserName: String): Either[CdpIamClientError, Option[User]]
+
+  /** Gets user using its uuid
+    * @param userId uuid of the user
+    * @return Either an error if something goes wrong, or an Option with the resulting user if it exists
+    */
+  def getUser(userId: String): Either[CdpIamClientError, Option[User]]
 }
 
 object CdpIamClient {

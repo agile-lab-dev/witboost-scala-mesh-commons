@@ -11,9 +11,9 @@ final case class RangerPolicyItem(
 
 object RangerPolicyItem {
 
-  def ownerLevel(groups: Seq[String], users: Seq[String]): RangerPolicyItem =
+  def ownerLevel(groups: Seq[String], users: Seq[String], roles: Seq[String]): RangerPolicyItem =
     RangerPolicyItem(
-      roles = Seq.empty[String],
+      roles = roles,
       groups = groups,
       users = users,
       conditions = Seq.empty[String],
@@ -23,9 +23,9 @@ object RangerPolicyItem {
       )
     )
 
-  def userLevel(groups: Seq[String], users: Seq[String]): RangerPolicyItem =
+  def userLevel(groups: Seq[String], users: Seq[String], roles: Seq[String]): RangerPolicyItem =
     RangerPolicyItem(
-      roles = Seq.empty[String],
+      roles = roles,
       groups = groups,
       users = users,
       conditions = Seq.empty[String],

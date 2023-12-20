@@ -1,21 +1,21 @@
 package it.agilelab.provisioning.mesh.self.service.api.controller
 
+import cats.data.NonEmptyList
 import cats.implicits._
+import io.circe.Decoder
+import it.agilelab.provisioning.commons.principalsmapping.PrincipalsMapperError.{
+  PrincipalMappingError,
+  PrincipalMappingSystemError
+}
+import it.agilelab.provisioning.commons.principalsmapping.{ CdpIamPrincipals, PrincipalsMapper }
+import it.agilelab.provisioning.commons.support.ParserSupport
 import it.agilelab.provisioning.mesh.self.service.api.handler.provision.ProvisionHandler
 import it.agilelab.provisioning.mesh.self.service.api.handler.state.ProvisionStateHandler
 import it.agilelab.provisioning.mesh.self.service.api.handler.validation.ValidationHandler
 import it.agilelab.provisioning.mesh.self.service.api.model.ApiError._
 import it.agilelab.provisioning.mesh.self.service.api.model.ApiRequest.ProvisioningRequest
 import it.agilelab.provisioning.mesh.self.service.api.model.ApiResponse.{ ProvisioningStatus, ValidationResult }
-import it.agilelab.provisioning.mesh.self.service.api.model.{
-  ApiError,
-  ApiResponse,
-  Component,
-  ProvisionRequest,
-  ProvisioningDescriptor
-}
-import io.circe.Decoder
-import it.agilelab.provisioning.commons.support.ParserSupport
+import it.agilelab.provisioning.mesh.self.service.api.model._
 
 /** Default ProvisionerController implementation
   * @param validationHandler: An instance of [[ValidationHandler]] that will be used to handle validation actions
@@ -24,11 +24,12 @@ import it.agilelab.provisioning.commons.support.ParserSupport
   * @tparam DP_SPEC: DataProduct specific type parameter
   * @tparam COMPONENT_SPEC: Component specific type parameter
   */
-class DefaultProvisionerController[DP_SPEC, COMPONENT_SPEC](
+class DefaultProvisionerController[DP_SPEC, COMPONENT_SPEC, PRINCIPAL <: CdpIamPrincipals](
   validationHandler: ValidationHandler[DP_SPEC, COMPONENT_SPEC],
-  provisionHandler: ProvisionHandler[DP_SPEC, COMPONENT_SPEC],
-  provisionStateHandler: ProvisionStateHandler
-) extends ProvisionerController[DP_SPEC, COMPONENT_SPEC]
+  provisionHandler: ProvisionHandler[DP_SPEC, COMPONENT_SPEC, PRINCIPAL],
+  provisionStateHandler: ProvisionStateHandler,
+  principalsMapper: PrincipalsMapper[PRINCIPAL]
+) extends ProvisionerController[DP_SPEC, COMPONENT_SPEC, PRINCIPAL]
     with ParserSupport {
 
   /** Validate a [[ProvisioningRequest]]
@@ -122,5 +123,46 @@ class DefaultProvisionerController[DP_SPEC, COMPONENT_SPEC](
       provisioningStatus <- if (validationResult.valid) provisionHandler.unprovision(provisionRequest)
                             else Left(validationResult.error.getOrElse(validErr()))
     } yield provisioningStatus
+
+  /** Updates the ACL of a component based on a [[it.agilelab.provisioning.mesh.self.service.api.model.ApiRequest.UpdateAclRequest]]
+    *
+    * Decode the yaml descriptor and executes the update ACL of the received refs
+    *
+    * @param updateAclRequest : an instance of [[ProvisioningRequest]]
+    * @return Right([[ProvisioningStatus]]) if the update ACL process complete without any side effect
+    *         * A Right(ProvisioningStatus(RUNNING,None)) is returned in case of async update ACL
+    *         * A Right(ProvisioningStatus(COMPLETED,Some("res")) is returned in case of sync update ACL
+    *         * A Right(ProvsiioningStatus(FAILED,Some("err")) is returned in case of sync update ACL failure
+    *         Left([[ApiError]])
+    *         * A Left(SystemError("errors")) is returned in case of side effect during the update ACL process
+    *         * A Left(ValidationError(["my-errors"]) is returned in case of validation issue
+    */
+  override def updateAcl(updateAclRequest: ApiRequest.UpdateAclRequest)(implicit
+    decoderPd: Decoder[ProvisioningDescriptor[DP_SPEC]],
+    decoderCmp: Decoder[Component[COMPONENT_SPEC]]
+  ): Either[ApiError, ProvisioningStatus] = for {
+    provisioningDesc   <- fromYml[ProvisioningDescriptor[DP_SPEC]](updateAclRequest.provisionInfo.request)
+                            .leftMap(e => validErr(e.show))
+    provisionRequest   <- provisioningDesc.toProvisionRequest[COMPONENT_SPEC].leftMap(e => validErr(e.show))
+    validationResult   <- validationHandler.validate(provisionRequest)
+    provisioningStatus <- if (validationResult.valid)
+                            for {
+                              refsMapping        <- Right {
+                                                      principalsMapper
+                                                        .map(updateAclRequest.refs.toSet)
+                                                        .values
+                                                        .partitionMap(identity)
+                                                    }
+                              provisioningStatus <- provisionHandler.updateAcl(provisionRequest, refsMapping._2.toSet)
+                              _                  <- NonEmptyList
+                                                      .fromList(refsMapping._1.toList)
+                                                      .map(ApiError.validErrNel(_) {
+                                                        case PrincipalMappingError(error, _)       => error.problems
+                                                        case PrincipalMappingSystemError(error, _) => error.problems
+                                                      })
+                                                      .toLeft(())
+                            } yield provisioningStatus
+                          else Left(validationResult.error.getOrElse(validErr()))
+  } yield provisioningStatus
 
 }

@@ -11,12 +11,14 @@ import it.agilelab.provisioning.mesh.self.service.api.model.ApiResponse.{ invali
 import it.agilelab.provisioning.mesh.self.service.api.model.{ Component, ProvisionRequest, ProvisioningDescriptor }
 import io.circe.Decoder
 import io.circe.generic.auto._
+import it.agilelab.provisioning.commons.principalsmapping.CdpIamPrincipals
 import it.agilelab.provisioning.commons.validator.Validator
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.funsuite.AnyFunSuite
 
 class LambdaProvisionerApiTest extends AnyFunSuite with MockFactory {
-  val provisionerController: ProvisionerController[String, String] = stub[ProvisionerController[String, String]]
+  val provisionerController: ProvisionerController[String, String, CdpIamPrincipals] =
+    stub[ProvisionerController[String, String, CdpIamPrincipals]]
 
   test("default") {
     val validator     = mock[Validator[ProvisionRequest[String, String]]]

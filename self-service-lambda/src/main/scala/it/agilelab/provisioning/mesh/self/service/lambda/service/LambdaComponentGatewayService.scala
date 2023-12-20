@@ -6,6 +6,7 @@ import it.agilelab.provisioning.mesh.self.service.api.model.ApiResponse.Provisio
 import it.agilelab.provisioning.mesh.self.service.core.gateway.ComponentGateway
 import it.agilelab.provisioning.mesh.self.service.lambda.core.model.{ ComponentOperation, ComponentServiceCommand }
 import io.circe.{ Decoder, Encoder }
+import it.agilelab.provisioning.commons.principalsmapping.CdpIamPrincipals
 import it.agilelab.provisioning.commons.support.ParserSupport
 
 /** A LambdaComponentGatewayService
@@ -15,9 +16,9 @@ import it.agilelab.provisioning.commons.support.ParserSupport
   * @tparam DP_SPEC: DataProduct type parameter
   * @tparam COMPONENT_SPEC: Component type parameter
   */
-class LambdaComponentGatewayService[DP_SPEC, COMPONENT_SPEC, RESOURCE](
+class LambdaComponentGatewayService[DP_SPEC, COMPONENT_SPEC, RESOURCE, PRINCIPAL <: CdpIamPrincipals](
   provisioningStatusRepo: Repository[ProvisioningStatus, String, Unit],
-  componentGateway: ComponentGateway[DP_SPEC, COMPONENT_SPEC, RESOURCE]
+  componentGateway: ComponentGateway[DP_SPEC, COMPONENT_SPEC, RESOURCE, PRINCIPAL]
 ) extends ParserSupport {
 
   private val FETCH_STATUS_ERROR        = "Unable to fetch Provisioning Status information with provided repository."
@@ -79,10 +80,10 @@ object LambdaComponentGatewayService {
     * @tparam RESOURCE: Resource type paramenter
     * @return
     */
-  def default[DP_SPEC, COMPONENT_SPEC, RESOURCE](
+  def default[DP_SPEC, COMPONENT_SPEC, RESOURCE, PRINCIPAL <: CdpIamPrincipals](
     repository: Repository[ProvisioningStatus, String, Unit],
-    componentGateway: ComponentGateway[DP_SPEC, COMPONENT_SPEC, RESOURCE]
-  ): LambdaComponentGatewayService[DP_SPEC, COMPONENT_SPEC, RESOURCE] =
-    new LambdaComponentGatewayService[DP_SPEC, COMPONENT_SPEC, RESOURCE](repository, componentGateway)
+    componentGateway: ComponentGateway[DP_SPEC, COMPONENT_SPEC, RESOURCE, PRINCIPAL]
+  ): LambdaComponentGatewayService[DP_SPEC, COMPONENT_SPEC, RESOURCE, PRINCIPAL] =
+    new LambdaComponentGatewayService[DP_SPEC, COMPONENT_SPEC, RESOURCE, PRINCIPAL](repository, componentGateway)
 
 }

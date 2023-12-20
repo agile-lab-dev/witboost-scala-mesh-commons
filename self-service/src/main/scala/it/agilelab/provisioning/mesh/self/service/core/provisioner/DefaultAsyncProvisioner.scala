@@ -1,11 +1,11 @@
 package it.agilelab.provisioning.mesh.self.service.core.provisioner
 
 import cats.implicits.toBifunctorOps
+import it.agilelab.provisioning.commons.principalsmapping.CdpIamPrincipals
 import it.agilelab.provisioning.mesh.repository.Repository
 import it.agilelab.provisioning.mesh.self.service.api.model.ApiResponse.{ running, ProvisioningStatus }
 import it.agilelab.provisioning.mesh.self.service.core.gateway.ComponentGateway
 import it.agilelab.provisioning.mesh.self.service.core.model.ProvisionCommand
-import io.circe.Encoder
 
 /** Execute an async provision
   * @param provisioningStatusRepo: A [[Repository]] of [[ProvisioningStatus]] that will be used to manage the async state of the provision
@@ -13,10 +13,10 @@ import io.circe.Encoder
   * @tparam DP_SPEC: DataProduct type parameter
   * @tparam COMPONENT_SPEC: Component type parameter
   */
-class DefaultAsyncProvisioner[DP_SPEC, COMPONENT_SPEC, RESOURCE](
+class DefaultAsyncProvisioner[DP_SPEC, COMPONENT_SPEC, RESOURCE, PRINCIPAL <: CdpIamPrincipals](
   provisioningStatusRepo: Repository[ProvisioningStatus, String, Unit],
-  componentGateway: ComponentGateway[DP_SPEC, COMPONENT_SPEC, RESOURCE]
-) extends Provisioner[DP_SPEC, COMPONENT_SPEC] {
+  componentGateway: ComponentGateway[DP_SPEC, COMPONENT_SPEC, RESOURCE, PRINCIPAL]
+) extends Provisioner[DP_SPEC, COMPONENT_SPEC, PRINCIPAL] {
 
   /** Execute the provision as follow:
     * Set the provision logic to running.
@@ -78,4 +78,25 @@ class DefaultAsyncProvisioner[DP_SPEC, COMPONENT_SPEC, RESOURCE](
           .leftMap(_ => ProvisionerError("Unable to create provisioning status with provided repository"))
     }
 
+  /** Executes the update ACL logic
+    *
+    * @param provisionCommand A [[ProvisionCommand]] instance
+    * @param refs             A list of refs to be granted access
+    * @return Right(ProvisioningStatus)
+    *         Left(ProvisionerError)
+    */
+  override def updateAcl(
+    provisionCommand: ProvisionCommand[DP_SPEC, COMPONENT_SPEC],
+    refs: Set[PRINCIPAL]
+  ): Either[ProvisionerError, ProvisioningStatus] = for {
+    status <- upsertStatus(running(provisionCommand.requestId))
+    _      <- componentGateway
+                .updateAcl(provisionCommand, refs)
+                .leftMap { e =>
+                  upsertStatus(
+                    status.failed(s"Unable to execute component gateway for provided request. Details: ${e.error}")
+                  )
+                  ProvisionerError(s"Unable to execute component gateway for provided request. Details: ${e.error}")
+                }
+  } yield status
 }

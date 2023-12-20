@@ -2,6 +2,7 @@ package it.agilelab.provisioning.mesh.self.service.api.model
 
 import cats.Show
 import cats.Show.fromToString
+import cats.data.NonEmptyList
 
 /** ApiError sealed trait
   *
@@ -33,6 +34,11 @@ object ApiError {
     * @return ValidationError
     */
   def validErr(errors: String*): ValidationError = ValidationError(errors)
+
+  def validErrNel[T](errors: NonEmptyList[T])(f: T => List[String]): ValidationError =
+    validErr(
+      errors.toList.flatMap(f(_)): _*
+    )
 
   implicit def showApiError: Show[ApiError] = Show.show {
     case s: SystemError     => fromToString[SystemError].show(s)

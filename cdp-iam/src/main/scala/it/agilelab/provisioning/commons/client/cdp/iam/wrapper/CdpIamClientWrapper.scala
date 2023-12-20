@@ -125,4 +125,9 @@ class CdpIamClientWrapper(iamClient: IamClient) {
     */
   def deleteGroup(req: DeleteGroupRequest): DeleteGroupResponse =
     iamClient.deleteGroup(req)
+
+  def getUser(req: GetUserRequest): GetUserResponse =
+    iamClient.getUser(req)
+
+  def listUsers(req: ListUsersRequest): ListUsersResponse = iamClient.listUsers(req)
 }

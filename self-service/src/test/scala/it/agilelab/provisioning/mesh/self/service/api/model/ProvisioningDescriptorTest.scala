@@ -22,6 +22,8 @@ class ProvisioningDescriptorTest extends AnyFunSuite with ParserSupport {
         |  version: my-dp-version
         |  kind: my-dp-kind
         |  dataProductOwner: my-dp-owner
+        |  devGroup: dev-group
+        |  ownerGroup: owner-group
         |  dataProductOwnerDisplayName: my-dp-owner-display-name
         |  email: email
         |  informationSLA: my-dp-info-sla
@@ -88,6 +90,8 @@ class ProvisioningDescriptorTest extends AnyFunSuite with ParserSupport {
           environment = "my-dp-environment",
           version = "my-dp-version",
           dataProductOwner = "my-dp-owner",
+          devGroup = "dev-group",
+          ownerGroup = "owner-group",
           specific = "my-dp-specific",
           components = Seq(
             Json.fromJsonObject(
@@ -166,6 +170,8 @@ class ProvisioningDescriptorTest extends AnyFunSuite with ParserSupport {
         environment = "my-dp-environment",
         version = "my-dp-version",
         dataProductOwner = "my-dp-owner",
+        devGroup = "dev-group",
+        ownerGroup = "owner-group",
         specific = "my-dp-specific",
         components = Seq(
           Json.fromJsonObject(
@@ -239,6 +245,8 @@ class ProvisioningDescriptorTest extends AnyFunSuite with ParserSupport {
           environment = "my-dp-environment",
           version = "my-dp-version",
           dataProductOwner = "my-dp-owner",
+          devGroup = "dev-group",
+          ownerGroup = "owner-group",
           specific = "my-dp-specific",
           components = Seq(
             Json.fromJsonObject(
@@ -316,6 +324,8 @@ class ProvisioningDescriptorTest extends AnyFunSuite with ParserSupport {
         environment = "my-dp-environment",
         version = "my-dp-version",
         dataProductOwner = "my-dp-owner",
+        devGroup = "dev-group",
+        ownerGroup = "owner-group",
         specific = "my-dp-specific",
         components = Seq(
           Json.fromJsonObject(
@@ -389,6 +399,8 @@ class ProvisioningDescriptorTest extends AnyFunSuite with ParserSupport {
           environment = "my-dp-environment",
           version = "my-dp-version",
           dataProductOwner = "my-dp-owner",
+          devGroup = "dev-group",
+          ownerGroup = "owner-group",
           specific = "my-dp-specific",
           components = Seq(
             Json.fromJsonObject(
@@ -475,6 +487,8 @@ class ProvisioningDescriptorTest extends AnyFunSuite with ParserSupport {
         environment = "my-dp-environment",
         version = "my-dp-version",
         dataProductOwner = "my-dp-owner",
+        devGroup = "dev-group",
+        ownerGroup = "owner-group",
         specific = "my-dp-specific",
         components = Seq(
           Json.fromJsonObject(
@@ -548,6 +562,8 @@ class ProvisioningDescriptorTest extends AnyFunSuite with ParserSupport {
           environment = "my-dp-environment",
           version = "my-dp-version",
           dataProductOwner = "my-dp-owner",
+          devGroup = "dev-group",
+          ownerGroup = "owner-group",
           specific = "my-dp-specific",
           components = Seq(
             Json.fromJsonObject(
@@ -624,6 +640,8 @@ class ProvisioningDescriptorTest extends AnyFunSuite with ParserSupport {
         environment = "my-dp-environment",
         version = "my-dp-version",
         dataProductOwner = "my-dp-owner",
+        devGroup = "dev-group",
+        ownerGroup = "owner-group",
         specific = "my-dp-specific",
         components = Seq(
           Json.fromJsonObject(

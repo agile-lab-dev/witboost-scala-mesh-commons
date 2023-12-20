@@ -33,6 +33,8 @@ object CdpIamClientError {
   final case class DestroyMachineUserErr(user: String, error: Throwable)                   extends CdpIamClientError
   final case class DestroyGroupErr(group: String, error: Throwable)                        extends CdpIamClientError
 
+  final case class GetUserErr(user: String, error: Throwable) extends CdpIamClientError
+
   implicit val showCdpIamClientError: Show[CdpIamClientError] = Show.show {
     case e: CdpIamClientInitError                 => show"CdpIamClientInitError(${e.error})"
     case e: GetMachineUserErr                     => show"GetMachineUserErr(${e.user},${e.error})"
@@ -52,5 +54,6 @@ object CdpIamClientError {
     case e: AccessKeyExistsErr                    => show"AccessKeyExistsErr(${e.accessKeyId},${e.error})"
     case e: DestroyMachineUserErr                 => show"DestroyMachineUserErr(${e.user},${e.error})"
     case e: DestroyGroupErr                       => show"DestroyGroupErr(${e.group},${e.error})"
+    case e: GetUserErr                            => show"GetUserErr(${e.user},${e.error})"
   }
 }

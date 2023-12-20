@@ -21,6 +21,7 @@ class DefaultRangerClient(
   private val V2_URI_BASE    = s"https://$host/service/public/v2/api"
   private val V2_POLICY_API  = s"$V2_URI_BASE/policy"
   private val V2_SERVICE_API = s"$V2_URI_BASE/service"
+  private val V2_ROLE_API    = s"$V2_URI_BASE/roles"
 
   /** Retrieve a specific policy by ID
     *
@@ -184,4 +185,74 @@ class DefaultRangerClient(
       case Left(e)                 => Left(FindPolicyByNameErr(name, e))
     }
 
+  // --------------------------------
+  // Roles methods
+  // --------------------------------
+
+  /** Retrieve a specific role by ID
+    *
+    * @param id : roleId
+    * @return Right(Some(RangerRole)) if role exists
+    *         Right(None) if role does not exists
+    *         Left(RangerClientError) in case of error
+    */
+  override def findRoleById(id: Int): Either[RangerClientError, Option[RangerRole]] =
+    http.get[RangerRole](s"$V2_ROLE_API/${id.toString}", Map.empty, credential) match {
+      case Right(r)                      => Right(Some(r))
+      case Left(ClientErr(404 | 400, _)) => Right(None)
+      case Left(e)                       => Left(FindRoleByIdErr(id, e))
+    }
+
+  /** Retrieve a specific role by service name and role name
+    *
+    * @param service : Service name
+    * @param name    : Role name
+    * @return Right(Some(RangerRole)) if role exists
+    *         Right(None) if role does not exists
+    *         Left(RangerClientError) in case of error
+    */
+  override def findRoleByName(name: String): Either[RangerClientError, Option[RangerRole]] =
+    http.get[RangerRole](s"$V2_ROLE_API/name/$name", Map.empty, credential) match {
+      case Right(r)                      => Right(Some(r))
+      case Left(ClientErr(404 | 400, _)) => Right(None)
+      case Left(e)                       => Left(FindRoleByNameErr(name, e))
+    }
+
+  /** Create a new RangerRole
+    *
+    * @param role : RangerRole definition
+    * @return Right(RangerRole) if all works fine
+    *         Left(RangerClientError) otherwise
+    */
+  override def createRole(role: RangerRole): Either[RangerClientError, RangerRole] =
+    http.post[RangerRole, RangerRole](s"$V2_ROLE_API", Map.empty, role, credential) match {
+      case Right(Some(r)) => Right(r)
+      case Right(None)    => Left(CreateRoleEmptyResponseErr(role))
+      case Left(e)        => Left(CreateRoleErr(role, e))
+    }
+
+  /** Update an existing RangerRole
+    *
+    * @param role : RangerRole definition
+    * @return Right(RangerRole) if all works fine
+    *         Left(RangerClientError) otherwise
+    */
+  override def updateRole(role: RangerRole): Either[RangerClientError, RangerRole] =
+    http.put[RangerRole, RangerRole](s"$V2_ROLE_API/${role.id.toString}", Map.empty, role, credential) match {
+      case Right(Some(r)) => Right(r)
+      case Right(None)    => Left(UpdateRoleEmptyResponseErr(role))
+      case Left(e)        => Left(UpdateRoleErr(role, e))
+    }
+
+  /** Delete an existing RangerRole
+    *
+    * @param role : RangerRole definition
+    * @return Right() if all works fine
+    *         Left(RangerClientError) otherwise
+    */
+  override def deleteRole(role: RangerRole): Either[RangerClientError, Unit] =
+    http.delete[Unit](s"$V2_ROLE_API/${role.id.toString}", Map.empty, credential) match {
+      case Right(_) => Right()
+      case Left(e)  => Left(DeleteRoleErr(role, e))
+    }
 }

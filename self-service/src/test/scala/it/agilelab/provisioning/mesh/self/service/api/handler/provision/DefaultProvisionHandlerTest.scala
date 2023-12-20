@@ -9,13 +9,15 @@ import it.agilelab.provisioning.mesh.self.service.core.model.ProvisionCommand
 import it.agilelab.provisioning.mesh.self.service.core.provisioner.{ Provisioner, ProvisionerError }
 import io.circe.Json
 import it.agilelab.provisioning.commons.identifier.IDGenerator
+import it.agilelab.provisioning.commons.principalsmapping.{ CdpIamPrincipals, CdpIamUser }
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.funsuite.AnyFunSuite
 
 class DefaultProvisionHandlerTest extends AnyFunSuite with MockFactory {
-  val idGenerator: IDGenerator                      = mock[IDGenerator]
-  val provisionService: Provisioner[String, String] = mock[Provisioner[String, String]]
-  val provisionHandler                              = new DefaultProvisionHandler(idGenerator, provisionService)
+  val idGenerator: IDGenerator                                        = mock[IDGenerator]
+  val provisionService: Provisioner[String, String, CdpIamPrincipals] =
+    mock[Provisioner[String, String, CdpIamPrincipals]]
+  val provisionHandler                                                = new DefaultProvisionHandler(idGenerator, provisionService)
 
   val request: ProvisionRequest[String, String] = ProvisionRequest(
     DataProduct[String](
@@ -25,6 +27,8 @@ class DefaultProvisionHandlerTest extends AnyFunSuite with MockFactory {
       environment = "my-dp-environment",
       version = "my-dp-version",
       dataProductOwner = "my-dp-owner",
+      devGroup = "dev-group",
+      ownerGroup = "owner-group",
       specific = "my-dp-specific",
       components = Seq.empty[Json]
     ),
@@ -38,6 +42,9 @@ class DefaultProvisionHandlerTest extends AnyFunSuite with MockFactory {
       )
     )
   )
+
+  val refs: Set[CdpIamPrincipals] =
+    Set(CdpIamUser("", "user1", ""), CdpIamUser("", "user2", ""))
 
   test("provision return Right(ProvisioningStatus)") {
     (idGenerator.random _).expects().once().returns("my-id")
@@ -87,4 +94,27 @@ class DefaultProvisionHandlerTest extends AnyFunSuite with MockFactory {
     assert(actual == expected)
   }
 
+  test("updateAcl return Right(ProvisioningStatus)") {
+    (idGenerator.random _).expects().once().returns("my-id")
+    (provisionService.updateAcl _)
+      .expects(ProvisionCommand("my-id", request), refs)
+      .once()
+      .returns(Right(ProvisioningStatus("my-id", RUNNING, None)))
+
+    val actual   = provisionHandler.updateAcl(request, refs)
+    val expected = Right(ProvisioningStatus("my-id", RUNNING, None))
+    assert(actual == expected)
+  }
+
+  test("updateAcl return SystemErr on repo findByIdError") {
+    (idGenerator.random _).expects().once().returns("my-id")
+    (provisionService.updateAcl _)
+      .expects(ProvisionCommand("my-id", request), refs)
+      .once()
+      .returns(Left(ProvisionerError("x")))
+
+    val actual   = provisionHandler.updateAcl(request, refs)
+    val expected = Left(SystemError("Unable to execute update ACL task: x"))
+    assert(actual == expected)
+  }
 }

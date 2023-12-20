@@ -33,7 +33,9 @@ lazy val root = (project in file("."))
     ranger,
     repository,
     selfService,
-    selfServiceLambda
+    selfServiceLambda,
+    principalsMapping,
+    principalsMappingSamples
   )
 
 lazy val core = (project in file("core"))
@@ -229,7 +231,7 @@ lazy val selfService = (project in file("self-service"))
     commonAssemblySettings,
     wartremoverSettings
   )
-  .dependsOn(core, repository)
+  .dependsOn(core, repository, principalsMapping, principalsMappingSamples)
   .enablePlugins(K8tyGitlabPlugin)
 
 lazy val selfServiceLambda = (project in file("self-service-lambda"))
@@ -242,3 +244,25 @@ lazy val selfServiceLambda = (project in file("self-service-lambda"))
   )
   .enablePlugins(K8tyGitlabPlugin)
   .dependsOn(core, awsLambda, awsLambdaHandlers, selfService)
+
+lazy val principalsMapping = (project in file("principals-mapping"))
+  .settings(
+    name := "scala-mesh-principals-mapping",
+    libraryDependencies ++= Dependencies.testDependencies,
+    artifactorySettings,
+    commonAssemblySettings,
+    wartremoverSettings
+  )
+  .enablePlugins(K8tyGitlabPlugin)
+  .dependsOn(core)
+
+lazy val principalsMappingSamples = (project in file("principals-mapping-samples"))
+  .settings(
+    name := "scala-mesh-principals-mapping-samples",
+    libraryDependencies ++= Dependencies.testDependencies,
+    artifactorySettings,
+    commonAssemblySettings,
+    wartremoverSettings
+  )
+  .enablePlugins(K8tyGitlabPlugin)
+  .dependsOn(core, principalsMapping, cdpIam)

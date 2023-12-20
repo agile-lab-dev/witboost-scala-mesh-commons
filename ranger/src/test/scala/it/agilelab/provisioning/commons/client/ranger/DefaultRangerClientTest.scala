@@ -1246,4 +1246,319 @@ class DefaultRangerClientTest extends AnyFunSuite with BeforeAndAfterAll with Mo
     assert(actual == expected)
   }
 
+  test("findRoleById return Right(Some(RangerRole))") {
+    val role = RangerRole.empty("name", "descr").copy(id = 1)
+
+    (http
+      .get[RangerRole](_: String, _: Map[String, String], _: Auth)(_: Decoder[RangerRole]))
+      .when("https://my-api-url/service/public/v2/api/roles/1", *, BasicCredential("x", "y"), *)
+      .returns(Right(role))
+
+    val actual = rangerClient.findRoleById(1)
+    assert(actual == Right(Some(role)))
+  }
+
+  test("findRoleById return Right(None)") {
+    (http
+      .get[RangerRole](_: String, _: Map[String, String], _: Auth)(_: Decoder[RangerRole]))
+      .when("https://my-api-url/service/public/v2/api/roles/1", *, BasicCredential("x", "y"), *)
+      .returns(Left(ClientErr(404, "")))
+
+    val actual = rangerClient.findRoleById(1)
+    assert(actual == Right(None))
+  }
+
+  test("findRoleById return Left(FindRoleBydIdErr(ClientError(401,)))") {
+    (http
+      .get[RangerRole](_: String, _: Map[String, String], _: Auth)(_: Decoder[RangerRole]))
+      .when("https://my-api-url/service/public/v2/api/roles/1", *, BasicCredential("x", "y"), *)
+      .returns(Left(ClientErr(401, "")))
+
+    val actual   = rangerClient.findRoleById(1)
+    val expected = Left(FindRoleByIdErr(1, ClientErr(401, "")))
+    assert(actual == expected)
+  }
+
+  test("findRoleById return Left(FindRoleBydIdErr(ServerErr(500,)))") {
+    (http
+      .get[RangerRole](_: String, _: Map[String, String], _: Auth)(_: Decoder[RangerRole]))
+      .when("https://my-api-url/service/public/v2/api/roles/1", *, BasicCredential("x", "y"), *)
+      .returns(Left(ServerErr(500, "")))
+
+    val actual   = rangerClient.findRoleById(1)
+    val expected = Left(FindRoleByIdErr(1, ServerErr(500, "")))
+    assert(actual == expected)
+  }
+
+  test("findRoleById return Left(FindRoleBydIdErr(GenericErr(301,)))") {
+    (http
+      .get[RangerRole](_: String, _: Map[String, String], _: Auth)(_: Decoder[RangerRole]))
+      .when("https://my-api-url/service/public/v2/api/roles/1", *, BasicCredential("x", "y"), *)
+      .returns(Left(GenericErr(301, "")))
+
+    val actual   = rangerClient.findRoleById(1)
+    val expected = Left(FindRoleByIdErr(1, GenericErr(301, "")))
+    assert(actual == expected)
+  }
+
+  test("findRoleByName return Right(Some(RangerRole))") {
+    val role = RangerRole.empty("name", "descr").copy(id = 1)
+
+    (http
+      .get[RangerRole](_: String, _: Map[String, String], _: Auth)(_: Decoder[RangerRole]))
+      .when("https://my-api-url/service/public/v2/api/roles/name/name", *, BasicCredential("x", "y"), *)
+      .returns(Right(role))
+
+    val actual = rangerClient.findRoleByName("name")
+    assert(actual == Right(Some(role)))
+  }
+
+  test("findRoleByName return Right(None)") {
+    (http
+      .get[RangerRole](_: String, _: Map[String, String], _: Auth)(_: Decoder[RangerRole]))
+      .when("https://my-api-url/service/public/v2/api/roles/name/name", *, BasicCredential("x", "y"), *)
+      .returns(Left(ClientErr(404, "")))
+
+    val actual = rangerClient.findRoleByName("name")
+    assert(actual == Right(None))
+  }
+
+  test("findRoleByName return Left(FindRoleBydNameErr(ClientError(401,)))") {
+    (http
+      .get[RangerRole](_: String, _: Map[String, String], _: Auth)(_: Decoder[RangerRole]))
+      .when("https://my-api-url/service/public/v2/api/roles/name/name", *, BasicCredential("x", "y"), *)
+      .returns(Left(ClientErr(401, "")))
+
+    val actual   = rangerClient.findRoleByName("name")
+    val expected = Left(FindRoleByNameErr("name", ClientErr(401, "")))
+    assert(actual == expected)
+  }
+
+  test("findRoleByName return Left(FindRoleBydNameErr(ServerErr(500,)))") {
+    (http
+      .get[RangerRole](_: String, _: Map[String, String], _: Auth)(_: Decoder[RangerRole]))
+      .when("https://my-api-url/service/public/v2/api/roles/name/name", *, BasicCredential("x", "y"), *)
+      .returns(Left(ServerErr(500, "")))
+
+    val actual   = rangerClient.findRoleByName("name")
+    val expected = Left(FindRoleByNameErr("name", ServerErr(500, "")))
+    assert(actual == expected)
+  }
+
+  test("findRoleByName return Left(FindRoleBydNameErr(GenericErr(301,)))") {
+    (http
+      .get[RangerRole](_: String, _: Map[String, String], _: Auth)(_: Decoder[RangerRole]))
+      .when("https://my-api-url/service/public/v2/api/roles/name/name", *, BasicCredential("x", "y"), *)
+      .returns(Left(GenericErr(301, "")))
+
+    val actual   = rangerClient.findRoleByName("name")
+    val expected = Left(FindRoleByNameErr("name", GenericErr(301, "")))
+    assert(actual == expected)
+  }
+
+  test("createRole return Right(RangerRole)") {
+    val role = RangerRole.empty("name", "descr")
+    (http
+      .post[RangerRole, RangerRole](_: String, _: Map[String, String], _: RangerRole, _: Auth)(
+        _: Encoder[RangerRole],
+        _: Decoder[RangerRole]
+      ))
+      .when("https://my-api-url/service/public/v2/api/roles", *, role, BasicCredential("x", "y"), *, *)
+      .returns(Right(Some(role.copy(id = 2))))
+
+    val actual = rangerClient.createRole(role)
+    assert(actual == Right(role.copy(id = 2)))
+  }
+
+  test("createRole return Left(CreateRangerRoleErr(Empty body))") {
+    val role = RangerRole.empty("name", "descr")
+    (http
+      .post[RangerRole, RangerRole](_: String, _: Map[String, String], _: RangerRole, _: Auth)(
+        _: Encoder[RangerRole],
+        _: Decoder[RangerRole]
+      ))
+      .when("https://my-api-url/service/public/v2/api/roles", *, role, BasicCredential("x", "y"), *, *)
+      .returns(Right(None))
+
+    val actual = rangerClient.createRole(role)
+    assert(actual == Left(CreateRoleEmptyResponseErr(role)))
+  }
+
+  test("createRole return Left(CreateRangerRoleErr(ClientErr(401,)))") {
+    val role = RangerRole.empty("name", "descr")
+    (http
+      .post[RangerRole, RangerRole](_: String, _: Map[String, String], _: RangerRole, _: Auth)(
+        _: Encoder[RangerRole],
+        _: Decoder[RangerRole]
+      ))
+      .when("https://my-api-url/service/public/v2/api/roles", *, role, BasicCredential("x", "y"), *, *)
+      .returns(Left(ClientErr(401, "")))
+
+    val actual   = rangerClient.createRole(role)
+    val expected = Left(CreateRoleErr(role, ClientErr(401, "")))
+    assert(actual == expected)
+  }
+
+  test("createRole return Left(CreateRangerRoleErr(ServerErr(500,)))") {
+    val role = RangerRole.empty("name", "descr")
+    (http
+      .post[RangerRole, RangerRole](_: String, _: Map[String, String], _: RangerRole, _: Auth)(
+        _: Encoder[RangerRole],
+        _: Decoder[RangerRole]
+      ))
+      .when("https://my-api-url/service/public/v2/api/roles", *, role, BasicCredential("x", "y"), *, *)
+      .returns(Left(ServerErr(500, "")))
+
+    val actual   = rangerClient.createRole(role)
+    val expected = Left(CreateRoleErr(role, ServerErr(500, "")))
+    assert(actual == expected)
+  }
+
+  test("createRole return Left(CreateRangerRoleErr(GenericErr(301,)))") {
+    val role = RangerRole.empty("name", "descr")
+    (http
+      .post[RangerRole, RangerRole](_: String, _: Map[String, String], _: RangerRole, _: Auth)(
+        _: Encoder[RangerRole],
+        _: Decoder[RangerRole]
+      ))
+      .when("https://my-api-url/service/public/v2/api/roles", *, role, BasicCredential("x", "y"), *, *)
+      .returns(Left(GenericErr(301, "")))
+
+    val actual   = rangerClient.createRole(role)
+    val expected = Left(CreateRoleErr(role, GenericErr(301, "")))
+    assert(actual == expected)
+  }
+
+  test("updateRole return Right(RangerRole)") {
+    val role = RangerRole.empty("name", "descr").copy(id = 1)
+    (http
+      .put[RangerRole, RangerRole](_: String, _: Map[String, String], _: RangerRole, _: Auth)(
+        _: Encoder[RangerRole],
+        _: Decoder[RangerRole]
+      ))
+      .when("https://my-api-url/service/public/v2/api/roles/1", *, role, BasicCredential("x", "y"), *, *)
+      .returns(Right(Some(role.copy(name = "new-name"))))
+
+    val actual = rangerClient.updateRole(role)
+    assert(actual == Right(role.copy(name = "new-name")))
+  }
+
+  test("updateRole return Left(CreateRangerRoleErr(Empty body))") {
+    val role = RangerRole.empty("name", "descr").copy(id = 1)
+    (http
+      .put[RangerRole, RangerRole](_: String, _: Map[String, String], _: RangerRole, _: Auth)(
+        _: Encoder[RangerRole],
+        _: Decoder[RangerRole]
+      ))
+      .when("https://my-api-url/service/public/v2/api/roles/1", *, role, BasicCredential("x", "y"), *, *)
+      .returns(Right(None))
+
+    val actual = rangerClient.updateRole(role)
+    assert(actual == Left(UpdateRoleEmptyResponseErr(role)))
+  }
+
+  test("updateRole return Left(UpdateRangerRoleErr(ClientErr(401,)))") {
+    val role = RangerRole.empty("name", "descr").copy(id = 1)
+    (http
+      .put[RangerRole, RangerRole](_: String, _: Map[String, String], _: RangerRole, _: Auth)(
+        _: Encoder[RangerRole],
+        _: Decoder[RangerRole]
+      ))
+      .when("https://my-api-url/service/public/v2/api/roles/1", *, role, BasicCredential("x", "y"), *, *)
+      .returns(Left(ClientErr(401, "")))
+
+    val actual   = rangerClient.updateRole(role)
+    val expected = Left(UpdateRoleErr(role, ClientErr(401, "")))
+    assert(actual == expected)
+  }
+
+  test("updateRole return Left(UpdateRangerRoleErr(ServerErr(500,)))") {
+    val role = RangerRole.empty("name", "descr").copy(id = 1)
+    (http
+      .put[RangerRole, RangerRole](_: String, _: Map[String, String], _: RangerRole, _: Auth)(
+        _: Encoder[RangerRole],
+        _: Decoder[RangerRole]
+      ))
+      .when("https://my-api-url/service/public/v2/api/roles/1", *, role, BasicCredential("x", "y"), *, *)
+      .returns(Left(ServerErr(500, "")))
+
+    val actual   = rangerClient.updateRole(role)
+    val expected = Left(UpdateRoleErr(role, ServerErr(500, "")))
+    assert(actual == expected)
+  }
+
+  test("updateRole return Left(UpdateRangerRoleErr(GenericErr(301,)))") {
+    val role = RangerRole.empty("name", "descr").copy(id = 1)
+    (http
+      .put[RangerRole, RangerRole](_: String, _: Map[String, String], _: RangerRole, _: Auth)(
+        _: Encoder[RangerRole],
+        _: Decoder[RangerRole]
+      ))
+      .when("https://my-api-url/service/public/v2/api/roles/1", *, role, BasicCredential("x", "y"), *, *)
+      .returns(Left(GenericErr(301, "")))
+
+    val actual   = rangerClient.updateRole(role)
+    val expected = Left(UpdateRoleErr(role, GenericErr(301, "")))
+    assert(actual == expected)
+  }
+
+  test("deleteRole return Right(())") {
+    val role = RangerRole.empty("name", "descr").copy(id = 1)
+
+    (http
+      .delete[Unit](_: String, _: Map[String, String], _: Auth)(
+        _: Decoder[Unit]
+      ))
+      .when("https://my-api-url/service/public/v2/api/roles/1", *, BasicCredential("x", "y"), *)
+      .returns(Right(None))
+
+    val actual = rangerClient.deleteRole(role)
+    assert(actual == Right(()))
+  }
+
+  test("deleteRole return Left(DeleteRoleErr(ClientError(401,)))") {
+    val role = RangerRole.empty("name", "descr").copy(id = 1)
+
+    (http
+      .delete[Unit](_: String, _: Map[String, String], _: Auth)(
+        _: Decoder[Unit]
+      ))
+      .when("https://my-api-url/service/public/v2/api/roles/1", *, BasicCredential("x", "y"), *)
+      .returns(Left(ClientErr(401, "")))
+
+    val actual   = rangerClient.deleteRole(role)
+    val expected = Left(DeleteRoleErr(role, ClientErr(401, "")))
+    assert(actual == expected)
+  }
+
+  test("deleteRole return Left(DeleteRoleErr(ServerErr(500,)))") {
+    val role = RangerRole.empty("name", "descr").copy(id = 1)
+
+    (http
+      .delete[Unit](_: String, _: Map[String, String], _: Auth)(
+        _: Decoder[Unit]
+      ))
+      .when("https://my-api-url/service/public/v2/api/roles/1", *, BasicCredential("x", "y"), *)
+      .returns(Left(ServerErr(500, "")))
+
+    val actual   = rangerClient.deleteRole(role)
+    val expected = Left(DeleteRoleErr(role, ServerErr(500, "")))
+    assert(actual == expected)
+  }
+
+  test("deleteRole return Left(DeleteRoleErr(GenericErr(301,)))") {
+    val role = RangerRole.empty("name", "descr").copy(id = 1)
+
+    (http
+      .delete[Unit](_: String, _: Map[String, String], _: Auth)(
+        _: Decoder[Unit]
+      ))
+      .when("https://my-api-url/service/public/v2/api/roles/1", *, BasicCredential("x", "y"), *)
+      .returns(Left(GenericErr(301, "")))
+
+    val actual   = rangerClient.deleteRole(role)
+    val expected = Left(DeleteRoleErr(role, GenericErr(301, "")))
+    assert(actual == expected)
+  }
+
 }

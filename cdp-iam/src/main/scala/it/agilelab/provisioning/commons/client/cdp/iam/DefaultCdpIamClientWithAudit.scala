@@ -1,6 +1,6 @@
 package it.agilelab.provisioning.commons.client.cdp.iam
 
-import com.cloudera.cdp.iam.model.{ Group, MachineUser, ResourceAssignment }
+import com.cloudera.cdp.iam.model.{ Group, MachineUser, ResourceAssignment, User }
 import cats.implicits._
 import it.agilelab.provisioning.commons.audit.Audit
 import it.agilelab.provisioning.commons.client.cdp.iam.model.AccessKeyCredential
@@ -135,4 +135,15 @@ class DefaultCdpIamClientWithAudit(client: CdpIamClient, audit: Audit) extends C
       case Left(l)  => audit.error(show"$action failed. Details: $l")
     }
 
+  override def getUserByWorkloadUsername(workloadUserName: String): Either[CdpIamClientError, Option[User]] = {
+    val result = client.getUserByWorkloadUsername(workloadUserName)
+    auditWithinResult(result, s"GetUserByWorkloadUserName($workloadUserName)")
+    result
+  }
+
+  override def getUser(userId: String): Either[CdpIamClientError, Option[User]] = {
+    val result = client.getUser(userId)
+    auditWithinResult(result, s"GetUser($userId)")
+    result
+  }
 }

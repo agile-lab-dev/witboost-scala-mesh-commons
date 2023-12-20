@@ -4,6 +4,7 @@ import it.agilelab.provisioning.commons.audit.Audit
 import it.agilelab.provisioning.commons.client.ranger.RangerClientError._
 import it.agilelab.provisioning.commons.client.ranger.model.{
   RangerPolicy,
+  RangerRole,
   RangerSecurityZone,
   RangerSecurityZoneResources,
   RangerService
@@ -540,4 +541,133 @@ class DefaultRangerClientWithAuditTest extends AnyFunSuite with BeforeAndAfterAl
     assert(actual == Left(DeletePolicyErr(policy, ClientErr(404, "x"))))
   }
 
+  //----------------------
+  // Roles
+  //----------------------
+
+  test("findRoleById logs success info") {
+    val role = RangerRole.empty(name = "b", description = "c").copy(id = 1)
+
+    (defaultRangerClient.findRoleById _).when(*).returns(Right(Some(role)))
+    inSequence(
+      (audit.info _).expects("Executing FindRoleById(1)").once(),
+      (audit.info _).expects("FindRoleById(1) completed successfully")
+    )
+    val actual = rangerClient.findRoleById(1)
+    assert(actual == Right(Some(role)))
+  }
+
+  test("findRoleById logs error info") {
+    (defaultRangerClient.findRoleById _).when(*).returns(Left(FindRoleByIdErr(1, ClientErr(404, "x"))))
+    inSequence(
+      (audit.info _).expects("Executing FindRoleById(1)").once(),
+      (audit.error _).expects(
+        "FindRoleById(1) failed. Details: FindRoleByIdErr(1,ClientErr(404,x))"
+      )
+    )
+    val actual = rangerClient.findRoleById(1)
+    assert(actual == Left(FindRoleByIdErr(1, ClientErr(404, "x"))))
+  }
+
+  test("findRoleByName logs success info") {
+    val role = RangerRole.empty(name = "name", description = "c").copy(id = 1)
+
+    (defaultRangerClient.findRoleByName _).when(*).returns(Right(Some(role)))
+    inSequence(
+      (audit.info _).expects("Executing FindRoleByName(name=name)").once(),
+      (audit.info _).expects("FindRoleByName(name=name) completed successfully")
+    )
+    val actual = rangerClient.findRoleByName("name")
+    assert(actual == Right(Some(role)))
+  }
+
+  test("findRoleByName logs error info") {
+    (defaultRangerClient.findRoleByName _).when(*).returns(Left(FindRoleByNameErr("name", ClientErr(404, "x"))))
+    inSequence(
+      (audit.info _).expects("Executing FindRoleByName(name=name)").once(),
+      (audit.error _).expects(
+        "FindRoleByName(name=name) failed. Details: FindRoleByNameErr(name,ClientErr(404,x))"
+      )
+    )
+    val actual = rangerClient.findRoleByName("name")
+    assert(actual == Left(FindRoleByNameErr("name", ClientErr(404, "x"))))
+  }
+
+  test("createRole logs success info") {
+    val role = RangerRole.empty(name = "b", description = "c")
+
+    (defaultRangerClient.createRole _).when(*).returns(Right(role))
+    inSequence(
+      (audit.info _).expects("Executing CreateRole(RangerRole(-1,true,b,c,List(),List(),List()))").once(),
+      (audit.info _).expects("CreateRole(RangerRole(-1,true,b,c,List(),List(),List())) completed successfully")
+    )
+    val actual = rangerClient.createRole(role)
+    assert(actual == Right(role))
+  }
+
+  test("createRole logs error info") {
+    val role = RangerRole.empty(name = "b", description = "c")
+
+    (defaultRangerClient.createRole _).when(*).returns(Left(CreateRoleErr(role, ClientErr(404, "x"))))
+    inSequence(
+      (audit.info _).expects("Executing CreateRole(RangerRole(-1,true,b,c,List(),List(),List()))").once(),
+      (audit.error _).expects(
+        "CreateRole(RangerRole(-1,true,b,c,List(),List(),List())) failed. Details: CreateRoleErr(RangerRole(-1,true,b,c,List(),List(),List()),ClientErr(404,x))"
+      )
+    )
+    val actual = rangerClient.createRole(role)
+    assert(actual == Left(CreateRoleErr(role, ClientErr(404, "x"))))
+  }
+
+  test("updateRole logs success info") {
+    val role = RangerRole.empty(name = "b", description = "c").copy(id = 1)
+
+    (defaultRangerClient.updateRole _).when(*).returns(Right(role))
+    inSequence(
+      (audit.info _).expects("Executing UpdateRole(RangerRole(1,true,b,c,List(),List(),List()))").once(),
+      (audit.info _).expects("UpdateRole(RangerRole(1,true,b,c,List(),List(),List())) completed successfully")
+    )
+    val actual = rangerClient.updateRole(role)
+    assert(actual == Right(role))
+  }
+
+  test("updateRole logs error info") {
+    val role = RangerRole.empty(name = "b", description = "c").copy(id = 1)
+
+    (defaultRangerClient.updateRole _).when(*).returns(Left(UpdateRoleErr(role, ClientErr(404, "x"))))
+    inSequence(
+      (audit.info _).expects("Executing UpdateRole(RangerRole(1,true,b,c,List(),List(),List()))").once(),
+      (audit.error _).expects(
+        "UpdateRole(RangerRole(1,true,b,c,List(),List(),List())) failed. Details: UpdateRoleErr(RangerRole(1,true,b,c,List(),List(),List()),ClientErr(404,x))"
+      )
+    )
+    val actual = rangerClient.updateRole(role)
+    assert(actual == Left(UpdateRoleErr(role, ClientErr(404, "x"))))
+  }
+
+  test("deleteRole logs success info") {
+    val role = RangerRole.empty(name = "b", description = "c").copy(id = 1)
+
+    (defaultRangerClient.deleteRole _).when(*).returns(Right(()))
+    inSequence(
+      (audit.info _).expects("Executing DeleteRole(RangerRole(1,true,b,c,List(),List(),List()))").once(),
+      (audit.info _).expects("DeleteRole(RangerRole(1,true,b,c,List(),List(),List())) completed successfully")
+    )
+    val actual = rangerClient.deleteRole(role)
+    assert(actual == Right(()))
+  }
+
+  test("deleteRole logs error info") {
+    val role = RangerRole.empty(name = "b", description = "c").copy(id = 1)
+
+    (defaultRangerClient.deleteRole _).when(*).returns(Left(DeleteRoleErr(role, ClientErr(404, "x"))))
+    inSequence(
+      (audit.info _).expects("Executing DeleteRole(RangerRole(1,true,b,c,List(),List(),List()))").once(),
+      (audit.error _).expects(
+        "DeleteRole(RangerRole(1,true,b,c,List(),List(),List())) failed. Details: DeleteRoleErr(RangerRole(1,true,b,c,List(),List(),List()),ClientErr(404,x))"
+      )
+    )
+    val actual = rangerClient.deleteRole(role)
+    assert(actual == Left(DeleteRoleErr(role, ClientErr(404, "x"))))
+  }
 }

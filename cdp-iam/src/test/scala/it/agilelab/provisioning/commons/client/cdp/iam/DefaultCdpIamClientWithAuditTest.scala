@@ -299,4 +299,39 @@ class DefaultCdpIamClientWithAuditTest extends AnyFunSuite with MockFactory with
     assertDestroyGroupErr(actual, "group-name", "x")
   }
 
+  test("getUserByWorkloadUsername logs success info") {
+    (client.getUserByWorkloadUsername _).when("user").returns(Right(None))
+    (audit.info _).expects("GetUserByWorkloadUserName(user) completed successfully")
+    val actual = clientWithAudit.getUserByWorkloadUsername("user")
+    assert(actual == Right(None))
+  }
+
+  test("getUserByWorkloadUsername logs error info") {
+    (client.getUserByWorkloadUsername _)
+      .when("user")
+      .returns(Left(GetUserErr("user", new IllegalArgumentException("x"))))
+    (audit.error _).expects(where { s: String =>
+      s.startsWith(
+        "GetUserByWorkloadUserName(user) failed. Details: GetUserErr(user,java.lang.IllegalArgumentException: x"
+      )
+    })
+    assertGetUserErr(clientWithAudit.getUserByWorkloadUsername("user"), "user", "x")
+  }
+
+  test("getUser logs success info") {
+    (client.getUserByWorkloadUsername _).when("user").returns(Right(None))
+    (audit.info _).expects("GetUserByWorkloadUserName(user) completed successfully")
+    val actual = clientWithAudit.getUserByWorkloadUsername("user")
+    assert(actual == Right(None))
+  }
+
+  test("getUser logs error info") {
+    (client.getUser _)
+      .when("user")
+      .returns(Left(GetUserErr("user", new IllegalArgumentException("x"))))
+    (audit.error _).expects(where { s: String =>
+      s.startsWith("GetUser(user) failed. Details: GetUserErr(user,java.lang.IllegalArgumentException: x")
+    })
+    assertGetUserErr(clientWithAudit.getUser("user"), "user", "x")
+  }
 }

@@ -141,6 +141,8 @@ class ComponentTest extends AnyFunSuite with ParserSupport {
         |version: version
         |kind: kind
         |dataProductOwner: dataProductOwner
+        |devGroup: dev-group
+        |ownerGroup: owner-group
         |dataProductOwnerDisplayName: dataProductOwnerDisplayName
         |email: email
         |informationSLA: informationSLA
@@ -159,6 +161,8 @@ class ComponentTest extends AnyFunSuite with ParserSupport {
       environment = "environment",
       version = "version",
       dataProductOwner = "dataProductOwner",
+      devGroup = "dev-group",
+      ownerGroup = "owner-group",
       specific = "specific",
       components = Seq.empty[Json]
     )

@@ -7,15 +7,18 @@ import it.agilelab.provisioning.mesh.self.service.api.model.Component.Workload
 import it.agilelab.provisioning.mesh.self.service.api.model.{ DataProduct, ProvisionRequest }
 import io.circe.Json
 import it.agilelab.provisioning.commons.audit.Audit
+import it.agilelab.provisioning.commons.principalsmapping.{ CdpIamPrincipals, CdpIamUser }
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.funsuite.AnyFunSuite
 
 class DefaultProvisionHandlerWithAuditTest extends AnyFunSuite with MockFactory {
 
-  val audit: Audit                                           = mock[Audit]
-  val baseProvisionHandler: ProvisionHandler[String, String] = mock[ProvisionHandler[String, String]]
-  val provisionHandler                                       = new DefaultProvisionHandlerWithAudit[String, String](baseProvisionHandler, audit)
-  val request: ProvisionRequest[String, String]              = ProvisionRequest(
+  val audit: Audit                                                             = mock[Audit]
+  val baseProvisionHandler: ProvisionHandler[String, String, CdpIamPrincipals] =
+    mock[ProvisionHandler[String, String, CdpIamPrincipals]]
+  val provisionHandler                                                         =
+    new DefaultProvisionHandlerWithAudit[String, String, CdpIamPrincipals](baseProvisionHandler, audit)
+  val request: ProvisionRequest[String, String]                                = ProvisionRequest(
     DataProduct[String](
       id = "my-dp-id",
       name = "my-dp-name",
@@ -23,6 +26,8 @@ class DefaultProvisionHandlerWithAuditTest extends AnyFunSuite with MockFactory 
       environment = "my-dp-environment",
       version = "my-dp-version",
       dataProductOwner = "my-dp-owner",
+      devGroup = "dev-group",
+      ownerGroup = "owner-group",
       specific = "my-dp-specific",
       components = Seq.empty[Json]
     ),
@@ -35,6 +40,11 @@ class DefaultProvisionHandlerWithAuditTest extends AnyFunSuite with MockFactory 
         specific = "x"
       )
     )
+  )
+
+  val refs: Set[CdpIamPrincipals] = Set(
+    CdpIamUser("", "user1", ""),
+    CdpIamUser("", "user2", "")
   )
 
   test("provision call info on success") {
@@ -85,6 +95,36 @@ class DefaultProvisionHandlerWithAuditTest extends AnyFunSuite with MockFactory 
       .once()
 
     val actual   = provisionHandler.unprovision(request)
+    val expected = Left(SystemError("error"))
+    assert(actual == expected)
+  }
+
+  test("updateAcl call info on success") {
+    (audit.info _)
+      .expects("Received refs { CdpIamUser(,user1,), CdpIamUser(,user2,) }")
+    (baseProvisionHandler.updateAcl _)
+      .expects(request, refs)
+      .returns(Right(ProvisioningStatus("x", RUNNING, None)))
+    (audit.info _)
+      .expects("Update ACL request completed successfully")
+      .once()
+
+    val actual   = provisionHandler.updateAcl(request, refs)
+    val expected = Right(ProvisioningStatus("x", RUNNING, None))
+    assert(actual == expected)
+  }
+
+  test("updateAcl call error on failure") {
+    (baseProvisionHandler.updateAcl _)
+      .expects(request, refs)
+      .returns(Left(SystemError("error")))
+    (audit.error _)
+      .expects("Update ACL request failed. Details SystemError(error)")
+      .once()
+    (audit.info _)
+      .expects("Received refs { CdpIamUser(,user1,), CdpIamUser(,user2,) }")
+
+    val actual   = provisionHandler.updateAcl(request, refs)
     val expected = Left(SystemError("error"))
     assert(actual == expected)
   }

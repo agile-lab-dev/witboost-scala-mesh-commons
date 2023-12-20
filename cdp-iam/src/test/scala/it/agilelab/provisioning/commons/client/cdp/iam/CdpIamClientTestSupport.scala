@@ -170,4 +170,15 @@ trait CdpIamClientTestSupport {
     assert(actual.left.value.asInstanceOf[DestroyGroupErr].error.getMessage == error)
   }
 
+  def assertGetUserErr[A](
+    actual: Either[CdpIamClientError, A],
+    user: String,
+    error: String
+  ): Unit = {
+    assert(actual.isLeft)
+    assert(actual.left.value.isInstanceOf[GetUserErr])
+    assert(actual.left.value.asInstanceOf[GetUserErr].user == user)
+    assert(actual.left.value.asInstanceOf[GetUserErr].error.getMessage == error)
+  }
+
 }
