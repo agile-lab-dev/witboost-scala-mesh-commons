@@ -66,6 +66,6 @@ class DefaultSyncProvisioner[DP_SPEC, COMPONENT_SPEC, RESOURCE, PRINCIPAL <: Cdp
   ): Either[ProvisionerError, ProvisioningStatus] =
     componentGateway
       .updateAcl(provisionCommand, refs)
-      .map(resource => completed(provisionCommand.requestId, Some(toJson[RESOURCE](resource))))
+      .map(resource => completed(provisionCommand.requestId, None))
       .leftMap(e => ProvisionerError(COMPLETE_UPDATE_ACL_ERROR.format(e.error)))
 }

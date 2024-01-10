@@ -598,8 +598,8 @@ class DefaultRangerClientWithAuditTest extends AnyFunSuite with BeforeAndAfterAl
 
     (defaultRangerClient.createRole _).when(*).returns(Right(role))
     inSequence(
-      (audit.info _).expects("Executing CreateRole(RangerRole(-1,true,b,c,List(),List(),List()))").once(),
-      (audit.info _).expects("CreateRole(RangerRole(-1,true,b,c,List(),List(),List())) completed successfully")
+      (audit.info _).expects("Executing CreateRole(RangerRole(0,true,b,c,List(),List(),List()))").once(),
+      (audit.info _).expects("CreateRole(RangerRole(0,true,b,c,List(),List(),List())) completed successfully")
     )
     val actual = rangerClient.createRole(role)
     assert(actual == Right(role))
@@ -610,9 +610,9 @@ class DefaultRangerClientWithAuditTest extends AnyFunSuite with BeforeAndAfterAl
 
     (defaultRangerClient.createRole _).when(*).returns(Left(CreateRoleErr(role, ClientErr(404, "x"))))
     inSequence(
-      (audit.info _).expects("Executing CreateRole(RangerRole(-1,true,b,c,List(),List(),List()))").once(),
+      (audit.info _).expects("Executing CreateRole(RangerRole(0,true,b,c,List(),List(),List()))").once(),
       (audit.error _).expects(
-        "CreateRole(RangerRole(-1,true,b,c,List(),List(),List())) failed. Details: CreateRoleErr(RangerRole(-1,true,b,c,List(),List(),List()),ClientErr(404,x))"
+        "CreateRole(RangerRole(0,true,b,c,List(),List(),List())) failed. Details: CreateRoleErr(RangerRole(0,true,b,c,List(),List(),List()),ClientErr(404,x))"
       )
     )
     val actual = rangerClient.createRole(role)

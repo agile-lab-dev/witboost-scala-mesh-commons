@@ -8,7 +8,11 @@ import it.agilelab.provisioning.commons.config.ConfError.ConfKeyNotFoundErr
   */
 class DefaultConf(config: Config) extends Conf {
 
-  override def get(key: String): Either[ConfError, String] =
+  override def get(key: String): Either[ConfError, String]       =
     try Right(config.getString(key))
+    catch { case _: Exception => Left(ConfKeyNotFoundErr(key)) }
+
+  override def getConfig(key: String): Either[ConfError, Config] =
+    try Right(config.getConfig(key))
     catch { case _: Exception => Left(ConfKeyNotFoundErr(key)) }
 }

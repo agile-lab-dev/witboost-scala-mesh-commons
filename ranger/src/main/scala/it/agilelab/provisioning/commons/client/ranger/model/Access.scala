@@ -7,10 +7,12 @@ final case class Access(
 
 object Access {
 
-  def all: Access = Access("ALL", isAllowed = true)
+  def all: Access = Access("all", isAllowed = true)
 
-  def select: Access = Access("SELECT", isAllowed = true)
+  def select: Access = Access("select", isAllowed = true)
 
-  def read: Access = Access("READ", isAllowed = true)
+  def read: Access = Access("read", isAllowed = true)
+
+  def write: Access = Access("write", isAllowed = true)
 
 }

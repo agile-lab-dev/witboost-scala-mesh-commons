@@ -11,7 +11,7 @@ trait ComponentGateway[DP_SPEC, COMPONENT_SPEC, RESOURCE, PRINCIPAL <: CdpIamPri
   def updateAcl(
     provisionCommand: ProvisionCommand[DP_SPEC, COMPONENT_SPEC],
     refs: Set[PRINCIPAL]
-  ): Either[ComponentGatewayError, RESOURCE]
+  ): Either[ComponentGatewayError, Set[PRINCIPAL]]
 }
 
 trait PermissionlessComponentGateway[DP_SPEC, COMPONENT_SPEC, RESOURCE]
@@ -20,5 +20,7 @@ trait PermissionlessComponentGateway[DP_SPEC, COMPONENT_SPEC, RESOURCE]
   override def updateAcl(
     provisionCommand: ProvisionCommand[DP_SPEC, COMPONENT_SPEC],
     refs: Set[CdpIamPrincipals]
-  ): Either[ComponentGatewayError, RESOURCE] = Left(ComponentGatewayError("Update ACL is not a supported operation"))
+  ): Either[ComponentGatewayError, Set[CdpIamPrincipals]] = Left(
+    ComponentGatewayError("Update ACL is not a supported operation")
+  )
 }

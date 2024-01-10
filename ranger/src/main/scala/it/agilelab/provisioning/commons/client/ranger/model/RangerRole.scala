@@ -15,7 +15,7 @@ final case class RangerRole(
 object RangerRole {
   def empty(name: String, description: String): RangerRole =
     new RangerRole(
-      id = -1,
+      id = 0,
       isEnabled = true,
       name = name,
       description = description,

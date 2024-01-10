@@ -14,7 +14,7 @@ trait PrincipalsMapperFactory[PRINCIPAL <: CdpIamPrincipals] {
 
   /** The [[configIdentifier]] defines the config key that the consumer will use to specify the configuration of this plugin inside the `principalmappingplugin` block.
     * {{{
-    *   principals-mapping {
+    *   principalsMappingPlugin {
     *     mymapperid {
     *       foo: "bar"
     *     }

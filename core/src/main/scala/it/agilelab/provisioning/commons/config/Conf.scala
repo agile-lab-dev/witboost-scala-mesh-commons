@@ -1,6 +1,6 @@
 package it.agilelab.provisioning.commons.config
 
-import com.typesafe.config.ConfigFactory
+import com.typesafe.config.{ Config, ConfigFactory }
 import it.agilelab.provisioning.commons.audit.Audit
 
 /** Conf trait
@@ -14,6 +14,8 @@ trait Conf {
     * @return String
     */
   def get(key: String): Either[ConfError, String]
+
+  def getConfig(key: String): Either[ConfError, Config]
 }
 
 object Conf {

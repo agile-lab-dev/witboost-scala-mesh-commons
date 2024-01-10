@@ -1,6 +1,7 @@
 package it.agilelab.provisioning.commons.config
 
 import cats.implicits._
+import com.typesafe.config.Config
 import it.agilelab.provisioning.commons.audit.Audit
 
 /** Default Conf with Auditing enable Instance.
@@ -22,4 +23,13 @@ class DefaultConfWithAudit(conf: Conf, audit: Audit) extends Conf {
     result
   }
 
+  override def getConfig(key: String): Either[ConfError, Config] = {
+    audit.info(show"Retrieving config object: $key")
+    val result = conf.getConfig(key)
+    result match {
+      case Right(_) => audit.info(show"Config object $key retrieved successfully")
+      case Left(e)  => audit.error(show"Config object $key retrieve failed. Details: $e")
+    }
+    result
+  }
 }

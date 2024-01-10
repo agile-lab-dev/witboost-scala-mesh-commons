@@ -13,8 +13,8 @@ class RangerPolicyItemTest extends AnyFunSuite {
       conditions = Seq.empty,
       delegateAdmin = false,
       accesses = Seq(
-        Access("SELECT", isAllowed = true),
-        Access("READ", isAllowed = true)
+        Access("select", isAllowed = true),
+        Access("read", isAllowed = true)
       )
     )
     assert(actual == expected)
@@ -29,7 +29,7 @@ class RangerPolicyItemTest extends AnyFunSuite {
       conditions = Seq.empty,
       delegateAdmin = false,
       accesses = Seq(
-        Access("ALL", isAllowed = true)
+        Access("all", isAllowed = true)
       )
     )
     assert(actual == expected)

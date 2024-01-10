@@ -93,10 +93,10 @@ class DefaultSyncProvisionerTest extends AnyFunSuite with MockFactory {
     (componentGateway.updateAcl _)
       .expects(ProvisionCommand("my-id", request), refs)
       .once()
-      .returns(Right(ComponentResponse("x", "y")))
+      .returns(Right(refs))
 
     val actual   = provisioner.updateAcl(ProvisionCommand("my-id", request), refs)
-    val expected = Right(ProvisioningStatus("my-id", COMPLETED, Some("""{"id":"x","value":"y"}""")))
+    val expected = Right(ProvisioningStatus("my-id", COMPLETED, None))
     assert(actual == expected)
   }
 

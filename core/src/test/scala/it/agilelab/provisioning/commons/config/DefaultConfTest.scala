@@ -1,6 +1,6 @@
 package it.agilelab.provisioning.commons.config
 
-import com.typesafe.config.Config
+import com.typesafe.config.{ Config, ConfigFactory }
 import it.agilelab.provisioning.commons.config.ConfError.ConfKeyNotFoundErr
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.funsuite.AnyFunSuite
@@ -23,6 +23,14 @@ class DefaultConfTest extends AnyFunSuite with MockFactory {
       (config.getString _).when(*).throws(new IllegalArgumentException())
       assert(configGateway.get(key) == Left(ConfKeyNotFoundErr(key)))
     }
+  }
+
+  test("get return conf with key") {
+    val key = "key1"
+    val c   = ConfigFactory.empty()
+    (config.getConfig _).when(key).returns(c)
+
+    assert(configGateway.getConfig(key) == Right(c))
   }
 
 }

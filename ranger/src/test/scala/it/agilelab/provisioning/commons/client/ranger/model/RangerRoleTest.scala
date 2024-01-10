@@ -7,7 +7,7 @@ class RangerRoleTest extends AnyFunSuite {
     val actual   = RangerRole.empty(name = "Name", description = "Description")
     val expected =
       RangerRole(
-        id = -1,
+        id = 0,
         isEnabled = true,
         name = "Name",
         description = "Description",
