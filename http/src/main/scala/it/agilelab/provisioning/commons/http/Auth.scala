@@ -25,13 +25,12 @@ object Auth {
     managed: String,
     endpoint_public_cert: String,
     token_type: String,
-    expires_in: Long,
-    passcode: String
+    expires_in: Long
   ) extends Auth
 
   implicit val showAuth: Show[Auth] = Show.show {
-    case NoAuth()                         => "NoAuth()"
-    case BasicCredential(_, _)            => "BasicCredential(*,*)"
-    case BearerToken(_, _, _, _, _, _, _) => "BearerToken(*,*,*,*,*,*,*)"
+    case NoAuth()                      => "NoAuth()"
+    case BasicCredential(_, _)         => "BasicCredential(*,*)"
+    case BearerToken(_, _, _, _, _, _) => "BearerToken(*,*,*,*,*,*)"
   }
 }

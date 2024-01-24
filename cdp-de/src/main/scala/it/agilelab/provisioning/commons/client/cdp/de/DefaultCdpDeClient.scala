@@ -25,9 +25,19 @@ class DefaultCdpDeClient(deClientWrapper: DeClientWrapper) extends CdpDeClient {
   ): Either[CdpDeClientError, Option[ServiceSummary]] =
     findAllServices().map(_.find(_.getName === serviceName))
 
-  override def findAllServices(): Either[CdpDeClientError, Seq[ServiceSummary]]                 =
-    try Right(deClientWrapper.listServices(new ListServicesRequest()))
-    catch { case e: Throwable => Left(FindAllServiceErr(e)) }
+  override def findAllServices(): Either[CdpDeClientError, Seq[ServiceSummary]] =
+    try {
+
+      val listServiceRequest = new ListServicesRequest()
+      listServiceRequest.setRemoveDeleted(true)
+
+      val services = deClientWrapper.listServices(listServiceRequest)
+
+      Right(services)
+
+    } catch {
+      case e: Throwable => Left(FindAllServiceErr(e))
+    }
 
   override def describeService(serviceId: String): Either[CdpDeClientError, ServiceDescription] =
     try Right(deClientWrapper.describeService(describeServiceReq(serviceId)))

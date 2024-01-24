@@ -57,18 +57,18 @@ class DefaultHttpWithAuditTest extends AnyFunSuite with MockFactory {
   test("get logs info on Right(Simple(\"1\", 1)) with BearerToken") {
     (baseHttp
       .get(_: String, _: Map[String, String], _: Auth)(_: Decoder[_]))
-      .when("http://my-endpoint/", *, BearerToken("myToken", "", "", "", "", 1L, ""), *)
+      .when("http://my-endpoint/", *, BearerToken("myToken", "", "", "", "", 1L), *)
       .returns(Right(Sample("1", 1)))
 
     inSequence(
       (audit.info _)
-        .expects("Executing http GET request to http://my-endpoint/;auth=BearerToken(*,*,*,*,*,*,*)")
+        .expects("Executing http GET request to http://my-endpoint/;auth=BearerToken(*,*,*,*,*,*)")
         .once(),
       (audit.info _).expects("Http GET request to http://my-endpoint/ completed successful").once()
     )
 
     val actual = http
-      .get[Sample]("http://my-endpoint/", Map.empty, BearerToken("myToken", "", "", "", "", 1L, ""))
+      .get[Sample]("http://my-endpoint/", Map.empty, BearerToken("myToken", "", "", "", "", 1L))
     assert(actual == Right(Sample("1", 1)))
   }
 
@@ -220,12 +220,12 @@ class DefaultHttpWithAuditTest extends AnyFunSuite with MockFactory {
         _: Encoder[Sample],
         _: Decoder[Sample]
       ))
-      .when("http://my-endpoint/", *, Sample("1", 1), BearerToken("myToken", "", "", "", "", 1L, ""), *, *)
+      .when("http://my-endpoint/", *, Sample("1", 1), BearerToken("myToken", "", "", "", "", 1L), *, *)
       .returns(Right(Option(Sample("2", 2))))
 
     inSequence(
       (audit.info _)
-        .expects("Executing http POST request to http://my-endpoint/;auth=BearerToken(*,*,*,*,*,*,*);body=Sample(1,1)")
+        .expects("Executing http POST request to http://my-endpoint/;auth=BearerToken(*,*,*,*,*,*);body=Sample(1,1)")
         .once(),
       (audit.info _).expects("Http POST request to http://my-endpoint/ completed successful").once()
     )
@@ -234,7 +234,7 @@ class DefaultHttpWithAuditTest extends AnyFunSuite with MockFactory {
       "http://my-endpoint/",
       Map.empty,
       Sample("1", 1),
-      BearerToken("myToken", "", "", "", "", 1L, "")
+      BearerToken("myToken", "", "", "", "", 1L)
     )
     assert(actual == Right(Option(Sample("2", 2))))
   }
@@ -401,12 +401,12 @@ class DefaultHttpWithAuditTest extends AnyFunSuite with MockFactory {
         _: Encoder[Sample],
         _: Decoder[Sample]
       ))
-      .when("http://my-endpoint/", *, Sample("1", 1), BearerToken("myToken", "", "", "", "", 1L, ""), *, *)
+      .when("http://my-endpoint/", *, Sample("1", 1), BearerToken("myToken", "", "", "", "", 1L), *, *)
       .returns(Right(Option(Sample("2", 2))))
 
     inSequence(
       (audit.info _)
-        .expects("Executing http PUT request to http://my-endpoint/;auth=BearerToken(*,*,*,*,*,*,*);body=Sample(1,1)")
+        .expects("Executing http PUT request to http://my-endpoint/;auth=BearerToken(*,*,*,*,*,*);body=Sample(1,1)")
         .once(),
       (audit.info _).expects("Http PUT request to http://my-endpoint/ completed successful").once()
     )
@@ -415,7 +415,7 @@ class DefaultHttpWithAuditTest extends AnyFunSuite with MockFactory {
       "http://my-endpoint/",
       Map.empty,
       Sample("1", 1),
-      BearerToken("myToken", "", "", "", "", 1L, "")
+      BearerToken("myToken", "", "", "", "", 1L)
     )
     assert(actual == Right(Option(Sample("2", 2))))
   }
@@ -588,12 +588,12 @@ class DefaultHttpWithAuditTest extends AnyFunSuite with MockFactory {
         _: Encoder[Sample],
         _: Decoder[Sample]
       ))
-      .when("http://my-endpoint/", *, Sample("1", 1), BearerToken("myToken", "", "", "", "", 1L, ""), *, *)
+      .when("http://my-endpoint/", *, Sample("1", 1), BearerToken("myToken", "", "", "", "", 1L), *, *)
       .returns(Right(Option(Sample("2", 2))))
 
     inSequence(
       (audit.info _)
-        .expects("Executing http PATCH request to http://my-endpoint/;auth=BearerToken(*,*,*,*,*,*,*);body=Sample(1,1)")
+        .expects("Executing http PATCH request to http://my-endpoint/;auth=BearerToken(*,*,*,*,*,*);body=Sample(1,1)")
         .once(),
       (audit.info _)
         .expects("Http PATCH request to http://my-endpoint/ completed successful")
@@ -604,7 +604,7 @@ class DefaultHttpWithAuditTest extends AnyFunSuite with MockFactory {
       "http://my-endpoint/",
       Map.empty,
       Sample("1", 1),
-      BearerToken("myToken", "", "", "", "", 1L, "")
+      BearerToken("myToken", "", "", "", "", 1L)
     )
     assert(actual == Right(Option(Sample("2", 2))))
   }
@@ -777,13 +777,13 @@ class DefaultHttpWithAuditTest extends AnyFunSuite with MockFactory {
 
   test("putFileMultipart logs info on Right() with BearerToken") {
     (baseHttp.putFileMultiPart _)
-      .when("http://my-endpoint/", *, "nm", "fnm", "cnt", *, BearerToken("myToken", "", "", "", "", 1L, ""))
+      .when("http://my-endpoint/", *, "nm", "fnm", "cnt", *, BearerToken("myToken", "", "", "", "", 1L))
       .returns(Right())
 
     inSequence(
       (audit.info _)
         .expects(
-          "Executing http PUT FILE MULTIPART request to http://my-endpoint/;auth=BearerToken(*,*,*,*,*,*,*);name=nm;fileName=fnm;contentType=cnt"
+          "Executing http PUT FILE MULTIPART request to http://my-endpoint/;auth=BearerToken(*,*,*,*,*,*);name=nm;fileName=fnm;contentType=cnt"
         )
         .once(),
       (audit.info _)
@@ -798,7 +798,7 @@ class DefaultHttpWithAuditTest extends AnyFunSuite with MockFactory {
       "fnm",
       "cnt",
       "x".getBytes,
-      BearerToken("myToken", "", "", "", "", 1L, "")
+      BearerToken("myToken", "", "", "", "", 1L)
     )
     assert(actual == Right())
   }
@@ -944,12 +944,12 @@ class DefaultHttpWithAuditTest extends AnyFunSuite with MockFactory {
       .delete[Sample](_: String, _: Map[String, String], _: Auth)(
         _: Decoder[Sample]
       ))
-      .when("http://my-endpoint/", *, BearerToken("myToken", "", "", "", "", 1L, ""), *)
+      .when("http://my-endpoint/", *, BearerToken("myToken", "", "", "", "", 1L), *)
       .returns(Right(Option(Sample("2", 2))))
 
     inSequence(
       (audit.info _)
-        .expects("Executing http DELETE request to http://my-endpoint/;auth=BearerToken(*,*,*,*,*,*,*)")
+        .expects("Executing http DELETE request to http://my-endpoint/;auth=BearerToken(*,*,*,*,*,*)")
         .once(),
       (audit.info _)
         .expects("Http DELETE request to http://my-endpoint/ completed successful")
@@ -959,7 +959,7 @@ class DefaultHttpWithAuditTest extends AnyFunSuite with MockFactory {
     val actual = http.delete[Sample](
       "http://my-endpoint/",
       Map.empty,
-      BearerToken("myToken", "", "", "", "", 1L, "")
+      BearerToken("myToken", "", "", "", "", 1L)
     )
     assert(actual == Right(Option(Sample("2", 2))))
   }

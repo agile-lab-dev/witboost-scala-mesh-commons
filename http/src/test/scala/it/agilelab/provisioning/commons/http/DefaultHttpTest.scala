@@ -65,7 +65,7 @@ class DefaultHttpTest extends AnyFunSuite with MockServerSuite with EitherValues
       responseCode = 200,
       responseBody = Some("""{"id":"1","x":1}""")
     )
-    val actual   = http.get[Sample](s"$srvUri/bt/200-b-ok", Map.empty, BearerToken("t", "", "", "", "", 1L, ""))
+    val actual   = http.get[Sample](s"$srvUri/bt/200-b-ok", Map.empty, BearerToken("t", "", "", "", "", 1L))
     val expected = Right(Sample("1", 1))
 
     assert(actual == expected)
@@ -179,7 +179,7 @@ class DefaultHttpTest extends AnyFunSuite with MockServerSuite with EitherValues
       responseCode = 200,
       responseBody = Some("""{"id":"2","x":2}""")
     )
-    val auth     = BearerToken("myToken", "", "", "", "", 1L, "")
+    val auth     = BearerToken("myToken", "", "", "", "", 1L)
     val actual   = http.post[Sample, Sample](s"$srvUri/bt/200-b-ok", Map.empty, Sample("1", 1), auth)
     val expected = Right(Some(Sample("2", 2)))
 
@@ -315,7 +315,7 @@ class DefaultHttpTest extends AnyFunSuite with MockServerSuite with EitherValues
       responseCode = 200,
       responseBody = Some("""{"id":"2","x":2}""")
     )
-    val auth     = BearerToken("myToken", "", "", "", "", 1L, "")
+    val auth     = BearerToken("myToken", "", "", "", "", 1L)
     val actual   = http.put[Sample, Sample](s"$srvUri/bt/200-b-ok", Map.empty, Sample("1", 1), auth)
     val expected = Right(Some(Sample("2", 2)))
 
@@ -451,7 +451,7 @@ class DefaultHttpTest extends AnyFunSuite with MockServerSuite with EitherValues
       responseCode = 200,
       responseBody = Some("""{"id":"2","x":2}""")
     )
-    val auth     = BearerToken("myToken", "", "", "", "", 1L, "")
+    val auth     = BearerToken("myToken", "", "", "", "", 1L)
     val actual   = http.patch[Sample, Sample](s"$srvUri/bt/200-b-ok", Map.empty, Sample("1", 1), auth)
     val expected = Right(Some(Sample("2", 2)))
 
@@ -616,7 +616,7 @@ class DefaultHttpTest extends AnyFunSuite with MockServerSuite with EitherValues
       fileName = "my/file/path/file.txt",
       contentType = "multipart/form-data",
       data = "x".getBytes,
-      BearerToken("myToken", "", "", "", "", 1L, "")
+      BearerToken("myToken", "", "", "", "", 1L)
     )
     assert(actual == Right())
   }
@@ -723,7 +723,7 @@ class DefaultHttpTest extends AnyFunSuite with MockServerSuite with EitherValues
       responseCode = 200,
       responseBody = Some("""{"id":"2","x":2}""")
     )
-    val auth     = BearerToken("myToken", "", "", "", "", 1L, "")
+    val auth     = BearerToken("myToken", "", "", "", "", 1L)
     val actual   = http.delete[Sample](s"$srvUri/bt/200-b-ok", Map.empty, auth)
     val expected = Right(Some(Sample("2", 2)))
 

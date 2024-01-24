@@ -99,7 +99,7 @@ SBT Dependencies reference
     "it.agilelab.provisioning" %% "scala-mesh-repository" % scalaMeshCoreVersion
     "it.agilelab.provisioning" %% "scala-mesh-self-service" % scalaMeshCoreVersion
     "it.agilelab.provisioning" %% "scala-mesh-self-service-lambda" % scalaMeshCoreVersion
-    "it.agilelab.provisioning" %% "scala-mesh-self-principals-mapping" % scalaMeshCoreVersion
-    "it.agilelab.provisioning" %% "scala-mesh-self-principals-mapping-samples" % scalaMeshCoreVersion
+    "it.agilelab.provisioning" %% "scala-mesh-principals-mapping" % scalaMeshCoreVersion
+    "it.agilelab.provisioning" %% "scala-mesh-principals-mapping-samples" % scalaMeshCoreVersion
  )
 ```

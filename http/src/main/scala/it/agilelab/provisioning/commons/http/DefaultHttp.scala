@@ -79,9 +79,9 @@ class DefaultHttp(backend: SttpBackend[Identity, capabilities.WebSockets]) exten
 
   private def authorize(auth: Auth, req: RequestT[Empty, Either[String, String], Any]) =
     auth match {
-      case BasicCredential(username, password)         => req.auth.basic(username, password)
-      case BearerToken(access_token, _, _, _, _, _, _) => req.auth.bearer(access_token)
-      case _                                           => req
+      case BasicCredential(username, password)      => req.auth.basic(username, password)
+      case BearerToken(access_token, _, _, _, _, _) => req.auth.bearer(access_token)
+      case _                                        => req
     }
 
   private def parseBody[A](body: String)(implicit decoder: Decoder[A]): Either[HttpErrors, A] =

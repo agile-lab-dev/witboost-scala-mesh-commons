@@ -20,12 +20,12 @@ class DefaultTokenProviderWithAuditTest extends AnyFunSuite with MockFactory wit
   test("get return Right(BearerToken) and call audit") {
     (defaultTokenProvider.get _)
       .when(*, *)
-      .returns(Right(BearerToken("token", "id", "a", "b", "c", 1L, "p")))
+      .returns(Right(BearerToken("token", "id", "a", "b", "c", 1L)))
 
     (audit.info _).expects("Token Exchange completed successfully").once()
 
     val actual   = tokenProvider.get("endpoint", BasicCredential("x", "y"))
-    val expected = Right(BearerToken("token", "id", "a", "b", "c", 1L, "p"))
+    val expected = Right(BearerToken("token", "id", "a", "b", "c", 1L))
     assert(actual == expected)
   }
 

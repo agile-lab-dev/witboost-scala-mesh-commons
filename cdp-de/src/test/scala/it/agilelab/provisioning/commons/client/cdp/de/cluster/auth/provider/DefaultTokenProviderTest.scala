@@ -18,10 +18,10 @@ class DefaultTokenProviderTest extends AnyFunSuite with MockFactory with BeforeA
     (http
       .get[BearerToken](_: String, _: Map[String, String], _: BasicCredential)(_: Decoder[BearerToken]))
       .when("endpoint", *, BasicCredential("x", "y"), *)
-      .returns(Right(BearerToken("token", "id", "a", "b", "c", 1L, "p")))
+      .returns(Right(BearerToken("token", "id", "a", "b", "c", 1L)))
 
     val actual   = tokenProvider.get("endpoint", BasicCredential("x", "y"))
-    val expected = Right(BearerToken("token", "id", "a", "b", "c", 1L, "p"))
+    val expected = Right(BearerToken("token", "id", "a", "b", "c", 1L))
     assert(actual == expected)
   }
 

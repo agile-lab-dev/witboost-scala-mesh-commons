@@ -125,11 +125,11 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
   test("getResource return Right(GetResourceRes(Some))") {
     (tokenProvider.get _)
       .when("https://mcf/gateway/authtkn/knoxtoken/api/v1/token", *)
-      .returns(Right(BearerToken("tk", "", "", "", "", 1L, "")))
+      .returns(Right(BearerToken("tk", "", "", "", "", 1L)))
 
     (http
       .get[ResourceDetails](_: String, _: Map[String, String], _: Auth)(_: Decoder[ResourceDetails]))
-      .when("https://api-uri/resources/x", *, BearerToken("tk", "", "", "", "", 1L, ""), *)
+      .when("https://api-uri/resources/x", *, BearerToken("tk", "", "", "", "", 1L), *)
       .returns(Right(ResourceDetails("x", "y", None, "", "", "", "", "")))
 
     val expected = Right(GetResourceRes(Some(ResourceDetails("x", "y", None, "", "", "", "", ""))))
@@ -140,11 +140,11 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
   test("getResource return Right(GetResourceRes(None))") {
     (tokenProvider.get _)
       .when("https://mcf/gateway/authtkn/knoxtoken/api/v1/token", *)
-      .returns(Right(BearerToken("tk", "", "", "", "", 1L, "")))
+      .returns(Right(BearerToken("tk", "", "", "", "", 1L)))
 
     (http
       .get[ResourceDetails](_: String, _: Map[String, String], _: Auth)(_: Decoder[ResourceDetails]))
-      .when("https://api-uri/resources/x", *, BearerToken("tk", "", "", "", "", 1L, ""), *)
+      .when("https://api-uri/resources/x", *, BearerToken("tk", "", "", "", "", 1L), *)
       .returns(Left(ClientErr(404, "not found")))
 
     val expected = Right(GetResourceRes(None))
@@ -155,11 +155,11 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
   test("getResource return Left(GetResourceErr(ClientError))") {
     (tokenProvider.get _)
       .when("https://mcf/gateway/authtkn/knoxtoken/api/v1/token", *)
-      .returns(Right(BearerToken("tk", "", "", "", "", 1L, "")))
+      .returns(Right(BearerToken("tk", "", "", "", "", 1L)))
 
     (http
       .get[ResourceDetails](_: String, _: Map[String, String], _: Auth)(_: Decoder[ResourceDetails]))
-      .when("https://api-uri/resources/x", *, BearerToken("tk", "", "", "", "", 1L, ""), *)
+      .when("https://api-uri/resources/x", *, BearerToken("tk", "", "", "", "", 1L), *)
       .returns(Left(ClientErr(301, "error")))
 
     val expected = Left(GetResourceErr(GetResourceReq("x"), ClientErr(301, "error")))
@@ -170,11 +170,11 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
   test("getResource return Left(GetResourceErr(ServerError)") {
     (tokenProvider.get _)
       .when("https://mcf/gateway/authtkn/knoxtoken/api/v1/token", *)
-      .returns(Right(BearerToken("tk", "", "", "", "", 1L, "")))
+      .returns(Right(BearerToken("tk", "", "", "", "", 1L)))
 
     (http
       .get[ResourceDetails](_: String, _: Map[String, String], _: Auth)(_: Decoder[ResourceDetails]))
-      .when("https://api-uri/resources/x", *, BearerToken("tk", "", "", "", "", 1L, ""), *)
+      .when("https://api-uri/resources/x", *, BearerToken("tk", "", "", "", "", 1L), *)
       .returns(Left(ServerErr(505, "error")))
 
     val expected = Left(GetResourceErr(GetResourceReq("x"), ServerErr(505, "error")))
@@ -185,11 +185,11 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
   test("getResource return Left(GenericErr(ServerError)") {
     (tokenProvider.get _)
       .when("https://mcf/gateway/authtkn/knoxtoken/api/v1/token", *)
-      .returns(Right(BearerToken("tk", "", "", "", "", 1L, "")))
+      .returns(Right(BearerToken("tk", "", "", "", "", 1L)))
 
     (http
       .get[ResourceDetails](_: String, _: Map[String, String], _: Auth)(_: Decoder[ResourceDetails]))
-      .when("https://api-uri/resources/x", *, BearerToken("tk", "", "", "", "", 1L, ""), *)
+      .when("https://api-uri/resources/x", *, BearerToken("tk", "", "", "", "", 1L), *)
       .returns(Left(GenericErr(101, "error")))
 
     val expected = Left(GetResourceErr(GetResourceReq("x"), GenericErr(101, "error")))
@@ -200,14 +200,14 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
   test(s"createResource return Right() with Right(None)") {
     (tokenProvider.get _)
       .when("https://mcf/gateway/authtkn/knoxtoken/api/v1/token", *)
-      .returns(Right(BearerToken("tk", "", "", "", "", 1L, "")))
+      .returns(Right(BearerToken("tk", "", "", "", "", 1L)))
 
     (http
       .post[CreateResourceReq, Unit](_: String, _: Map[String, String], _: CreateResourceReq, _: Auth)(
         _: Encoder[CreateResourceReq],
         _: Decoder[Unit]
       ))
-      .when("https://api-uri/resources", *, *, BearerToken("tk", "", "", "", "", 1L, ""), *, *)
+      .when("https://api-uri/resources", *, *, BearerToken("tk", "", "", "", "", 1L), *, *)
       .returns(Right(None))
 
     val req    = CdeRequest(serviceDesc, vcDesc, CreateResourceReq("x", "y", "z", None))
@@ -218,14 +218,14 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
   test(s"createResource return Right() with Right(Some())") {
     (tokenProvider.get _)
       .when("https://mcf/gateway/authtkn/knoxtoken/api/v1/token", *)
-      .returns(Right(BearerToken("tk", "", "", "", "", 1L, "")))
+      .returns(Right(BearerToken("tk", "", "", "", "", 1L)))
 
     (http
       .post[CreateResourceReq, Unit](_: String, _: Map[String, String], _: CreateResourceReq, _: Auth)(
         _: Encoder[CreateResourceReq],
         _: Decoder[Unit]
       ))
-      .when("https://api-uri/resources", *, *, BearerToken("tk", "", "", "", "", 1L, ""), *, *)
+      .when("https://api-uri/resources", *, *, BearerToken("tk", "", "", "", "", 1L), *, *)
       .returns(Right(Some()))
 
     val req    = CdeRequest(serviceDesc, vcDesc, CreateResourceReq("x", "y", "z", None))
@@ -236,14 +236,14 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
   test(s"createResource return Left(CreateResourceErr(ClientError))") {
     (tokenProvider.get _)
       .when("https://mcf/gateway/authtkn/knoxtoken/api/v1/token", *)
-      .returns(Right(BearerToken("tk", "", "", "", "", 1L, "")))
+      .returns(Right(BearerToken("tk", "", "", "", "", 1L)))
 
     (http
       .post[CreateResourceReq, Unit](_: String, _: Map[String, String], _: CreateResourceReq, _: Auth)(
         _: Encoder[CreateResourceReq],
         _: Decoder[Unit]
       ))
-      .when("https://api-uri/resources", *, *, BearerToken("tk", "", "", "", "", 1L, ""), *, *)
+      .when("https://api-uri/resources", *, *, BearerToken("tk", "", "", "", "", 1L), *, *)
       .returns(Left(ClientErr(404, "error")))
 
     val req    = CdeRequest(serviceDesc, vcDesc, CreateResourceReq("x", "y", "z", None))
@@ -254,14 +254,14 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
   test(s"createResource return Left(CreateResourceErr(ServerError))") {
     (tokenProvider.get _)
       .when("https://mcf/gateway/authtkn/knoxtoken/api/v1/token", *)
-      .returns(Right(BearerToken("tk", "", "", "", "", 1L, "")))
+      .returns(Right(BearerToken("tk", "", "", "", "", 1L)))
 
     (http
       .post[CreateResourceReq, Unit](_: String, _: Map[String, String], _: CreateResourceReq, _: Auth)(
         _: Encoder[CreateResourceReq],
         _: Decoder[Unit]
       ))
-      .when("https://api-uri/resources", *, *, BearerToken("tk", "", "", "", "", 1L, ""), *, *)
+      .when("https://api-uri/resources", *, *, BearerToken("tk", "", "", "", "", 1L), *, *)
       .returns(Left(ServerErr(505, "error")))
 
     val req    = CdeRequest(serviceDesc, vcDesc, CreateResourceReq("x", "y", "z", None))
@@ -272,14 +272,14 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
   test(s"createResource return Left(CreateResourceErr(GenericError))") {
     (tokenProvider.get _)
       .when("https://mcf/gateway/authtkn/knoxtoken/api/v1/token", *)
-      .returns(Right(BearerToken("tk", "", "", "", "", 1L, "")))
+      .returns(Right(BearerToken("tk", "", "", "", "", 1L)))
 
     (http
       .post[CreateResourceReq, Unit](_: String, _: Map[String, String], _: CreateResourceReq, _: Auth)(
         _: Encoder[CreateResourceReq],
         _: Decoder[Unit]
       ))
-      .when("https://api-uri/resources", *, *, BearerToken("tk", "", "", "", "", 1L, ""), *, *)
+      .when("https://api-uri/resources", *, *, BearerToken("tk", "", "", "", "", 1L), *, *)
       .returns(Left(GenericErr(101, "error")))
 
     val req    = CdeRequest(serviceDesc, vcDesc, CreateResourceReq("x", "y", "z", None))
@@ -290,11 +290,11 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
   test(s"safeCreateResource return Right() with Right(None)") {
     (tokenProvider.get _)
       .when("https://mcf/gateway/authtkn/knoxtoken/api/v1/token", *)
-      .returns(Right(BearerToken("tk", "", "", "", "", 1L, "")))
+      .returns(Right(BearerToken("tk", "", "", "", "", 1L)))
 
     (http
       .get[ResourceDetails](_: String, _: Map[String, String], _: Auth)(_: Decoder[ResourceDetails]))
-      .when("https://api-uri/resources/x", *, BearerToken("tk", "", "", "", "", 1L, ""), *)
+      .when("https://api-uri/resources/x", *, BearerToken("tk", "", "", "", "", 1L), *)
       .returns(Left(ClientErr(404, "")))
 
     (http
@@ -302,7 +302,7 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
         _: Encoder[CreateResourceReq],
         _: Decoder[Unit]
       ))
-      .when("https://api-uri/resources", *, *, BearerToken("tk", "", "", "", "", 1L, ""), *, *)
+      .when("https://api-uri/resources", *, *, BearerToken("tk", "", "", "", "", 1L), *, *)
       .returns(Right(None))
 
     val req    = CdeRequest(serviceDesc, vcDesc, CreateResourceReq("x", "y", "z", None))
@@ -313,11 +313,11 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
   test(s"safeCreateResource return Right() with Right(Some())") {
     (tokenProvider.get _)
       .when("https://mcf/gateway/authtkn/knoxtoken/api/v1/token", *)
-      .returns(Right(BearerToken("tk", "", "", "", "", 1L, "")))
+      .returns(Right(BearerToken("tk", "", "", "", "", 1L)))
 
     (http
       .get[ResourceDetails](_: String, _: Map[String, String], _: Auth)(_: Decoder[ResourceDetails]))
-      .when("https://api-uri/resources/x", *, BearerToken("tk", "", "", "", "", 1L, ""), *)
+      .when("https://api-uri/resources/x", *, BearerToken("tk", "", "", "", "", 1L), *)
       .returns(Left(ClientErr(404, "")))
 
     (http
@@ -325,7 +325,7 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
         _: Encoder[CreateResourceReq],
         _: Decoder[Unit]
       ))
-      .when("https://api-uri/resources", *, *, BearerToken("tk", "", "", "", "", 1L, ""), *, *)
+      .when("https://api-uri/resources", *, *, BearerToken("tk", "", "", "", "", 1L), *, *)
       .returns(Right(Some()))
 
     val req    = CdeRequest(serviceDesc, vcDesc, CreateResourceReq("x", "y", "z", None))
@@ -336,11 +336,11 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
   test(s"safeCreateResource return Right() with existing res") {
     (tokenProvider.get _)
       .when("https://mcf/gateway/authtkn/knoxtoken/api/v1/token", *)
-      .returns(Right(BearerToken("tk", "", "", "", "", 1L, "")))
+      .returns(Right(BearerToken("tk", "", "", "", "", 1L)))
 
     (http
       .get[ResourceDetails](_: String, _: Map[String, String], _: Auth)(_: Decoder[ResourceDetails]))
-      .when("https://api-uri/resources/x", *, BearerToken("tk", "", "", "", "", 1L, ""), *)
+      .when("https://api-uri/resources/x", *, BearerToken("tk", "", "", "", "", 1L), *)
       .returns(Right(ResourceDetails("existing-res", "y", None, "", "", "", "", "")))
 
     val req    = CdeRequest(serviceDesc, vcDesc, CreateResourceReq("x", "y", "z", None))
@@ -351,11 +351,11 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
   test(s"safeCreateResource return Left(GetResourceError)") {
     (tokenProvider.get _)
       .when("https://mcf/gateway/authtkn/knoxtoken/api/v1/token", *)
-      .returns(Right(BearerToken("tk", "", "", "", "", 1L, "")))
+      .returns(Right(BearerToken("tk", "", "", "", "", 1L)))
 
     (http
       .get[ResourceDetails](_: String, _: Map[String, String], _: Auth)(_: Decoder[ResourceDetails]))
-      .when("https://api-uri/resources/x", *, BearerToken("tk", "", "", "", "", 1L, ""), *)
+      .when("https://api-uri/resources/x", *, BearerToken("tk", "", "", "", "", 1L), *)
       .returns(Left(ServerErr(500, "")))
 
     val req    = CdeRequest(serviceDesc, vcDesc, CreateResourceReq("x", "y", "z", None))
@@ -366,11 +366,11 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
   test(s"safeCreateResource return Left(CreateResourceErr)") {
     (tokenProvider.get _)
       .when("https://mcf/gateway/authtkn/knoxtoken/api/v1/token", *)
-      .returns(Right(BearerToken("tk", "", "", "", "", 1L, "")))
+      .returns(Right(BearerToken("tk", "", "", "", "", 1L)))
 
     (http
       .get[ResourceDetails](_: String, _: Map[String, String], _: Auth)(_: Decoder[ResourceDetails]))
-      .when("https://api-uri/resources/x", *, BearerToken("tk", "", "", "", "", 1L, ""), *)
+      .when("https://api-uri/resources/x", *, BearerToken("tk", "", "", "", "", 1L), *)
       .returns(Left(ClientErr(404, "")))
 
     (http
@@ -378,7 +378,7 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
         _: Encoder[CreateResourceReq],
         _: Decoder[Unit]
       ))
-      .when("https://api-uri/resources", *, *, BearerToken("tk", "", "", "", "", 1L, ""), *, *)
+      .when("https://api-uri/resources", *, *, BearerToken("tk", "", "", "", "", 1L), *, *)
       .returns(Left(ServerErr(500, "")))
 
     val req    = CdeRequest(serviceDesc, vcDesc, CreateResourceReq("x", "y", "z", None))
@@ -389,7 +389,7 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
   test("uploadFile return Right()") {
     (tokenProvider.get _)
       .when("https://mcf/gateway/authtkn/knoxtoken/api/v1/token", *)
-      .returns(Right(BearerToken("tk", "", "", "", "", 1L, "")))
+      .returns(Right(BearerToken("tk", "", "", "", "", 1L)))
 
     (http.putFileMultiPart _)
       .when(
@@ -399,7 +399,7 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
         "my/file.txt",
         "cnt",
         *,
-        BearerToken("tk", "", "", "", "", 1L, "")
+        BearerToken("tk", "", "", "", "", 1L)
       )
       .returns(Right())
 
@@ -411,7 +411,7 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
   test("uploadFile return Left(ClientErr(403,)") {
     (tokenProvider.get _)
       .when("https://mcf/gateway/authtkn/knoxtoken/api/v1/token", *)
-      .returns(Right(BearerToken("tk", "", "", "", "", 1L, "")))
+      .returns(Right(BearerToken("tk", "", "", "", "", 1L)))
 
     (http.putFileMultiPart _)
       .when(
@@ -421,7 +421,7 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
         "my/file.txt",
         "cnt",
         *,
-        BearerToken("tk", "", "", "", "", 1L, "")
+        BearerToken("tk", "", "", "", "", 1L)
       )
       .returns(Left(ClientErr(403, "")))
 
@@ -433,7 +433,7 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
   test("uploadFile return Left(ServerErr(403,)") {
     (tokenProvider.get _)
       .when("https://mcf/gateway/authtkn/knoxtoken/api/v1/token", *)
-      .returns(Right(BearerToken("tk", "", "", "", "", 1L, "")))
+      .returns(Right(BearerToken("tk", "", "", "", "", 1L)))
 
     (http.putFileMultiPart _)
       .when(
@@ -443,7 +443,7 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
         "my/file.txt",
         "cnt",
         *,
-        BearerToken("tk", "", "", "", "", 1L, "")
+        BearerToken("tk", "", "", "", "", 1L)
       )
       .returns(Left(ServerErr(505, "")))
 
@@ -455,7 +455,7 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
   test("uploadFile return Left(GenericErr(301,)") {
     (tokenProvider.get _)
       .when("https://mcf/gateway/authtkn/knoxtoken/api/v1/token", *)
-      .returns(Right(BearerToken("tk", "", "", "", "", 1L, "")))
+      .returns(Right(BearerToken("tk", "", "", "", "", 1L)))
 
     (http.putFileMultiPart _)
       .when(
@@ -465,7 +465,7 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
         "my/file.txt",
         "cnt",
         *,
-        BearerToken("tk", "", "", "", "", 1L, "")
+        BearerToken("tk", "", "", "", "", 1L)
       )
       .returns(Left(GenericErr(301, "")))
 
@@ -477,11 +477,11 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
   test("listJobs return Right(ListJobsRes)") {
     (tokenProvider.get _)
       .when("https://mcf/gateway/authtkn/knoxtoken/api/v1/token", *)
-      .returns(Right(BearerToken("tk", "", "", "", "", 1L, "")))
+      .returns(Right(BearerToken("tk", "", "", "", "", 1L)))
 
     (http
       .get[ListJobsRes](_: String, _: Map[String, String], _: Auth)(_: Decoder[ListJobsRes]))
-      .when("https://api-uri/jobs?limit=100&offset=0", *, BearerToken("tk", "", "", "", "", 1L, ""), *)
+      .when("https://api-uri/jobs?limit=100&offset=0", *, BearerToken("tk", "", "", "", "", 1L), *)
       .returns(
         Right(
           ListJobsRes(Seq(Job("x", "t", Seq.empty, "", None, None, None)), PaginationMeta(hasNext = false, 0, 1, 1))
@@ -499,11 +499,11 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
   test("listJobs return Left(ListJobsErr(ClientError())") {
     (tokenProvider.get _)
       .when("https://mcf/gateway/authtkn/knoxtoken/api/v1/token", *)
-      .returns(Right(BearerToken("tk", "", "", "", "", 1L, "")))
+      .returns(Right(BearerToken("tk", "", "", "", "", 1L)))
 
     (http
       .get[ListJobsRes](_: String, _: Map[String, String], _: Auth)(_: Decoder[ListJobsRes]))
-      .when("https://api-uri/jobs?limit=100&offset=0", *, BearerToken("tk", "", "", "", "", 1L, ""), *)
+      .when("https://api-uri/jobs?limit=100&offset=0", *, BearerToken("tk", "", "", "", "", 1L), *)
       .returns(Left(ClientErr(405, "")))
 
     val actual = cdeClient.listJobs(CdeRequest(serviceDesc, vcDesc, ListJobsReq(None, None, None)))
@@ -513,11 +513,11 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
   test("listJobs return Left(ListJobsErr(ServerError())") {
     (tokenProvider.get _)
       .when("https://mcf/gateway/authtkn/knoxtoken/api/v1/token", *)
-      .returns(Right(BearerToken("tk", "", "", "", "", 1L, "")))
+      .returns(Right(BearerToken("tk", "", "", "", "", 1L)))
 
     (http
       .get[ListJobsRes](_: String, _: Map[String, String], _: Auth)(_: Decoder[ListJobsRes]))
-      .when("https://api-uri/jobs?limit=100&offset=0", *, BearerToken("tk", "", "", "", "", 1L, ""), *)
+      .when("https://api-uri/jobs?limit=100&offset=0", *, BearerToken("tk", "", "", "", "", 1L), *)
       .returns(Left(ServerErr(500, "")))
 
     val actual = cdeClient.listJobs(CdeRequest(serviceDesc, vcDesc, ListJobsReq(None, None, None)))
@@ -527,11 +527,11 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
   test("listJobs return Left(ListJobsErr(GenericError())") {
     (tokenProvider.get _)
       .when("https://mcf/gateway/authtkn/knoxtoken/api/v1/token", *)
-      .returns(Right(BearerToken("tk", "", "", "", "", 1L, "")))
+      .returns(Right(BearerToken("tk", "", "", "", "", 1L)))
 
     (http
       .get[ListJobsRes](_: String, _: Map[String, String], _: Auth)(_: Decoder[ListJobsRes]))
-      .when("https://api-uri/jobs?limit=100&offset=0", *, BearerToken("tk", "", "", "", "", 1L, ""), *)
+      .when("https://api-uri/jobs?limit=100&offset=0", *, BearerToken("tk", "", "", "", "", 1L), *)
       .returns(Left(GenericErr(301, "")))
 
     val actual = cdeClient.listJobs(CdeRequest(serviceDesc, vcDesc, ListJobsReq(None, None, None)))
@@ -541,11 +541,11 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
   test("getJob return Right(GetJobRes(Some))") {
     (tokenProvider.get _)
       .when("https://mcf/gateway/authtkn/knoxtoken/api/v1/token", *)
-      .returns(Right(BearerToken("tk", "", "", "", "", 1L, "")))
+      .returns(Right(BearerToken("tk", "", "", "", "", 1L)))
 
     (http
       .get[JobDetails](_: String, _: Map[String, String], _: Auth)(_: Decoder[JobDetails]))
-      .when("https://api-uri/jobs/x", *, BearerToken("tk", "", "", "", "", 1L, ""), *)
+      .when("https://api-uri/jobs/x", *, BearerToken("tk", "", "", "", "", 1L), *)
       .returns(Right(JobDetails("x", "y", "", "", "", Seq.empty, "", None, None)))
 
     val expected = Right(
@@ -558,11 +558,11 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
   test("getJob return Right(GetJobRes(None))") {
     (tokenProvider.get _)
       .when("https://mcf/gateway/authtkn/knoxtoken/api/v1/token", *)
-      .returns(Right(BearerToken("tk", "", "", "", "", 1L, "")))
+      .returns(Right(BearerToken("tk", "", "", "", "", 1L)))
 
     (http
       .get[JobDetails](_: String, _: Map[String, String], _: Auth)(_: Decoder[JobDetails]))
-      .when("https://api-uri/jobs/x", *, BearerToken("tk", "", "", "", "", 1L, ""), *)
+      .when("https://api-uri/jobs/x", *, BearerToken("tk", "", "", "", "", 1L), *)
       .returns(Left(ClientErr(404, "")))
 
     val expected = Right(GetJobRes(None))
@@ -573,11 +573,11 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
   test("getJob return Left(GetJobErr(ClientError))") {
     (tokenProvider.get _)
       .when("https://mcf/gateway/authtkn/knoxtoken/api/v1/token", *)
-      .returns(Right(BearerToken("tk", "", "", "", "", 1L, "")))
+      .returns(Right(BearerToken("tk", "", "", "", "", 1L)))
 
     (http
       .get[JobDetails](_: String, _: Map[String, String], _: Auth)(_: Decoder[JobDetails]))
-      .when("https://api-uri/jobs/x", *, BearerToken("tk", "", "", "", "", 1L, ""), *)
+      .when("https://api-uri/jobs/x", *, BearerToken("tk", "", "", "", "", 1L), *)
       .returns(Left(ClientErr(405, "")))
 
     val actual = cdeClient.getJob(CdeRequest(serviceDesc, vcDesc, GetJobReq("x")))
@@ -587,11 +587,11 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
   test("getJob return Left(GetJobErr(ServerError))") {
     (tokenProvider.get _)
       .when("https://mcf/gateway/authtkn/knoxtoken/api/v1/token", *)
-      .returns(Right(BearerToken("tk", "", "", "", "", 1L, "")))
+      .returns(Right(BearerToken("tk", "", "", "", "", 1L)))
 
     (http
       .get[JobDetails](_: String, _: Map[String, String], _: Auth)(_: Decoder[JobDetails]))
-      .when("https://api-uri/jobs/x", *, BearerToken("tk", "", "", "", "", 1L, ""), *)
+      .when("https://api-uri/jobs/x", *, BearerToken("tk", "", "", "", "", 1L), *)
       .returns(Left(ServerErr(500, "")))
 
     val actual = cdeClient.getJob(CdeRequest(serviceDesc, vcDesc, GetJobReq("x")))
@@ -601,11 +601,11 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
   test("getJob return Left(GetJobErr(GenericError))") {
     (tokenProvider.get _)
       .when("https://mcf/gateway/authtkn/knoxtoken/api/v1/token", *)
-      .returns(Right(BearerToken("tk", "", "", "", "", 1L, "")))
+      .returns(Right(BearerToken("tk", "", "", "", "", 1L)))
 
     (http
       .get[JobDetails](_: String, _: Map[String, String], _: Auth)(_: Decoder[JobDetails]))
-      .when("https://api-uri/jobs/x", *, BearerToken("tk", "", "", "", "", 1L, ""), *)
+      .when("https://api-uri/jobs/x", *, BearerToken("tk", "", "", "", "", 1L), *)
       .returns(Left(GenericErr(301, "")))
 
     val actual = cdeClient.getJob(CdeRequest(serviceDesc, vcDesc, GetJobReq("x")))
@@ -615,11 +615,11 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
   test("createJob return Right()") {
     (tokenProvider.get _)
       .when("https://mcf/gateway/authtkn/knoxtoken/api/v1/token", *)
-      .returns(Right(BearerToken("tk", "", "", "", "", 1L, "")))
+      .returns(Right(BearerToken("tk", "", "", "", "", 1L)))
 
     (http
       .post[Job, Job](_: String, _: Map[String, String], _: Job, _: Auth)(_: Encoder[Job], _: Decoder[Job]))
-      .when("https://api-uri/jobs", *, *, BearerToken("tk", "", "", "", "", 1L, ""), *, *)
+      .when("https://api-uri/jobs", *, *, BearerToken("tk", "", "", "", "", 1L), *, *)
       .returns(Right(Some(Job("x", "z", Seq.empty, "", None, None, None))))
 
     val req    = CreateJobReq(Job("x", "y", Seq.empty, "", None, None, None))
@@ -630,11 +630,11 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
   test("createJob return Left(CreateJobErr(ClientError)") {
     (tokenProvider.get _)
       .when("https://mcf/gateway/authtkn/knoxtoken/api/v1/token", *)
-      .returns(Right(BearerToken("tk", "", "", "", "", 1L, "")))
+      .returns(Right(BearerToken("tk", "", "", "", "", 1L)))
 
     (http
       .post[Job, Job](_: String, _: Map[String, String], _: Job, _: Auth)(_: Encoder[Job], _: Decoder[Job]))
-      .when("https://api-uri/jobs", *, *, BearerToken("tk", "", "", "", "", 1L, ""), *, *)
+      .when("https://api-uri/jobs", *, *, BearerToken("tk", "", "", "", "", 1L), *, *)
       .returns(Left(ClientErr(404, "")))
 
     val req    = CreateJobReq(Job("x", "y", Seq.empty, "", None, None, None))
@@ -645,11 +645,11 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
   test("createJob return Left(CreateJobErr(ServerError)") {
     (tokenProvider.get _)
       .when("https://mcf/gateway/authtkn/knoxtoken/api/v1/token", *)
-      .returns(Right(BearerToken("tk", "", "", "", "", 1L, "")))
+      .returns(Right(BearerToken("tk", "", "", "", "", 1L)))
 
     (http
       .post[Job, Job](_: String, _: Map[String, String], _: Job, _: Auth)(_: Encoder[Job], _: Decoder[Job]))
-      .when("https://api-uri/jobs", *, *, BearerToken("tk", "", "", "", "", 1L, ""), *, *)
+      .when("https://api-uri/jobs", *, *, BearerToken("tk", "", "", "", "", 1L), *, *)
       .returns(Left(ServerErr(500, "")))
 
     val req    = CreateJobReq(Job("x", "y", Seq.empty, "", None, None, None))
@@ -660,11 +660,11 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
   test("createJob return Left(CreateJobErr(GenericError)") {
     (tokenProvider.get _)
       .when("https://mcf/gateway/authtkn/knoxtoken/api/v1/token", *)
-      .returns(Right(BearerToken("tk", "", "", "", "", 1L, "")))
+      .returns(Right(BearerToken("tk", "", "", "", "", 1L)))
 
     (http
       .post[Job, Job](_: String, _: Map[String, String], _: Job, _: Auth)(_: Encoder[Job], _: Decoder[Job]))
-      .when("https://api-uri/jobs", *, *, BearerToken("tk", "", "", "", "", 1L, ""), *, *)
+      .when("https://api-uri/jobs", *, *, BearerToken("tk", "", "", "", "", 1L), *, *)
       .returns(Left(GenericErr(301, "")))
 
     val req    = CreateJobReq(Job("x", "y", Seq.empty, "", None, None, None))
@@ -675,11 +675,11 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
   test("updateJob return Right()") {
     (tokenProvider.get _)
       .when("https://mcf/gateway/authtkn/knoxtoken/api/v1/token", *)
-      .returns(Right(BearerToken("tk", "", "", "", "", 1L, "")))
+      .returns(Right(BearerToken("tk", "", "", "", "", 1L)))
 
     (http
       .patch[Job, Job](_: String, _: Map[String, String], _: Job, _: Auth)(_: Encoder[Job], _: Decoder[Job]))
-      .when("https://api-uri/jobs/x", *, *, BearerToken("tk", "", "", "", "", 1L, ""), *, *)
+      .when("https://api-uri/jobs/x", *, *, BearerToken("tk", "", "", "", "", 1L), *, *)
       .returns(Right(Some(Job("x", "z", Seq.empty, "", None, None, None))))
 
     val req    = UpdateJobReq(Job("x", "y", Seq.empty, "", None, None, None))
@@ -690,11 +690,11 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
   test("updateJob return Left(CreateJobErr(ClientError)") {
     (tokenProvider.get _)
       .when("https://mcf/gateway/authtkn/knoxtoken/api/v1/token", *)
-      .returns(Right(BearerToken("tk", "", "", "", "", 1L, "")))
+      .returns(Right(BearerToken("tk", "", "", "", "", 1L)))
 
     (http
       .patch[Job, Job](_: String, _: Map[String, String], _: Job, _: Auth)(_: Encoder[Job], _: Decoder[Job]))
-      .when("https://api-uri/jobs/x", *, *, BearerToken("tk", "", "", "", "", 1L, ""), *, *)
+      .when("https://api-uri/jobs/x", *, *, BearerToken("tk", "", "", "", "", 1L), *, *)
       .returns(Left(ClientErr(404, "")))
 
     val req    = UpdateJobReq(Job("x", "y", Seq.empty, "", None, None, None))
@@ -705,11 +705,11 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
   test("updateJob return Left(CreateJobErr(ServerError)") {
     (tokenProvider.get _)
       .when("https://mcf/gateway/authtkn/knoxtoken/api/v1/token", *)
-      .returns(Right(BearerToken("tk", "", "", "", "", 1L, "")))
+      .returns(Right(BearerToken("tk", "", "", "", "", 1L)))
 
     (http
       .patch[Job, Job](_: String, _: Map[String, String], _: Job, _: Auth)(_: Encoder[Job], _: Decoder[Job]))
-      .when("https://api-uri/jobs/x", *, *, BearerToken("tk", "", "", "", "", 1L, ""), *, *)
+      .when("https://api-uri/jobs/x", *, *, BearerToken("tk", "", "", "", "", 1L), *, *)
       .returns(Left(ServerErr(500, "")))
 
     val req    = UpdateJobReq(Job("x", "y", Seq.empty, "", None, None, None))
@@ -720,11 +720,11 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
   test("updateJob return Left(CreateJobErr(GenericError)") {
     (tokenProvider.get _)
       .when("https://mcf/gateway/authtkn/knoxtoken/api/v1/token", *)
-      .returns(Right(BearerToken("tk", "", "", "", "", 1L, "")))
+      .returns(Right(BearerToken("tk", "", "", "", "", 1L)))
 
     (http
       .patch[Job, Job](_: String, _: Map[String, String], _: Job, _: Auth)(_: Encoder[Job], _: Decoder[Job]))
-      .when("https://api-uri/jobs/x", *, *, BearerToken("tk", "", "", "", "", 1L, ""), *, *)
+      .when("https://api-uri/jobs/x", *, *, BearerToken("tk", "", "", "", "", 1L), *, *)
       .returns(Left(GenericErr(301, "")))
 
     val req    = UpdateJobReq(Job("x", "y", Seq.empty, "", None, None, None))
@@ -735,16 +735,16 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
   test("upsertJob return Right() with not existing job") {
     (tokenProvider.get _)
       .when("https://mcf/gateway/authtkn/knoxtoken/api/v1/token", *)
-      .returns(Right(BearerToken("tk", "", "", "", "", 1L, "")))
+      .returns(Right(BearerToken("tk", "", "", "", "", 1L)))
 
     (http
       .get[JobDetails](_: String, _: Map[String, String], _: Auth)(_: Decoder[JobDetails]))
-      .when("https://api-uri/jobs/x", *, BearerToken("tk", "", "", "", "", 1L, ""), *)
+      .when("https://api-uri/jobs/x", *, BearerToken("tk", "", "", "", "", 1L), *)
       .returns(Left(ClientErr(404, "")))
 
     (http
       .post[Job, Job](_: String, _: Map[String, String], _: Job, _: Auth)(_: Encoder[Job], _: Decoder[Job]))
-      .when("https://api-uri/jobs", *, *, BearerToken("tk", "", "", "", "", 1L, ""), *, *)
+      .when("https://api-uri/jobs", *, *, BearerToken("tk", "", "", "", "", 1L), *, *)
       .returns(Right(Some(Job("x", "y", Seq.empty, "", None, None, None))))
 
     val req    = UpsertJobReq(Job("x", "y", Seq.empty, "", None, None, None))
@@ -755,16 +755,16 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
   test("upsertJob return Right() with existing job") {
     (tokenProvider.get _)
       .when("https://mcf/gateway/authtkn/knoxtoken/api/v1/token", *)
-      .returns(Right(BearerToken("tk", "", "", "", "", 1L, "")))
+      .returns(Right(BearerToken("tk", "", "", "", "", 1L)))
 
     (http
       .get[JobDetails](_: String, _: Map[String, String], _: Auth)(_: Decoder[JobDetails]))
-      .when("https://api-uri/jobs/x", *, BearerToken("tk", "", "", "", "", 1L, ""), *)
+      .when("https://api-uri/jobs/x", *, BearerToken("tk", "", "", "", "", 1L), *)
       .returns(Right(JobDetails("x", "y", "", "", "", Seq.empty, "", None, None)))
 
     (http
       .patch[Job, Job](_: String, _: Map[String, String], _: Job, _: Auth)(_: Encoder[Job], _: Decoder[Job]))
-      .when("https://api-uri/jobs/x", *, *, BearerToken("tk", "", "", "", "", 1L, ""), *, *)
+      .when("https://api-uri/jobs/x", *, *, BearerToken("tk", "", "", "", "", 1L), *, *)
       .returns(Right(Some(Job("x", "y", Seq.empty, "", None, None, None))))
 
     val req    = UpsertJobReq(Job("x", "y", Seq.empty, "", None, None, None))
@@ -775,11 +775,11 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
   test("upsertJob return Left(GetJobErr(GenericError))") {
     (tokenProvider.get _)
       .when("https://mcf/gateway/authtkn/knoxtoken/api/v1/token", *)
-      .returns(Right(BearerToken("tk", "", "", "", "", 1L, "")))
+      .returns(Right(BearerToken("tk", "", "", "", "", 1L)))
 
     (http
       .get[JobDetails](_: String, _: Map[String, String], _: Auth)(_: Decoder[JobDetails]))
-      .when("https://api-uri/jobs/x", *, BearerToken("tk", "", "", "", "", 1L, ""), *)
+      .when("https://api-uri/jobs/x", *, BearerToken("tk", "", "", "", "", 1L), *)
       .returns(Left(GenericErr(301, "")))
 
     val req    = UpsertJobReq(Job("x", "y", Seq.empty, "", None, None, None))
@@ -790,16 +790,16 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
   test("upsertJob return Left(CreateJobErr(GenericError))") {
     (tokenProvider.get _)
       .when("https://mcf/gateway/authtkn/knoxtoken/api/v1/token", *)
-      .returns(Right(BearerToken("tk", "", "", "", "", 1L, "")))
+      .returns(Right(BearerToken("tk", "", "", "", "", 1L)))
 
     (http
       .get[JobDetails](_: String, _: Map[String, String], _: Auth)(_: Decoder[JobDetails]))
-      .when("https://api-uri/jobs/x", *, BearerToken("tk", "", "", "", "", 1L, ""), *)
+      .when("https://api-uri/jobs/x", *, BearerToken("tk", "", "", "", "", 1L), *)
       .returns(Left(ClientErr(404, "")))
 
     (http
       .post[Job, Job](_: String, _: Map[String, String], _: Job, _: Auth)(_: Encoder[Job], _: Decoder[Job]))
-      .when("https://api-uri/jobs", *, *, BearerToken("tk", "", "", "", "", 1L, ""), *, *)
+      .when("https://api-uri/jobs", *, *, BearerToken("tk", "", "", "", "", 1L), *, *)
       .returns(Left(GenericErr(301, "")))
 
     val req    = UpsertJobReq(Job("x", "y", Seq.empty, "", None, None, None))
@@ -812,16 +812,16 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
   test("upsertJob return Left(UpdateJobErr(GenericError))") {
     (tokenProvider.get _)
       .when("https://mcf/gateway/authtkn/knoxtoken/api/v1/token", *)
-      .returns(Right(BearerToken("tk", "", "", "", "", 1L, "")))
+      .returns(Right(BearerToken("tk", "", "", "", "", 1L)))
 
     (http
       .get[JobDetails](_: String, _: Map[String, String], _: Auth)(_: Decoder[JobDetails]))
-      .when("https://api-uri/jobs/x", *, BearerToken("tk", "", "", "", "", 1L, ""), *)
+      .when("https://api-uri/jobs/x", *, BearerToken("tk", "", "", "", "", 1L), *)
       .returns(Right(JobDetails("x", "y", "", "", "", Seq.empty, "", None, None)))
 
     (http
       .patch[Job, Job](_: String, _: Map[String, String], _: Job, _: Auth)(_: Encoder[Job], _: Decoder[Job]))
-      .when("https://api-uri/jobs/x", *, *, BearerToken("tk", "", "", "", "", 1L, ""), *, *)
+      .when("https://api-uri/jobs/x", *, *, BearerToken("tk", "", "", "", "", 1L), *, *)
       .returns(Left(GenericErr(301, "")))
 
     val req    = UpsertJobReq(Job("x", "y", Seq.empty, "", None, None, None))
@@ -834,14 +834,14 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
   test("listJobRuns return Right(ListJobRunsRes)") {
     (tokenProvider.get _)
       .when("https://mcf/gateway/authtkn/knoxtoken/api/v1/token", *)
-      .returns(Right(BearerToken("tk", "", "", "", "", 1L, "")))
+      .returns(Right(BearerToken("tk", "", "", "", "", 1L)))
 
     (http
       .get[ListJobRunsRes](_: String, _: Map[String, String], _: Auth)(_: Decoder[ListJobRunsRes]))
       .when(
         "https://api-uri/job-runs?limit=100&offset=0",
         *,
-        BearerToken("tk", "", "", "", "", 1L, ""),
+        BearerToken("tk", "", "", "", "", 1L),
         *
       )
       .returns(
@@ -867,14 +867,14 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
   test("listJobRuns return Left(ListJobRunsErr(ClientError))") {
     (tokenProvider.get _)
       .when("https://mcf/gateway/authtkn/knoxtoken/api/v1/token", *)
-      .returns(Right(BearerToken("tk", "", "", "", "", 1L, "")))
+      .returns(Right(BearerToken("tk", "", "", "", "", 1L)))
 
     (http
       .get[ListJobRunsRes](_: String, _: Map[String, String], _: Auth)(_: Decoder[ListJobRunsRes]))
       .when(
         "https://api-uri/job-runs?limit=100&offset=0",
         *,
-        BearerToken("tk", "", "", "", "", 1L, ""),
+        BearerToken("tk", "", "", "", "", 1L),
         *
       )
       .returns(Left(ClientErr(404, "")))
@@ -888,14 +888,14 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
   test("listJobRuns return Left(ListJobRunsErr(ServerError))") {
     (tokenProvider.get _)
       .when("https://mcf/gateway/authtkn/knoxtoken/api/v1/token", *)
-      .returns(Right(BearerToken("tk", "", "", "", "", 1L, "")))
+      .returns(Right(BearerToken("tk", "", "", "", "", 1L)))
 
     (http
       .get[ListJobRunsRes](_: String, _: Map[String, String], _: Auth)(_: Decoder[ListJobRunsRes]))
       .when(
         "https://api-uri/job-runs?limit=100&offset=0",
         *,
-        BearerToken("tk", "", "", "", "", 1L, ""),
+        BearerToken("tk", "", "", "", "", 1L),
         *
       )
       .returns(Left(ServerErr(500, "")))
@@ -909,14 +909,14 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
   test("listJobRuns return Left(ListJobRunsErr(GenericError))") {
     (tokenProvider.get _)
       .when("https://mcf/gateway/authtkn/knoxtoken/api/v1/token", *)
-      .returns(Right(BearerToken("tk", "", "", "", "", 1L, "")))
+      .returns(Right(BearerToken("tk", "", "", "", "", 1L)))
 
     (http
       .get[ListJobRunsRes](_: String, _: Map[String, String], _: Auth)(_: Decoder[ListJobRunsRes]))
       .when(
         "https://api-uri/job-runs?limit=100&offset=0",
         *,
-        BearerToken("tk", "", "", "", "", 1L, ""),
+        BearerToken("tk", "", "", "", "", 1L),
         *
       )
       .returns(Left(GenericErr(301, "")))
@@ -930,11 +930,11 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
   test("deleteJob return Right()") {
     (tokenProvider.get _)
       .when("https://mcf/gateway/authtkn/knoxtoken/api/v1/token", *)
-      .returns(Right(BearerToken("tk", "", "", "", "", 1L, "")))
+      .returns(Right(BearerToken("tk", "", "", "", "", 1L)))
 
     (http
       .delete[Unit](_: String, _: Map[String, String], _: Auth)(_: Decoder[Unit]))
-      .when("https://api-uri/jobs/jobName", *, BearerToken("tk", "", "", "", "", 1L, ""), *)
+      .when("https://api-uri/jobs/jobName", *, BearerToken("tk", "", "", "", "", 1L), *)
       .returns(Right(None))
 
     val req    = DeleteJobReq("jobName")
@@ -945,11 +945,11 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
   test("deleteJob return Left(DeleteJobErr(ClientError)") {
     (tokenProvider.get _)
       .when("https://mcf/gateway/authtkn/knoxtoken/api/v1/token", *)
-      .returns(Right(BearerToken("tk", "", "", "", "", 1L, "")))
+      .returns(Right(BearerToken("tk", "", "", "", "", 1L)))
 
     (http
       .delete[Unit](_: String, _: Map[String, String], _: Auth)(_: Decoder[Unit]))
-      .when("https://api-uri/jobs/jobName", *, BearerToken("tk", "", "", "", "", 1L, ""), *)
+      .when("https://api-uri/jobs/jobName", *, BearerToken("tk", "", "", "", "", 1L), *)
       .returns(Left(ClientErr(404, "")))
 
     val req    = DeleteJobReq("jobName")
@@ -960,11 +960,11 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
   test("deleteJob return Left(DeleteJobErr(ServerError)") {
     (tokenProvider.get _)
       .when("https://mcf/gateway/authtkn/knoxtoken/api/v1/token", *)
-      .returns(Right(BearerToken("tk", "", "", "", "", 1L, "")))
+      .returns(Right(BearerToken("tk", "", "", "", "", 1L)))
 
     (http
       .delete[Unit](_: String, _: Map[String, String], _: Auth)(_: Decoder[Unit]))
-      .when("https://api-uri/jobs/jobName", *, BearerToken("tk", "", "", "", "", 1L, ""), *)
+      .when("https://api-uri/jobs/jobName", *, BearerToken("tk", "", "", "", "", 1L), *)
       .returns(Left(ServerErr(500, "")))
 
     val req    = DeleteJobReq("jobName")
@@ -975,11 +975,11 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
   test("deleteJob return Left(DeleteJobErr(GenericError)") {
     (tokenProvider.get _)
       .when("https://mcf/gateway/authtkn/knoxtoken/api/v1/token", *)
-      .returns(Right(BearerToken("tk", "", "", "", "", 1L, "")))
+      .returns(Right(BearerToken("tk", "", "", "", "", 1L)))
 
     (http
       .delete[Unit](_: String, _: Map[String, String], _: Auth)(_: Decoder[Unit]))
-      .when("https://api-uri/jobs/jobName", *, BearerToken("tk", "", "", "", "", 1L, ""), *)
+      .when("https://api-uri/jobs/jobName", *, BearerToken("tk", "", "", "", "", 1L), *)
       .returns(Left(GenericErr(301, "")))
 
     val req    = DeleteJobReq("jobName")
@@ -990,11 +990,11 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
   test(s"safeDeleteJob return Right() with Right(None)") {
     (tokenProvider.get _)
       .when("https://mcf/gateway/authtkn/knoxtoken/api/v1/token", *)
-      .returns(Right(BearerToken("tk", "", "", "", "", 1L, "")))
+      .returns(Right(BearerToken("tk", "", "", "", "", 1L)))
 
     (http
       .get[JobDetails](_: String, _: Map[String, String], _: Auth)(_: Decoder[JobDetails]))
-      .when("https://api-uri/jobs/x", *, BearerToken("tk", "", "", "", "", 1L, ""), *)
+      .when("https://api-uri/jobs/x", *, BearerToken("tk", "", "", "", "", 1L), *)
       .returns(Left(ClientErr(404, "")))
 
     val req    = CdeRequest(serviceDesc, vcDesc, DeleteJobReq("x"))
@@ -1005,16 +1005,16 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
   test(s"safeDeleteJob return Right() with existing job") {
     (tokenProvider.get _)
       .when("https://mcf/gateway/authtkn/knoxtoken/api/v1/token", *)
-      .returns(Right(BearerToken("tk", "", "", "", "", 1L, "")))
+      .returns(Right(BearerToken("tk", "", "", "", "", 1L)))
 
     (http
       .get[JobDetails](_: String, _: Map[String, String], _: Auth)(_: Decoder[JobDetails]))
-      .when("https://api-uri/jobs/x", *, BearerToken("tk", "", "", "", "", 1L, ""), *)
+      .when("https://api-uri/jobs/x", *, BearerToken("tk", "", "", "", "", 1L), *)
       .returns(Right(JobDetails("x", "y", "", "", "", Seq.empty, "", None, None)))
 
     (http
       .delete[Unit](_: String, _: Map[String, String], _: Auth)(_: Decoder[Unit]))
-      .when("https://api-uri/jobs/x", *, BearerToken("tk", "", "", "", "", 1L, ""), *)
+      .when("https://api-uri/jobs/x", *, BearerToken("tk", "", "", "", "", 1L), *)
       .returns(Right(None))
 
     val req    = CdeRequest(serviceDesc, vcDesc, DeleteJobReq("x"))
@@ -1025,11 +1025,11 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
   test(s"safeDeleteJob return Left(GetJobError)") {
     (tokenProvider.get _)
       .when("https://mcf/gateway/authtkn/knoxtoken/api/v1/token", *)
-      .returns(Right(BearerToken("tk", "", "", "", "", 1L, "")))
+      .returns(Right(BearerToken("tk", "", "", "", "", 1L)))
 
     (http
       .get[JobDetails](_: String, _: Map[String, String], _: Auth)(_: Decoder[JobDetails]))
-      .when("https://api-uri/jobs/x", *, BearerToken("tk", "", "", "", "", 1L, ""), *)
+      .when("https://api-uri/jobs/x", *, BearerToken("tk", "", "", "", "", 1L), *)
       .returns(Left(ServerErr(500, "")))
 
     val req    = CdeRequest(serviceDesc, vcDesc, DeleteJobReq("x"))
@@ -1040,16 +1040,16 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
   test(s"safeDeleteJob return Left(DeleteJobErr)") {
     (tokenProvider.get _)
       .when("https://mcf/gateway/authtkn/knoxtoken/api/v1/token", *)
-      .returns(Right(BearerToken("tk", "", "", "", "", 1L, "")))
+      .returns(Right(BearerToken("tk", "", "", "", "", 1L)))
 
     (http
       .get[JobDetails](_: String, _: Map[String, String], _: Auth)(_: Decoder[JobDetails]))
-      .when("https://api-uri/jobs/x", *, BearerToken("tk", "", "", "", "", 1L, ""), *)
+      .when("https://api-uri/jobs/x", *, BearerToken("tk", "", "", "", "", 1L), *)
       .returns(Right(JobDetails("x", "y", "", "", "", Seq.empty, "", None, None)))
 
     (http
       .delete[Unit](_: String, _: Map[String, String], _: Auth)(_: Decoder[Unit]))
-      .when("https://api-uri/jobs/x", *, BearerToken("tk", "", "", "", "", 1L, ""), *)
+      .when("https://api-uri/jobs/x", *, BearerToken("tk", "", "", "", "", 1L), *)
       .returns(Left(ServerErr(500, "")))
 
     val req    = CdeRequest(serviceDesc, vcDesc, DeleteJobReq("x"))
@@ -1060,11 +1060,11 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
   test("deleteResource return Right()") {
     (tokenProvider.get _)
       .when("https://mcf/gateway/authtkn/knoxtoken/api/v1/token", *)
-      .returns(Right(BearerToken("tk", "", "", "", "", 1L, "")))
+      .returns(Right(BearerToken("tk", "", "", "", "", 1L)))
 
     (http
       .delete[Unit](_: String, _: Map[String, String], _: Auth)(_: Decoder[Unit]))
-      .when("https://api-uri/resources/resourceName", *, BearerToken("tk", "", "", "", "", 1L, ""), *)
+      .when("https://api-uri/resources/resourceName", *, BearerToken("tk", "", "", "", "", 1L), *)
       .returns(Right(None))
 
     val req    = DeleteResourceReq("resourceName")
@@ -1075,11 +1075,11 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
   test("deleteResource return Left(DeleteResourceErr(ClientError)") {
     (tokenProvider.get _)
       .when("https://mcf/gateway/authtkn/knoxtoken/api/v1/token", *)
-      .returns(Right(BearerToken("tk", "", "", "", "", 1L, "")))
+      .returns(Right(BearerToken("tk", "", "", "", "", 1L)))
 
     (http
       .delete[Unit](_: String, _: Map[String, String], _: Auth)(_: Decoder[Unit]))
-      .when("https://api-uri/resources/resourceName", *, BearerToken("tk", "", "", "", "", 1L, ""), *)
+      .when("https://api-uri/resources/resourceName", *, BearerToken("tk", "", "", "", "", 1L), *)
       .returns(Left(ClientErr(404, "")))
 
     val req    = DeleteResourceReq("resourceName")
@@ -1090,11 +1090,11 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
   test("deleteResource return Left(DeleteResourceErr(ServerError)") {
     (tokenProvider.get _)
       .when("https://mcf/gateway/authtkn/knoxtoken/api/v1/token", *)
-      .returns(Right(BearerToken("tk", "", "", "", "", 1L, "")))
+      .returns(Right(BearerToken("tk", "", "", "", "", 1L)))
 
     (http
       .delete[Unit](_: String, _: Map[String, String], _: Auth)(_: Decoder[Unit]))
-      .when("https://api-uri/resources/resourceName", *, BearerToken("tk", "", "", "", "", 1L, ""), *)
+      .when("https://api-uri/resources/resourceName", *, BearerToken("tk", "", "", "", "", 1L), *)
       .returns(Left(ServerErr(500, "")))
 
     val req    = DeleteResourceReq("resourceName")
@@ -1105,11 +1105,11 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
   test("deleteResource return Left(DeleteResourceErr(GenericError)") {
     (tokenProvider.get _)
       .when("https://mcf/gateway/authtkn/knoxtoken/api/v1/token", *)
-      .returns(Right(BearerToken("tk", "", "", "", "", 1L, "")))
+      .returns(Right(BearerToken("tk", "", "", "", "", 1L)))
 
     (http
       .delete[Unit](_: String, _: Map[String, String], _: Auth)(_: Decoder[Unit]))
-      .when("https://api-uri/resources/resourceName", *, BearerToken("tk", "", "", "", "", 1L, ""), *)
+      .when("https://api-uri/resources/resourceName", *, BearerToken("tk", "", "", "", "", 1L), *)
       .returns(Left(GenericErr(301, "")))
 
     val req    = DeleteResourceReq("resourceName")
@@ -1120,11 +1120,11 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
   test(s"safeDeleteResource return Right() with Right(None)") {
     (tokenProvider.get _)
       .when("https://mcf/gateway/authtkn/knoxtoken/api/v1/token", *)
-      .returns(Right(BearerToken("tk", "", "", "", "", 1L, "")))
+      .returns(Right(BearerToken("tk", "", "", "", "", 1L)))
 
     (http
       .get[ResourceDetails](_: String, _: Map[String, String], _: Auth)(_: Decoder[ResourceDetails]))
-      .when("https://api-uri/resources/x", *, BearerToken("tk", "", "", "", "", 1L, ""), *)
+      .when("https://api-uri/resources/x", *, BearerToken("tk", "", "", "", "", 1L), *)
       .returns(Left(ClientErr(404, "")))
 
     val req    = CdeRequest(serviceDesc, vcDesc, DeleteResourceReq("x"))
@@ -1135,16 +1135,16 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
   test(s"safeDeleteResource return Right() with existing resource") {
     (tokenProvider.get _)
       .when("https://mcf/gateway/authtkn/knoxtoken/api/v1/token", *)
-      .returns(Right(BearerToken("tk", "", "", "", "", 1L, "")))
+      .returns(Right(BearerToken("tk", "", "", "", "", 1L)))
 
     (http
       .get[ResourceDetails](_: String, _: Map[String, String], _: Auth)(_: Decoder[ResourceDetails]))
-      .when("https://api-uri/resources/x", *, BearerToken("tk", "", "", "", "", 1L, ""), *)
+      .when("https://api-uri/resources/x", *, BearerToken("tk", "", "", "", "", 1L), *)
       .returns(Right(ResourceDetails("x", "y", None, "", "", "", "", "")))
 
     (http
       .delete[Unit](_: String, _: Map[String, String], _: Auth)(_: Decoder[Unit]))
-      .when("https://api-uri/resources/x", *, BearerToken("tk", "", "", "", "", 1L, ""), *)
+      .when("https://api-uri/resources/x", *, BearerToken("tk", "", "", "", "", 1L), *)
       .returns(Right(None))
 
     val req    = CdeRequest(serviceDesc, vcDesc, DeleteResourceReq("x"))
@@ -1155,11 +1155,11 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
   test(s"safeDeleteResource return Left(GetResourceError)") {
     (tokenProvider.get _)
       .when("https://mcf/gateway/authtkn/knoxtoken/api/v1/token", *)
-      .returns(Right(BearerToken("tk", "", "", "", "", 1L, "")))
+      .returns(Right(BearerToken("tk", "", "", "", "", 1L)))
 
     (http
       .get[ResourceDetails](_: String, _: Map[String, String], _: Auth)(_: Decoder[ResourceDetails]))
-      .when("https://api-uri/resources/x", *, BearerToken("tk", "", "", "", "", 1L, ""), *)
+      .when("https://api-uri/resources/x", *, BearerToken("tk", "", "", "", "", 1L), *)
       .returns(Left(ServerErr(500, "")))
 
     val req    = CdeRequest(serviceDesc, vcDesc, DeleteResourceReq("x"))
@@ -1170,16 +1170,16 @@ class DefaultCdeClusterClientTest extends AnyFunSuite with BeforeAndAfterAll wit
   test(s"safeDeleteResource return Left(DeleteResourceErr)") {
     (tokenProvider.get _)
       .when("https://mcf/gateway/authtkn/knoxtoken/api/v1/token", *)
-      .returns(Right(BearerToken("tk", "", "", "", "", 1L, "")))
+      .returns(Right(BearerToken("tk", "", "", "", "", 1L)))
 
     (http
       .get[ResourceDetails](_: String, _: Map[String, String], _: Auth)(_: Decoder[ResourceDetails]))
-      .when("https://api-uri/resources/x", *, BearerToken("tk", "", "", "", "", 1L, ""), *)
+      .when("https://api-uri/resources/x", *, BearerToken("tk", "", "", "", "", 1L), *)
       .returns(Right(ResourceDetails("x", "y", None, "", "", "", "", "")))
 
     (http
       .delete[Unit](_: String, _: Map[String, String], _: Auth)(_: Decoder[Unit]))
-      .when("https://api-uri/resources/x", *, BearerToken("tk", "", "", "", "", 1L, ""), *)
+      .when("https://api-uri/resources/x", *, BearerToken("tk", "", "", "", "", 1L), *)
       .returns(Left(ServerErr(500, "")))
 
     val req    = CdeRequest(serviceDesc, vcDesc, DeleteResourceReq("x"))

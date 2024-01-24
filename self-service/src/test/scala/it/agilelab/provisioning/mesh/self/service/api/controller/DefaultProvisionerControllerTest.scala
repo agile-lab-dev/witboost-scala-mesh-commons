@@ -315,7 +315,6 @@ class DefaultProvisionerControllerTest extends AnyFunSuite with MockFactory {
       .returns(Right(ProvisioningStatus("x", RUNNING, None)))
 
     val actual   = provisionerController.updateAcl(updateAclRequest)
-    println(actual.left.toOption.get.asInstanceOf[ValidationError].errors)
     val expected = Left(
       ValidationError(
         List("error", "error2", "GetUserErr(user3,com.cloudera.cdp.CdpClientException: CdpError")
