@@ -1,8 +1,10 @@
 package it.agilelab.provisioning.commons.client.ranger
 
+import com.sun.jersey.api.client.ClientResponse
 import it.agilelab.provisioning.commons.audit.Audit
 import it.agilelab.provisioning.commons.client.ranger.RangerClientError._
 import it.agilelab.provisioning.commons.client.ranger.model.{
+  ClientResponseMock,
   RangerPolicy,
   RangerRole,
   RangerSecurityZone,
@@ -10,15 +12,17 @@ import it.agilelab.provisioning.commons.client.ranger.model.{
   RangerService
 }
 import it.agilelab.provisioning.commons.http.HttpErrors.ClientErr
+import org.apache.ranger.RangerServiceException
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.funsuite.AnyFunSuite
+import org.apache.ranger
 
-class DefaultRangerClientWithAuditTest extends AnyFunSuite with BeforeAndAfterAll with MockFactory {
+class RangerClientAdapterWithAuditTest extends AnyFunSuite with BeforeAndAfterAll with MockFactory {
 
-  val defaultRangerClient: DefaultRangerClient = stub[DefaultRangerClient]
+  val defaultRangerClient: RangerClientAdapter = stub[RangerClientAdapter]
   val audit: Audit                             = mock[Audit]
-  val rangerClient                             = new DefaultRangerClientWithAudit(defaultRangerClient, audit)
+  val rangerClient                             = new RangerClientAdapterWithAudit(defaultRangerClient, audit)
 
   test("findPolicyById logs success info") {
     val policy = RangerPolicy(
@@ -48,15 +52,20 @@ class DefaultRangerClientWithAuditTest extends AnyFunSuite with BeforeAndAfterAl
   }
 
   test("findPolicyById logs error info") {
-    (defaultRangerClient.findPolicyById _).when(*).returns(Left(FindPolicyByIdErr(1, ClientErr(404, "x"))))
+    val exception = new RangerServiceException(
+      ranger.RangerClient.GET_POLICY_BY_ID,
+      ClientResponseMock(ClientResponse.Status.NOT_FOUND, "x")
+    )
+
+    (defaultRangerClient.findPolicyById _).when(*).returns(Left(FindPolicyByIdErr(1, exception)))
     inSequence(
       (audit.info _).expects("Executing FindPolicyById(1)").once(),
       (audit.error _).expects(
-        "FindPolicyById(1) failed. Details: FindPolicyByIdErr(1,ClientErr(404,x))"
+        where((s: String) => s.startsWith("FindPolicyById(1) failed. Details: FindPolicyByIdErr(1,"))
       )
     )
     val actual = rangerClient.findPolicyById(1)
-    assert(actual == Left(FindPolicyByIdErr(1, ClientErr(404, "x"))))
+    assert(actual == Left(FindPolicyByIdErr(1, exception)))
   }
 
   test("findPolicyByName logs success info") {
@@ -90,17 +99,28 @@ class DefaultRangerClientWithAuditTest extends AnyFunSuite with BeforeAndAfterAl
   }
 
   test("findPolicyByName logs error info") {
-    (defaultRangerClient.findPolicyByName _).when(*, *, *).returns(Left(FindPolicyByNameErr("pn", ClientErr(404, "x"))))
+    val exception = new RangerServiceException(
+      ranger.RangerClient.GET_POLICY_BY_NAME,
+      ClientResponseMock(ClientResponse.Status.NOT_FOUND, "x")
+    )
+
+    (defaultRangerClient.findPolicyByName _)
+      .when(*, *, *)
+      .returns(Left(FindPoliciesErr(Map("policyName" -> "pn", "serviceName" -> "srv"), exception)))
     inSequence(
       (audit.info _)
         .expects("Executing FindPolicyByName(service=srv,name=pn,zoneName=None)")
         .once(),
       (audit.error _).expects(
-        "FindPolicyByName(service=srv,name=pn,zoneName=None) failed. Details: FindPolicyByNameErr(pn,ClientErr(404,x))"
+        where((s: String) =>
+          s.startsWith(
+            "FindPolicyByName(service=srv,name=pn,zoneName=None) failed. Details: FindPoliciesErr("
+          )
+        )
       )
     )
     val actual = rangerClient.findPolicyByName("srv", "pn", None)
-    assert(actual == Left(FindPolicyByNameErr("pn", ClientErr(404, "x"))))
+    assert(actual == Left(FindPoliciesErr(Map("policyName" -> "pn", "serviceName" -> "srv"), exception)))
   }
 
   test("createPolicy logs success info") {
@@ -150,17 +170,26 @@ class DefaultRangerClientWithAuditTest extends AnyFunSuite with BeforeAndAfterAl
       policyPriority = 0
     )
 
-    (defaultRangerClient.createPolicy _).when(*).returns(Left(CreatePolicyErr(policy, ClientErr(404, "x"))))
+    val exception = new RangerServiceException(
+      ranger.RangerClient.CREATE_POLICY,
+      ClientResponseMock(ClientResponse.Status.UNAUTHORIZED, "x")
+    )
+
+    (defaultRangerClient.createPolicy _).when(*).returns(Left(CreatePolicyErr(policy, exception)))
     inSequence(
       (audit.info _)
         .expects("Executing CreatePolicy(RangerPolicy(1,a,b,c,false,false,Map(),List(),d,List(),false,e,0))")
         .once(),
       (audit.error _).expects(
-        "CreatePolicy(RangerPolicy(1,a,b,c,false,false,Map(),List(),d,List(),false,e,0)) failed. Details: CreatePolicyErr(RangerPolicy(1,a,b,c,false,false,Map(),List(),d,List(),false,e,0),ClientErr(404,x))"
+        where((s: String) =>
+          s.startsWith(
+            "CreatePolicy(RangerPolicy(1,a,b,c,false,false,Map(),List(),d,List(),false,e,0)) failed. Details: CreatePolicyErr(RangerPolicy(1,a,b,c,false,false,Map(),List(),d,List(),false,e,0),"
+          )
+        )
       )
     )
     val actual = rangerClient.createPolicy(policy)
-    assert(actual == Left(CreatePolicyErr(policy, ClientErr(404, "x"))))
+    assert(actual == Left(CreatePolicyErr(policy, exception)))
   }
 
   test("updatePolicy logs success info") {
@@ -210,17 +239,26 @@ class DefaultRangerClientWithAuditTest extends AnyFunSuite with BeforeAndAfterAl
       policyPriority = 0
     )
 
-    (defaultRangerClient.updatePolicy _).when(*).returns(Left(CreatePolicyErr(policy, ClientErr(404, "x"))))
+    val exception = new RangerServiceException(
+      ranger.RangerClient.UPDATE_POLICY_BY_ID,
+      ClientResponseMock(ClientResponse.Status.NOT_FOUND, "x")
+    )
+
+    (defaultRangerClient.updatePolicy _).when(*).returns(Left(CreatePolicyErr(policy, exception)))
     inSequence(
       (audit.info _)
         .expects("Executing UpdatePolicy(RangerPolicy(1,a,b,c,false,false,Map(),List(),d,List(),false,e,0))")
         .once(),
       (audit.error _).expects(
-        "UpdatePolicy(RangerPolicy(1,a,b,c,false,false,Map(),List(),d,List(),false,e,0)) failed. Details: CreatePolicyErr(RangerPolicy(1,a,b,c,false,false,Map(),List(),d,List(),false,e,0),ClientErr(404,x))"
+        where((s: String) =>
+          s.startsWith(
+            "UpdatePolicy(RangerPolicy(1,a,b,c,false,false,Map(),List(),d,List(),false,e,0)) failed. Details: CreatePolicyErr(RangerPolicy(1,a,b,c,false,false,Map(),List(),d,List(),false,e,0),"
+          )
+        )
       )
     )
     val actual = rangerClient.updatePolicy(policy)
-    assert(actual == Left(CreatePolicyErr(policy, ClientErr(404, "x"))))
+    assert(actual == Left(CreatePolicyErr(policy, exception)))
   }
 
   test("findSecurityZoneByName logs success info") {
@@ -256,17 +294,25 @@ class DefaultRangerClientWithAuditTest extends AnyFunSuite with BeforeAndAfterAl
   }
 
   test("findSecurityZoneByName logs error info") {
+
+    val exception = new RangerServiceException(
+      ranger.RangerClient.GET_ZONE_BY_NAME,
+      ClientResponseMock(ClientResponse.Status.NOT_FOUND, "x")
+    )
+
     (defaultRangerClient.findSecurityZoneByName _)
       .when(*)
-      .returns(Left(FindSecurityZoneByNameErr("zone", ClientErr(404, "x"))))
+      .returns(Left(FindSecurityZoneByNameErr("zone", exception)))
     inSequence(
       (audit.info _).expects("Executing FindSecurityZoneByName(zoneName=zzz)").once(),
       (audit.error _).expects(
-        "FindSecurityZoneByName(zoneName=zzz) failed. Details: FindSecurityZoneByNameErr(zone,ClientErr(404,x))"
+        where((s: String) =>
+          s.startsWith("FindSecurityZoneByName(zoneName=zzz) failed. Details: FindSecurityZoneByNameErr(zone,")
+        )
       )
     )
     val actual = rangerClient.findSecurityZoneByName("zzz")
-    assert(actual == Left(FindSecurityZoneByNameErr("zone", ClientErr(404, "x"))))
+    assert(actual == Left(FindSecurityZoneByNameErr("zone", exception)))
   }
 
   test("updateSecurityZone logs success info") {
@@ -307,6 +353,12 @@ class DefaultRangerClientWithAuditTest extends AnyFunSuite with BeforeAndAfterAl
   }
 
   test("updateSecurityZone logs error info") {
+
+    val exception = new RangerServiceException(
+      ranger.RangerClient.UPDATE_ZONE_BY_ID,
+      ClientResponseMock(ClientResponse.Status.NOT_FOUND, "x")
+    )
+
     val zone: RangerSecurityZone = RangerSecurityZone(
       1,
       "zzz",
@@ -328,7 +380,7 @@ class DefaultRangerClientWithAuditTest extends AnyFunSuite with BeforeAndAfterAl
       List("auditUserGroup1", "auditUserGroup2")
     )
 
-    (defaultRangerClient.updateSecurityZone _).when(*).returns(Left(UpdateSecurityZoneErr(zone, ClientErr(404, ""))))
+    (defaultRangerClient.updateSecurityZone _).when(*).returns(Left(UpdateSecurityZoneErr(zone, exception)))
     inSequence(
       (audit.info _)
         .expects(
@@ -336,11 +388,15 @@ class DefaultRangerClientWithAuditTest extends AnyFunSuite with BeforeAndAfterAl
         )
         .once(),
       (audit.error _).expects(
-        "UpdateSecurityZone(RangerSecurityZone(1,zzz,Map(service_name -> RangerSecurityZoneResources(List(Map(database -> List(domain_*), column -> List(*), table -> List(*))))),true,List(adminUser1, adminUser2),List(adminUserGroup1, adminUserGroup2),List(auditUser1, auditUser2),List(auditUserGroup1, auditUserGroup2))) failed. Details: UpdateSecurityZoneErr(RangerSecurityZone(1,zzz,Map(service_name -> RangerSecurityZoneResources(List(Map(database -> List(domain_*), column -> List(*), table -> List(*))))),true,List(adminUser1, adminUser2),List(adminUserGroup1, adminUserGroup2),List(auditUser1, auditUser2),List(auditUserGroup1, auditUserGroup2)),ClientErr(404,))"
+        where((s: String) =>
+          s.startsWith(
+            "UpdateSecurityZone(RangerSecurityZone(1,zzz,Map(service_name -> RangerSecurityZoneResources(List(Map(database -> List(domain_*), column -> List(*), table -> List(*))))),true,List(adminUser1, adminUser2),List(adminUserGroup1, adminUserGroup2),List(auditUser1, auditUser2),List(auditUserGroup1, auditUserGroup2))) failed. Details: UpdateSecurityZoneErr(RangerSecurityZone(1,zzz,Map(service_name -> RangerSecurityZoneResources(List(Map(database -> List(domain_*), column -> List(*), table -> List(*))))),true,List(adminUser1, adminUser2),List(adminUserGroup1, adminUserGroup2),List(auditUser1, auditUser2),List(auditUserGroup1, auditUserGroup2)),"
+          )
+        )
       )
     )
     val actual = rangerClient.updateSecurityZone(zone)
-    assert(actual == Left(UpdateSecurityZoneErr(zone, ClientErr(404, ""))))
+    assert(actual == Left(UpdateSecurityZoneErr(zone, exception)))
   }
 
   test("findAllServices logs success info") {
@@ -396,15 +452,25 @@ class DefaultRangerClientWithAuditTest extends AnyFunSuite with BeforeAndAfterAl
   }
 
   test("findAllServices logs error info") {
-    (defaultRangerClient.findAllServices _).when().returns(Left(FindAllServicesErr(ClientErr(404, "x"))))
+
+    val exception = new RangerServiceException(
+      ranger.RangerClient.FIND_SERVICES,
+      ClientResponseMock(ClientResponse.Status.NOT_FOUND, "x")
+    )
+
+    (defaultRangerClient.findAllServices _).when().returns(Left(FindAllServicesErr(exception)))
     inSequence(
       (audit.info _).expects("Executing FindAllServices").once(),
       (audit.error _).expects(
-        "FindAllServices failed. Details: FindAllServicesErr(ClientErr(404,x))"
+        where((s: String) =>
+          s.startsWith(
+            "FindAllServices failed. Details: FindAllServicesErr("
+          )
+        )
       )
     )
     val actual = rangerClient.findAllServices
-    assert(actual == Left(FindAllServicesErr(ClientErr(404, "x"))))
+    assert(actual == Left(FindAllServicesErr(exception)))
   }
 
   test("createSecurityZone logs success info") {
@@ -445,6 +511,11 @@ class DefaultRangerClientWithAuditTest extends AnyFunSuite with BeforeAndAfterAl
   }
 
   test("createSecurityZone logs error info") {
+    val exception = new RangerServiceException(
+      ranger.RangerClient.CREATE_ZONE,
+      ClientResponseMock(ClientResponse.Status.NOT_FOUND, "x")
+    )
+
     val zone: RangerSecurityZone = RangerSecurityZone(
       -1,
       "zzz",
@@ -466,7 +537,7 @@ class DefaultRangerClientWithAuditTest extends AnyFunSuite with BeforeAndAfterAl
       List("auditUserGroup1", "auditUserGroup2")
     )
 
-    (defaultRangerClient.createSecurityZone _).when(*).returns(Left(CreateSecurityZoneErr(zone, ClientErr(404, "x"))))
+    (defaultRangerClient.createSecurityZone _).when(*).returns(Left(CreateSecurityZoneErr(zone, exception)))
     inSequence(
       (audit.info _)
         .expects(
@@ -474,11 +545,15 @@ class DefaultRangerClientWithAuditTest extends AnyFunSuite with BeforeAndAfterAl
         )
         .once(),
       (audit.error _).expects(
-        "CreateSecurityZone(zone=RangerSecurityZone(-1,zzz,Map(service_name -> RangerSecurityZoneResources(List(Map(database -> List(domain_*), column -> List(*), table -> List(*))))),true,List(adminUser1, adminUser2),List(adminUserGroup1, adminUserGroup2),List(auditUser1, auditUser2),List(auditUserGroup1, auditUserGroup2))) failed. Details: CreateSecurityZoneErr(RangerSecurityZone(-1,zzz,Map(service_name -> RangerSecurityZoneResources(List(Map(database -> List(domain_*), column -> List(*), table -> List(*))))),true,List(adminUser1, adminUser2),List(adminUserGroup1, adminUserGroup2),List(auditUser1, auditUser2),List(auditUserGroup1, auditUserGroup2)),ClientErr(404,x))"
+        where((s: String) =>
+          s.startsWith(
+            "CreateSecurityZone(zone=RangerSecurityZone(-1,zzz,Map(service_name -> RangerSecurityZoneResources(List(Map(database -> List(domain_*), column -> List(*), table -> List(*))))),true,List(adminUser1, adminUser2),List(adminUserGroup1, adminUserGroup2),List(auditUser1, auditUser2),List(auditUserGroup1, auditUserGroup2))) failed. Details: CreateSecurityZoneErr(RangerSecurityZone(-1,zzz,Map(service_name -> RangerSecurityZoneResources(List(Map(database -> List(domain_*), column -> List(*), table -> List(*))))),true,List(adminUser1, adminUser2),List(adminUserGroup1, adminUserGroup2),List(auditUser1, auditUser2),List(auditUserGroup1, auditUserGroup2)),"
+          )
+        )
       )
     )
     val actual = rangerClient.createSecurityZone(zone)
-    assert(actual == Left(CreateSecurityZoneErr(zone, ClientErr(404, "x"))))
+    assert(actual == Left(CreateSecurityZoneErr(zone, exception)))
   }
 
   test("deletePolicy logs success info") {
@@ -528,17 +603,26 @@ class DefaultRangerClientWithAuditTest extends AnyFunSuite with BeforeAndAfterAl
       policyPriority = 0
     )
 
-    (defaultRangerClient.deletePolicy _).when(*).returns(Left(DeletePolicyErr(policy, ClientErr(404, "x"))))
+    val exception = new RangerServiceException(
+      ranger.RangerClient.DELETE_POLICY_BY_ID,
+      ClientResponseMock(ClientResponse.Status.NOT_FOUND, "x")
+    )
+
+    (defaultRangerClient.deletePolicy _).when(*).returns(Left(DeletePolicyErr(policy, exception)))
     inSequence(
       (audit.info _)
         .expects("Executing DeletePolicy(RangerPolicy(1,a,b,c,false,false,Map(),List(),d,List(),false,e,0))")
         .once(),
       (audit.error _).expects(
-        "DeletePolicy(RangerPolicy(1,a,b,c,false,false,Map(),List(),d,List(),false,e,0)) failed. Details: DeletePolicyErr(RangerPolicy(1,a,b,c,false,false,Map(),List(),d,List(),false,e,0),ClientErr(404,x))"
+        where((s: String) =>
+          s.startsWith(
+            "DeletePolicy(RangerPolicy(1,a,b,c,false,false,Map(),List(),d,List(),false,e,0)) failed. Details: DeletePolicyErr(RangerPolicy(1,a,b,c,false,false,Map(),List(),d,List(),false,e,0),"
+          )
+        )
       )
     )
     val actual = rangerClient.deletePolicy(policy)
-    assert(actual == Left(DeletePolicyErr(policy, ClientErr(404, "x"))))
+    assert(actual == Left(DeletePolicyErr(policy, exception)))
   }
 
   //----------------------
@@ -558,15 +642,24 @@ class DefaultRangerClientWithAuditTest extends AnyFunSuite with BeforeAndAfterAl
   }
 
   test("findRoleById logs error info") {
-    (defaultRangerClient.findRoleById _).when(*).returns(Left(FindRoleByIdErr(1, ClientErr(404, "x"))))
+    val exception = new RangerServiceException(
+      ranger.RangerClient.GET_ROLE_BY_ID,
+      ClientResponseMock(ClientResponse.Status.NOT_FOUND, "x")
+    )
+
+    (defaultRangerClient.findRoleById _).when(*).returns(Left(FindRoleByIdErr(1, exception)))
     inSequence(
       (audit.info _).expects("Executing FindRoleById(1)").once(),
       (audit.error _).expects(
-        "FindRoleById(1) failed. Details: FindRoleByIdErr(1,ClientErr(404,x))"
+        where((s: String) =>
+          s.startsWith(
+            "FindRoleById(1) failed. Details: FindRoleByIdErr(1,"
+          )
+        )
       )
     )
     val actual = rangerClient.findRoleById(1)
-    assert(actual == Left(FindRoleByIdErr(1, ClientErr(404, "x"))))
+    assert(actual == Left(FindRoleByIdErr(1, exception)))
   }
 
   test("findRoleByName logs success info") {
@@ -582,15 +675,24 @@ class DefaultRangerClientWithAuditTest extends AnyFunSuite with BeforeAndAfterAl
   }
 
   test("findRoleByName logs error info") {
-    (defaultRangerClient.findRoleByName _).when(*).returns(Left(FindRoleByNameErr("name", ClientErr(404, "x"))))
+    val exception = new RangerServiceException(
+      ranger.RangerClient.GET_ROLE_BY_NAME,
+      ClientResponseMock(ClientResponse.Status.UNAUTHORIZED, "x")
+    )
+
+    (defaultRangerClient.findRoleByName _).when(*).returns(Left(FindRoleByNameErr("name", exception)))
     inSequence(
       (audit.info _).expects("Executing FindRoleByName(name=name)").once(),
       (audit.error _).expects(
-        "FindRoleByName(name=name) failed. Details: FindRoleByNameErr(name,ClientErr(404,x))"
+        where((s: String) =>
+          s.startsWith(
+            "FindRoleByName(name=name) failed. Details: FindRoleByNameErr(name,"
+          )
+        )
       )
     )
     val actual = rangerClient.findRoleByName("name")
-    assert(actual == Left(FindRoleByNameErr("name", ClientErr(404, "x"))))
+    assert(actual == Left(FindRoleByNameErr("name", exception)))
   }
 
   test("createRole logs success info") {
@@ -606,17 +708,25 @@ class DefaultRangerClientWithAuditTest extends AnyFunSuite with BeforeAndAfterAl
   }
 
   test("createRole logs error info") {
-    val role = RangerRole.empty(name = "b", description = "c")
+    val exception = new RangerServiceException(
+      ranger.RangerClient.CREATE_ROLE,
+      ClientResponseMock(ClientResponse.Status.NOT_FOUND, "x")
+    )
+    val role      = RangerRole.empty(name = "b", description = "c")
 
-    (defaultRangerClient.createRole _).when(*).returns(Left(CreateRoleErr(role, ClientErr(404, "x"))))
+    (defaultRangerClient.createRole _).when(*).returns(Left(CreateRoleErr(role, exception)))
     inSequence(
       (audit.info _).expects("Executing CreateRole(RangerRole(0,true,b,c,List(),List(),List()))").once(),
       (audit.error _).expects(
-        "CreateRole(RangerRole(0,true,b,c,List(),List(),List())) failed. Details: CreateRoleErr(RangerRole(0,true,b,c,List(),List(),List()),ClientErr(404,x))"
+        where((s: String) =>
+          s.startsWith(
+            "CreateRole(RangerRole(0,true,b,c,List(),List(),List())) failed. Details: CreateRoleErr(RangerRole(0,true,b,c,List(),List(),List()),"
+          )
+        )
       )
     )
     val actual = rangerClient.createRole(role)
-    assert(actual == Left(CreateRoleErr(role, ClientErr(404, "x"))))
+    assert(actual == Left(CreateRoleErr(role, exception)))
   }
 
   test("updateRole logs success info") {
@@ -632,17 +742,25 @@ class DefaultRangerClientWithAuditTest extends AnyFunSuite with BeforeAndAfterAl
   }
 
   test("updateRole logs error info") {
-    val role = RangerRole.empty(name = "b", description = "c").copy(id = 1)
+    val exception = new RangerServiceException(
+      ranger.RangerClient.UPDATE_ROLE_BY_ID,
+      ClientResponseMock(ClientResponse.Status.NOT_FOUND, "x")
+    )
+    val role      = RangerRole.empty(name = "b", description = "c").copy(id = 1)
 
-    (defaultRangerClient.updateRole _).when(*).returns(Left(UpdateRoleErr(role, ClientErr(404, "x"))))
+    (defaultRangerClient.updateRole _).when(*).returns(Left(UpdateRoleErr(role, exception)))
     inSequence(
       (audit.info _).expects("Executing UpdateRole(RangerRole(1,true,b,c,List(),List(),List()))").once(),
       (audit.error _).expects(
-        "UpdateRole(RangerRole(1,true,b,c,List(),List(),List())) failed. Details: UpdateRoleErr(RangerRole(1,true,b,c,List(),List(),List()),ClientErr(404,x))"
+        where((s: String) =>
+          s.startsWith(
+            "UpdateRole(RangerRole(1,true,b,c,List(),List(),List())) failed. Details: UpdateRoleErr(RangerRole(1,true,b,c,List(),List(),List()),"
+          )
+        )
       )
     )
     val actual = rangerClient.updateRole(role)
-    assert(actual == Left(UpdateRoleErr(role, ClientErr(404, "x"))))
+    assert(actual == Left(UpdateRoleErr(role, exception)))
   }
 
   test("deleteRole logs success info") {
@@ -658,16 +776,24 @@ class DefaultRangerClientWithAuditTest extends AnyFunSuite with BeforeAndAfterAl
   }
 
   test("deleteRole logs error info") {
-    val role = RangerRole.empty(name = "b", description = "c").copy(id = 1)
+    val exception = new RangerServiceException(
+      ranger.RangerClient.DELETE_ROLE_BY_ID,
+      ClientResponseMock(ClientResponse.Status.NOT_FOUND, "x")
+    )
+    val role      = RangerRole.empty(name = "b", description = "c").copy(id = 1)
 
-    (defaultRangerClient.deleteRole _).when(*).returns(Left(DeleteRoleErr(role, ClientErr(404, "x"))))
+    (defaultRangerClient.deleteRole _).when(*).returns(Left(DeleteRoleErr(role, exception)))
     inSequence(
       (audit.info _).expects("Executing DeleteRole(RangerRole(1,true,b,c,List(),List(),List()))").once(),
       (audit.error _).expects(
-        "DeleteRole(RangerRole(1,true,b,c,List(),List(),List())) failed. Details: DeleteRoleErr(RangerRole(1,true,b,c,List(),List(),List()),ClientErr(404,x))"
+        where((s: String) =>
+          s.startsWith(
+            "DeleteRole(RangerRole(1,true,b,c,List(),List(),List())) failed. Details: DeleteRoleErr(RangerRole(1,true,b,c,List(),List(),List()),"
+          )
+        )
       )
     )
     val actual = rangerClient.deleteRole(role)
-    assert(actual == Left(DeleteRoleErr(role, ClientErr(404, "x"))))
+    assert(actual == Left(DeleteRoleErr(role, exception)))
   }
 }

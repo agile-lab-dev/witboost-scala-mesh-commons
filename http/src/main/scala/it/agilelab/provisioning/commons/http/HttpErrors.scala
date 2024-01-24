@@ -47,5 +47,4 @@ object HttpErrors {
     case e: GenericErr        => show"GenericErr(${e.code},${e.details})"
     case e: UnexpectedBodyErr => show"UnexpectedBodyErr(${e.body},${e.error})"
   }
-
 }

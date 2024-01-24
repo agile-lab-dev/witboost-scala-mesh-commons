@@ -200,7 +200,9 @@ lazy val cdpIam = (project in file("cdp-iam"))
 lazy val ranger = (project in file("ranger"))
   .settings(
     name := "scala-mesh-ranger",
-    libraryDependencies ++= Dependencies.testDependencies,
+    libraryDependencies ++= Dependencies.testDependencies ++ Seq(
+      Dependencies.rangerIntegration
+    ),
     artifactorySettings,
     commonAssemblySettings,
     wartremoverSettings

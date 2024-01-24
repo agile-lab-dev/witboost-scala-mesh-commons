@@ -8,7 +8,7 @@ import it.agilelab.provisioning.commons.client.ranger.model.{
   RangerService
 }
 import it.agilelab.provisioning.commons.http.Auth.BasicCredential
-import it.agilelab.provisioning.commons.http.Http
+import org.apache.ranger
 
 /** RangerClient trait
   */
@@ -148,12 +148,32 @@ trait RangerClient {
 
 object RangerClient {
 
-  def default(host: String, credential: BasicCredential): RangerClient =
-    new DefaultRangerClient(host, Http.default(), credential)
+  val SIMPLE_AUTH   = "simple"
+  val KERBEROS_AUTH = "kerberos"
 
-  def defaultWithAudit(host: String, credential: BasicCredential): RangerClient =
-    new DefaultRangerClientWithAudit(
-      new DefaultRangerClient(host, Http.defaultWithAudit(), credential),
+  def default(host: String, credential: BasicCredential): RangerClient = {
+    val client = new ranger.RangerClient(host, SIMPLE_AUTH, credential.username, credential.password, null)
+    new RangerClientAdapter(client)
+  }
+
+  def defaultWithKerberos(host: String, principal: String, keytabPath: String): RangerClient = {
+    val client = new ranger.RangerClient(host, KERBEROS_AUTH, principal, keytabPath, null)
+    new RangerClientAdapter(client)
+  }
+
+  def defaultWithAudit(host: String, credential: BasicCredential): RangerClient = {
+    val client = new ranger.RangerClient(host, SIMPLE_AUTH, credential.username, credential.password, null)
+    new RangerClientAdapterWithAudit(
+      new RangerClientAdapter(client),
       Audit.default("RangerClient")
     )
+  }
+
+  def defaultWithKerberosWithAudit(host: String, principal: String, keytabPath: String): RangerClient = {
+    val client = new ranger.RangerClient(host, KERBEROS_AUTH, principal, keytabPath, null)
+    new RangerClientAdapterWithAudit(
+      new RangerClientAdapter(client),
+      Audit.default("RangerClient")
+    )
+  }
 }

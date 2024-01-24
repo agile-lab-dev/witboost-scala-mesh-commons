@@ -4,8 +4,8 @@ import cats.implicits._
 import it.agilelab.provisioning.commons.audit.Audit
 import it.agilelab.provisioning.commons.client.ranger.model._
 
-class DefaultRangerClientWithAudit(
-  defaultRangerClient: DefaultRangerClient,
+class RangerClientAdapterWithAudit(
+  defaultRangerClient: RangerClientAdapter,
   audit: Audit
 ) extends RangerClient {
 

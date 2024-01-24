@@ -8,12 +8,22 @@ class RangerClientTest extends AnyFunSuite with MockFactory {
 
   test("default") {
     val client = RangerClient.default("x", BasicCredential("x", "y"))
-    assert(client.isInstanceOf[DefaultRangerClient])
+    assert(client.isInstanceOf[RangerClientAdapter])
   }
 
   test("defaultWithAudit") {
     val client = RangerClient.defaultWithAudit("x", BasicCredential("x", "y"))
-    assert(client.isInstanceOf[DefaultRangerClientWithAudit])
+    assert(client.isInstanceOf[RangerClientAdapterWithAudit])
+  }
+
+  test("defaultWithKerberos") {
+    val client = RangerClient.defaultWithKerberos("x", "principal", "keytab/path")
+    assert(client.isInstanceOf[RangerClientAdapter])
+  }
+
+  test("defaultWithKerberosWithAudit") {
+    val client = RangerClient.defaultWithKerberosWithAudit("x", "principal", "keytab/path")
+    assert(client.isInstanceOf[RangerClientAdapterWithAudit])
   }
 
 }

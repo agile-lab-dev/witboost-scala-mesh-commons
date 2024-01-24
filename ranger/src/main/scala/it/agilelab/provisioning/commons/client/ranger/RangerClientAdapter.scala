@@ -3,25 +3,31 @@ package it.agilelab.provisioning.commons.client.ranger
 import io.circe.generic.auto._
 import it.agilelab.provisioning.commons.client.ranger.RangerClientError._
 import it.agilelab.provisioning.commons.client.ranger.model._
-import it.agilelab.provisioning.commons.http.Auth.BasicCredential
-import it.agilelab.provisioning.commons.http.Http
 import it.agilelab.provisioning.commons.http.HttpErrors._
+import org.apache.ranger
+import org.apache.ranger.RangerServiceException
+
+import scala.jdk.CollectionConverters.{ CollectionHasAsScala, MapHasAsJava }
+import scala.util.{ Failure, Success, Try }
 
 /** Default Range Client implementation
   * @param host a String containing the ranger host; the string must NOT ends with '/'
   * @param http an Http instance
   * @param credential a BasicCredential instance
   */
-class DefaultRangerClient(
+class RangerClientAdapter(
+  rangerClient: ranger.RangerClient
+  /*
   host: String,
   http: Http,
   credential: BasicCredential
+   */
 ) extends RangerClient {
 
-  private val V2_URI_BASE    = s"https://$host/service/public/v2/api"
-  private val V2_POLICY_API  = s"$V2_URI_BASE/policy"
-  private val V2_SERVICE_API = s"$V2_URI_BASE/service"
-  private val V2_ROLE_API    = s"$V2_URI_BASE/roles"
+  val PARAM_SERVICE_NAME = "serviceName"
+  val PARAM_ROLE_NAME    = "roleName"
+  val PARAM_ZONE_NAME    = "zoneName"
+  val PARAM_POLICY_NAME  = "policyName"
 
   /** Retrieve a specific policy by ID
     *
@@ -32,10 +38,13 @@ class DefaultRangerClient(
   override def findPolicyById(
     id: Int
   ): Either[RangerClientError, Option[RangerPolicy]] =
-    http.get[RangerPolicy](s"$V2_POLICY_API/${id.toString}", Map.empty, credential) match {
-      case Right(r)                      => Right(Some(r))
-      case Left(ClientErr(404 | 400, _)) => Right(None)
-      case Left(e)                       => Left(FindPolicyByIdErr(id, e))
+    Try(rangerClient.getPolicy(id)) match {
+      case Success(r) => Right(Some(r))
+
+      case Failure(err: RangerServiceException) if List(400, 404).contains(err.getStatus.getStatusCode) =>
+        Right(None)
+
+      case Failure(e) => Left(FindPolicyByIdErr(id, e))
     }
 
   /** Retrieve a specific policy by service name and policy name
@@ -53,10 +62,15 @@ class DefaultRangerClient(
     service: String,
     name: String,
     zoneName: Option[String]
-  ): Either[RangerClientError, Option[RangerPolicy]] =
+  ): Either[RangerClientError, Option[RangerPolicy]] = {
+    val params = Map(
+      PARAM_SERVICE_NAME -> service,
+      PARAM_POLICY_NAME  -> name
+    )
     zoneName
-      .map(findPolicyByServiceZonesName(service, name, _))
-      .getOrElse(findPolicyByServiceName(service, name))
+      .map(zone => findPolicies(params + (PARAM_ZONE_NAME -> zone)))
+      .getOrElse(findPolicies(params))
+  }
 
   /** Create a new RangerPolicy
     *
@@ -67,10 +81,9 @@ class DefaultRangerClient(
   override def createPolicy(
     policy: RangerPolicy
   ): Either[RangerClientError, RangerPolicy] =
-    http.post[RangerPolicy, RangerPolicy](s"$V2_POLICY_API", Map.empty, policy, credential) match {
-      case Right(Some(p)) => Right(p)
-      case Right(None)    => Left(CreatePolicyEmptyResponseErr(policy))
-      case Left(e)        => Left(CreatePolicyErr(policy, e))
+    Try(rangerClient.createPolicy(policy)) match {
+      case Success(p) => Right(p)
+      case Failure(e) => Left(CreatePolicyErr(policy, e))
     }
 
   /** Update an existing RangerPolicy
@@ -82,16 +95,15 @@ class DefaultRangerClient(
   override def updatePolicy(
     policy: RangerPolicy
   ): Either[RangerClientError, RangerPolicy] =
-    http.put[RangerPolicy, RangerPolicy](s"$V2_POLICY_API/${policy.id.toString}", Map.empty, policy, credential) match {
-      case Right(Some(p)) => Right(p)
-      case Right(None)    => Left(UpdatePolicyEmptyResponseErr(policy))
-      case Left(e)        => Left(UpdatePolicyErr(policy, e))
+    Try(rangerClient.updatePolicy(policy.id, policy)) match {
+      case Success(p) => Right(p)
+      case Failure(e) => Left(UpdatePolicyErr(policy, e))
     }
 
   override def deletePolicy(policy: RangerPolicy): Either[RangerClientError, Unit] =
-    http.delete[Unit](s"$V2_POLICY_API/${policy.id.toString}", Map.empty, credential) match {
-      case Right(_) => Right()
-      case Left(e)  => Left(DeletePolicyErr(policy, e))
+    Try(rangerClient.deletePolicy(policy.id)) match {
+      case Success(_) => Right()
+      case Failure(e) => Left(DeletePolicyErr(policy, e))
     }
 
   /** Retrieve a specific security zone by name
@@ -102,14 +114,12 @@ class DefaultRangerClient(
   override def findSecurityZoneByName(
     zoneName: String
   ): Either[RangerClientError, Option[RangerSecurityZone]] =
-    http.get[RangerSecurityZone](
-      s"$V2_URI_BASE/zones/name/$zoneName",
-      Map("Accept" -> "application/json"),
-      credential
-    ) match {
-      case Right(p)                      => Right(Some(p))
-      case Left(ClientErr(404 | 400, _)) => Right(None)
-      case Left(e)                       => Left(FindSecurityZoneByNameErr(zoneName, e))
+    Try(rangerClient.getSecurityZone(zoneName)) match {
+      case Success(sz) => Right(Some(sz))
+
+      case Failure(err: RangerServiceException) if List(400, 404).contains(err.getStatus.getStatusCode) => Right(None)
+
+      case Failure(e) => Left(FindSecurityZoneByNameErr(zoneName, e))
     }
 
   /** Update an existing RangerSecurityZone
@@ -120,15 +130,9 @@ class DefaultRangerClient(
   override def updateSecurityZone(
     zone: RangerSecurityZone
   ): Either[RangerClientError, RangerSecurityZone] =
-    http.put[RangerSecurityZone, RangerSecurityZone](
-      s"$V2_URI_BASE/zones/${zone.id.toString}",
-      Map("Accept" -> "application/json"),
-      zone,
-      credential
-    ) match {
-      case Right(Some(p)) => Right(p)
-      case Right(None)    => Left(UpdateSecurityZoneEmptyResponseErr(zone))
-      case Left(e)        => Left(UpdateSecurityZoneErr(zone, e))
+    Try(rangerClient.updateSecurityZone(zone.id, zone)) match {
+      case Success(sz) => Right(sz)
+      case Failure(e)  => Left(UpdateSecurityZoneErr(zone, e))
     }
 
   /** Create a RangerSecurityZone
@@ -139,15 +143,9 @@ class DefaultRangerClient(
   override def createSecurityZone(
     zone: RangerSecurityZone
   ): Either[RangerClientError, RangerSecurityZone] =
-    http.post[RangerSecurityZone, RangerSecurityZone](
-      s"$V2_URI_BASE/zones",
-      Map("Accept" -> "application/json"),
-      zone,
-      credential
-    ) match {
-      case Right(Some(p)) => Right(p)
-      case Right(None)    => Left(CreateSecurityZoneEmptyResponseErr(zone))
-      case Left(e)        => Left(CreateSecurityZoneErr(zone, e))
+    Try(rangerClient.createSecurityZone(zone)) match {
+      case Success(sz) => Right(sz)
+      case Failure(e)  => Left(CreateSecurityZoneErr(zone, e))
     }
 
   /** Retrieve all the Ranger services
@@ -155,34 +153,21 @@ class DefaultRangerClient(
     *         Left(RangerClientError) otherwise
     */
   override def findAllServices: Either[RangerClientError, Seq[RangerService]] =
-    http.get[Seq[RangerService]](s"$V2_SERVICE_API", Map.empty, credential) match {
-      case Right(r) => Right(r)
-      case Left(e)  => Left(FindAllServicesErr(e))
+    Try(rangerClient.findServices(Map.empty[String, String].asJava)) match {
+      case Success(r) => Right(r)
+      case Failure(e) => Left(FindAllServicesErr(e))
     }
 
-  private def findPolicyByServiceName(
-    service: String,
-    name: String
+  private def findPolicies(
+    searchParams: Map[String, String]
   ): Either[RangerClientError, Option[RangerPolicy]] =
-    http.get[RangerPolicy](s"$V2_SERVICE_API/$service/policy/$name", Map.empty, credential) match {
-      case Right(b)                => Right(Some(b))
-      case Left(ClientErr(404, _)) => Right(None)
-      case Left(e)                 => Left(FindPolicyByNameErr(name, e))
-    }
-
-  private def findPolicyByServiceZonesName(
-    service: String,
-    name: String,
-    zone: String
-  ): Either[RangerClientError, Option[RangerPolicy]] =
-    http.get[Seq[RangerPolicy]](
-      s"$V2_SERVICE_API/$service/policy?policyName=$name&zoneName=$zone",
-      Map.empty,
-      credential
+    Try(
+      rangerClient.findPolicies(
+        searchParams.asJava
+      )
     ) match {
-      case Right(b)                => Right(b.headOption)
-      case Left(ClientErr(404, _)) => Right(None)
-      case Left(e)                 => Left(FindPolicyByNameErr(name, e))
+      case Success(p) => Right(p.asScala.headOption.map(RangerPolicy.policyFromRangerModel))
+      case Failure(e) => Left(FindPoliciesErr(searchParams, e))
     }
 
   // --------------------------------
@@ -197,10 +182,12 @@ class DefaultRangerClient(
     *         Left(RangerClientError) in case of error
     */
   override def findRoleById(id: Int): Either[RangerClientError, Option[RangerRole]] =
-    http.get[RangerRole](s"$V2_ROLE_API/${id.toString}", Map.empty, credential) match {
-      case Right(r)                      => Right(Some(r))
-      case Left(ClientErr(404 | 400, _)) => Right(None)
-      case Left(e)                       => Left(FindRoleByIdErr(id, e))
+    Try(rangerClient.getRole(id)) match {
+      case Success(r) => Right(Some(r))
+
+      case Failure(err: RangerServiceException) if List(400, 404).contains(err.getStatus.getStatusCode) => Right(None)
+
+      case Failure(e) => Left(FindRoleByIdErr(id, e))
     }
 
   /** Retrieve a specific role by service name and role name
@@ -212,10 +199,9 @@ class DefaultRangerClient(
     *         Left(RangerClientError) in case of error
     */
   override def findRoleByName(name: String): Either[RangerClientError, Option[RangerRole]] =
-    http.get[RangerRole](s"$V2_ROLE_API/name/$name", Map.empty, credential) match {
-      case Right(r)                      => Right(Some(r))
-      case Left(ClientErr(404 | 400, _)) => Right(None)
-      case Left(e)                       => Left(FindRoleByNameErr(name, e))
+    Try(rangerClient.findRoles(Map(PARAM_ROLE_NAME -> name).asJava)) match {
+      case Success(r) => Right(r.asScala.headOption.map(RangerRole.roleFromRangerModel))
+      case Failure(e) => Left(FindRoleByNameErr(name, e))
     }
 
   /** Create a new RangerRole
@@ -225,10 +211,9 @@ class DefaultRangerClient(
     *         Left(RangerClientError) otherwise
     */
   override def createRole(role: RangerRole): Either[RangerClientError, RangerRole] =
-    http.post[RangerRole, RangerRole](s"$V2_ROLE_API", Map.empty, role, credential) match {
-      case Right(Some(r)) => Right(r)
-      case Right(None)    => Left(CreateRoleEmptyResponseErr(role))
-      case Left(e)        => Left(CreateRoleErr(role, e))
+    Try(rangerClient.createRole("", role)) match {
+      case Success(r) => Right(r)
+      case Failure(e) => Left(CreateRoleErr(role, e))
     }
 
   /** Update an existing RangerRole
@@ -238,10 +223,9 @@ class DefaultRangerClient(
     *         Left(RangerClientError) otherwise
     */
   override def updateRole(role: RangerRole): Either[RangerClientError, RangerRole] =
-    http.put[RangerRole, RangerRole](s"$V2_ROLE_API/${role.id.toString}", Map.empty, role, credential) match {
-      case Right(Some(r)) => Right(r)
-      case Right(None)    => Left(UpdateRoleEmptyResponseErr(role))
-      case Left(e)        => Left(UpdateRoleErr(role, e))
+    Try(rangerClient.updateRole(role.id, role)) match {
+      case Success(r) => Right(r)
+      case Failure(e) => Left(UpdateRoleErr(role, e))
     }
 
   /** Delete an existing RangerRole
@@ -251,8 +235,8 @@ class DefaultRangerClient(
     *         Left(RangerClientError) otherwise
     */
   override def deleteRole(role: RangerRole): Either[RangerClientError, Unit] =
-    http.delete[Unit](s"$V2_ROLE_API/${role.id.toString}", Map.empty, credential) match {
-      case Right(_) => Right()
-      case Left(e)  => Left(DeleteRoleErr(role, e))
+    Try(rangerClient.deleteRole(role.id)) match {
+      case Success(_) => Right()
+      case Failure(e) => Left(DeleteRoleErr(role, e))
     }
 }

@@ -15,6 +15,7 @@ trait Dependencies {
   lazy val awsLambdaJavaEventsVrs = "2.2.6"
   lazy val awsLambdaJavaCoreVrs   = "1.2.0"
   lazy val cdpSdkVrs              = "0.9.96"
+  lazy val rangerVrs              = "2.4.0"
 
   lazy val typeSafeConfig      = "com.typesafe"                   % "config"                 % typeSafeConfigVrs
   lazy val typeSafeLogging     = "com.typesafe.scala-logging"    %% "scala-logging"          % typeSafeLoggingVrs
@@ -35,6 +36,7 @@ trait Dependencies {
   lazy val awsLambdaJavaEvents = "com.amazonaws"                  % "aws-lambda-java-events" % awsLambdaJavaEventsVrs
   lazy val awsLambdaJavaCore   = "com.amazonaws"                  % "aws-lambda-java-core"   % awsLambdaJavaCoreVrs
   lazy val cdpSdk              = "com.cloudera.cdp"               % "cdp-sdk-java"           % cdpSdkVrs
+  lazy val rangerIntegration   = "org.apache.ranger"              % "ranger-intg"            % rangerVrs
   lazy val scalaTest           = "org.scalatest"                 %% "scalatest"              % scalaTestVrs  % "test"
   lazy val scalaMock           = "org.scalamock"                 %% "scalamock"              % scalaMockVrs  % "test"
   lazy val serverMock          = "org.mock-server"                % "mockserver-netty"       % serverMockVrs % "test"

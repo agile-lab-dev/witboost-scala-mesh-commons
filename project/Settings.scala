@@ -30,6 +30,7 @@ trait Settings {
       Wart.DefaultArguments,
       Wart.TraversableOps,
       Wart.ImplicitParameter,
+      Wart.ImplicitConversion,
       Wart.Null
     )
   )
