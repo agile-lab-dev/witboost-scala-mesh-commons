@@ -146,34 +146,52 @@ trait RangerClient {
 
 }
 
+object RangerAuthType {
+  type RangerAuthType = RangerAuthType.Value
+  object RangerAuthType extends Enumeration {
+    val Simple: RangerAuthType.Value   = Value("simple")
+    val Kerberos: RangerAuthType.Value = Value("kerberos")
+  }
+}
+
 object RangerClient {
-
-  val SIMPLE_AUTH   = "simple"
-  val KERBEROS_AUTH = "kerberos"
-
   def default(host: String, credential: BasicCredential): RangerClient = {
-    val client = new ranger.RangerClient(host, SIMPLE_AUTH, credential.username, credential.password, null)
+    val client = new ranger.RangerClient(
+      host,
+      RangerAuthType.RangerAuthType.Simple.toString,
+      credential.username,
+      credential.password,
+      null
+    )
     new RangerClientAdapter(client)
   }
 
   def defaultWithKerberos(host: String, principal: String, keytabPath: String): RangerClient = {
-    val client = new ranger.RangerClient(host, KERBEROS_AUTH, principal, keytabPath, null)
+    val client =
+      new ranger.RangerClient(host, RangerAuthType.RangerAuthType.Kerberos.toString, principal, keytabPath, null)
     new RangerClientAdapter(client)
   }
 
   def defaultWithAudit(host: String, credential: BasicCredential): RangerClient = {
-    val client = new ranger.RangerClient(host, SIMPLE_AUTH, credential.username, credential.password, null)
+    val client = new ranger.RangerClient(
+      host,
+      RangerAuthType.RangerAuthType.Simple.toString,
+      credential.username,
+      credential.password,
+      null
+    )
     new RangerClientAdapterWithAudit(
       new RangerClientAdapter(client),
-      Audit.default("RangerClient")
+      Audit.default("RangerClient(auth=Basic)")
     )
   }
 
   def defaultWithKerberosWithAudit(host: String, principal: String, keytabPath: String): RangerClient = {
-    val client = new ranger.RangerClient(host, KERBEROS_AUTH, principal, keytabPath, null)
+    val client =
+      new ranger.RangerClient(host, RangerAuthType.RangerAuthType.Kerberos.toString, principal, keytabPath, null)
     new RangerClientAdapterWithAudit(
       new RangerClientAdapter(client),
-      Audit.default("RangerClient")
+      Audit.default("RangerClient(auth=Kerberos)")
     )
   }
 }

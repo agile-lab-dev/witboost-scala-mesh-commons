@@ -41,7 +41,8 @@ class RangerClientAdapter(
     Try(rangerClient.getPolicy(id)) match {
       case Success(r) => Right(Some(r))
 
-      case Failure(err: RangerServiceException) if List(400, 404).contains(err.getStatus.getStatusCode) =>
+      case Failure(err: RangerServiceException)
+          if err.getStatus != null && List(400, 404).contains(err.getStatus.getStatusCode) =>
         Right(None)
 
       case Failure(e) => Left(FindPolicyByIdErr(id, e))
@@ -68,8 +69,8 @@ class RangerClientAdapter(
       PARAM_POLICY_NAME  -> name
     )
     zoneName
-      .map(zone => findPolicies(params + (PARAM_ZONE_NAME -> zone)))
-      .getOrElse(findPolicies(params))
+      .map(zone => findPolicy(params + (PARAM_ZONE_NAME -> zone)))
+      .getOrElse(findPolicy(params))
   }
 
   /** Create a new RangerPolicy
@@ -117,7 +118,9 @@ class RangerClientAdapter(
     Try(rangerClient.getSecurityZone(zoneName)) match {
       case Success(sz) => Right(Some(sz))
 
-      case Failure(err: RangerServiceException) if List(400, 404).contains(err.getStatus.getStatusCode) => Right(None)
+      case Failure(err: RangerServiceException)
+          if err.getStatus != null && List(400, 404).contains(err.getStatus.getStatusCode) =>
+        Right(None)
 
       case Failure(e) => Left(FindSecurityZoneByNameErr(zoneName, e))
     }
@@ -158,14 +161,10 @@ class RangerClientAdapter(
       case Failure(e) => Left(FindAllServicesErr(e))
     }
 
-  private def findPolicies(
+  private def findPolicy(
     searchParams: Map[String, String]
   ): Either[RangerClientError, Option[RangerPolicy]] =
-    Try(
-      rangerClient.findPolicies(
-        searchParams.asJava
-      )
-    ) match {
+    Try(rangerClient.findPolicies(searchParams.asJava)) match {
       case Success(p) => Right(p.asScala.headOption.map(RangerPolicy.policyFromRangerModel))
       case Failure(e) => Left(FindPoliciesErr(searchParams, e))
     }
@@ -185,7 +184,9 @@ class RangerClientAdapter(
     Try(rangerClient.getRole(id)) match {
       case Success(r) => Right(Some(r))
 
-      case Failure(err: RangerServiceException) if List(400, 404).contains(err.getStatus.getStatusCode) => Right(None)
+      case Failure(err: RangerServiceException)
+          if err.getStatus != null && List(400, 404).contains(err.getStatus.getStatusCode) =>
+        Right(None)
 
       case Failure(e) => Left(FindRoleByIdErr(id, e))
     }

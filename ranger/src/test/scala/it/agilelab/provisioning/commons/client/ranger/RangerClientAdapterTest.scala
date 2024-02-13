@@ -73,6 +73,15 @@ class RangerClientAdapterTest extends AnyFunSuite with BeforeAndAfterAll with Mo
     assert(actual == expected)
   }
 
+  test("findPolicyById return Left(FindPolicyByIdErr) on connection error") {
+    val exception = new RangerServiceException(ranger.RangerClient.GET_POLICY_BY_ID, null)
+    (client.getPolicy(_: Long)).expects(*).once().throws(exception)
+
+    val actual   = rangerClient.findPolicyById(1)
+    val expected = Left(FindPolicyByIdErr(1, exception))
+    assert(actual == expected)
+  }
+
   test("findPolicyByName without zone return Right(Some(RangerPolicy))") {
     val policy = RangerPolicy(
       id = 1,
@@ -288,36 +297,6 @@ class RangerClientAdapterTest extends AnyFunSuite with BeforeAndAfterAll with Mo
     assert(actual == Right(policy.copy(name = "z")))
   }
 
-  /*
-  test("updatePolicy return Left(UpdatePolicyErr(Empty body))") {
-    val policy = RangerPolicy(
-      id = 1,
-      service = "a",
-      name = "b",
-      description = "c",
-      isAuditEnabled = false,
-      isEnabled = false,
-      resources = Map.empty,
-      policyItems = Seq.empty,
-      serviceType = "d",
-      policyLabels = Seq.empty,
-      isDenyAllElse = false,
-      zoneName = "e",
-      policyPriority = 0
-    )
-
-    (client
-      .put[RangerPolicy, RangerPolicy](_: String, _: Map[String, String], _: RangerPolicy, _: Auth)(
-        _: Encoder[RangerPolicy],
-        _: Decoder[RangerPolicy]
-      ))
-      .when("https://my-api-url/service/public/v2/api/policy/1", *, policy, BasicCredential("x", "y"), *, *)
-      .returns(Right(None))
-
-    val actual = rangerClient.updatePolicy(policy)
-    assert(actual == Left(UpdatePolicyEmptyResponseErr(policy)))
-  }
-   */
   test("updatePolicy return Left(UpdatePolicyErr(policy,ClientError(401,)))") {
     val policy = RangerPolicy(
       id = 1,
@@ -403,6 +382,19 @@ class RangerClientAdapterTest extends AnyFunSuite with BeforeAndAfterAll with Mo
     assert(actual == expected)
   }
 
+  test("findSecurityZoneByName return Left(FindSecurityZoneByNameErr) on connection error") {
+    val exception = new RangerServiceException(
+      ranger.RangerClient.GET_ZONE_BY_NAME,
+      null
+    )
+
+    (client.getSecurityZone(_: String)).expects("zzz").throws(exception)
+
+    val actual   = rangerClient.findSecurityZoneByName("zzz")
+    val expected = Left(FindSecurityZoneByNameErr("zzz", exception))
+    assert(actual == expected)
+  }
+
   test("updateSecurityZone return Right(RangerSecurityZone)") {
     val zone = RangerSecurityZone(
       11,
@@ -434,44 +426,6 @@ class RangerClientAdapterTest extends AnyFunSuite with BeforeAndAfterAll with Mo
     assert(actual == Right(zone.copy(name = "z")))
   }
 
-  /*
-  test("updateSecurityZone return Left(UpdateSecurityZoneErr(Empty body))") {
-    val zone = RangerSecurityZone(
-      11,
-      "b",
-      Map(
-        "service_name" -> RangerSecurityZoneResources(
-          Seq(
-            Map(
-              "database" -> Seq("domain_*"),
-              "column"   -> Seq("*"),
-              "table"    -> Seq("*")
-            )
-          )
-        )
-      ),
-      isEnabled = true,
-      List("adminUser1", "adminUser2"),
-      List("adminUserGroup1", "adminUserGroup2"),
-      List("auditUser1", "auditUser2"),
-      List("auditUserGroup1", "auditUserGroup2")
-    )
-
-    (
-      client
-        .put[RangerSecurityZone, RangerSecurityZone](_: String, _: Map[String, String], _: RangerSecurityZone, _: Auth)(
-          _: Encoder[RangerSecurityZone],
-          _: Decoder[RangerSecurityZone]
-        )
-      )
-      .when("https://my-api-url/service/public/v2/api/zones/11", *, zone, BasicCredential("x", "y"), *, *)
-      .returns(Right(None))
-
-    val actual = rangerClient.updateSecurityZone(zone)
-    assert(actual == Left(UpdateSecurityZoneEmptyResponseErr(zone)))
-  }
-
-   */
   test("updateSecurityZone return Left(UpdateSecurityZoneErr(ClientError(401,)))") {
     val zone      = RangerSecurityZone(
       11,
@@ -610,48 +564,6 @@ class RangerClientAdapterTest extends AnyFunSuite with BeforeAndAfterAll with Mo
     assert(actual == Right(zone.copy(id = 2)))
   }
 
-  /*
-  test("createSecurityZone return Left(CreateSecurityZoneErr(Empty body))") {
-    val zone: RangerSecurityZone = RangerSecurityZone(
-      -1,
-      "zzz",
-      Map(
-        "service_name" -> RangerSecurityZoneResources(
-          Seq(
-            Map(
-              "database" -> Seq("domain_*"),
-              "column"   -> Seq("*"),
-              "table"    -> Seq("*")
-            )
-          )
-        )
-      ),
-      isEnabled = true,
-      List("adminUser1", "adminUser2"),
-      List("adminUserGroup1", "adminUserGroup2"),
-      List("auditUser1", "auditUser2"),
-      List("auditUserGroup1", "auditUserGroup2")
-    )
-
-    (
-      client
-        .post[RangerSecurityZone, RangerSecurityZone](
-          _: String,
-          _: Map[String, String],
-          _: RangerSecurityZone,
-          _: Auth
-        )(
-          _: Encoder[RangerSecurityZone],
-          _: Decoder[RangerSecurityZone]
-        )
-      )
-      .when("https://my-api-url/service/public/v2/api/zones", *, zone, BasicCredential("x", "y"), *, *)
-      .returns(Right(None))
-
-    val actual = rangerClient.createSecurityZone(zone)
-    assert(actual == Left(CreateSecurityZoneEmptyResponseErr(zone)))
-  }
-   */
   test("createSecurityZone return Left(CreateSecurityZoneErr(ClientError(401,)))") {
     val zone: RangerSecurityZone = RangerSecurityZone(
       -1,
@@ -775,6 +687,19 @@ class RangerClientAdapterTest extends AnyFunSuite with BeforeAndAfterAll with Mo
     assert(actual == expected)
   }
 
+  test("findRoleById return Left(FindRoleBydIdErr) on connection error") {
+    val exception = new RangerServiceException(
+      ranger.RangerClient.GET_ROLE_BY_ID,
+      null
+    )
+
+    (client.getRole(_: Long)).expects(1).throws(exception)
+
+    val actual   = rangerClient.findRoleById(1)
+    val expected = Left(FindRoleByIdErr(1, exception))
+    assert(actual == expected)
+  }
+
   test("findRoleByName return Right(RangerRole)") {
     val role = new model.RangerRole(
       "name",
@@ -829,22 +754,6 @@ class RangerClientAdapterTest extends AnyFunSuite with BeforeAndAfterAll with Mo
     assert(actual == Right(role.copy(id = 2)))
   }
 
-  /*
-  test("createRole return Left(CreateRangerRoleErr(Empty body))") {
-    val role = RangerRole.empty("name", "descr")
-    (client
-      .post[RangerRole, RangerRole](_: String, _: Map[String, String], _: RangerRole, _: Auth)(
-        _: Encoder[RangerRole],
-        _: Decoder[RangerRole]
-      ))
-      .when("https://my-api-url/service/public/v2/api/roles", *, role, BasicCredential("x", "y"), *, *)
-      .returns(Right(None))
-
-    val actual = rangerClient.createRole(role)
-    assert(actual == Left(CreateRoleEmptyResponseErr(role)))
-  }
-   */
-
   test("createRole return Left(CreateRangerRoleErr(ClientErr(401,)))") {
     val role = RangerRole.empty("name", "descr")
 
@@ -871,22 +780,6 @@ class RangerClientAdapterTest extends AnyFunSuite with BeforeAndAfterAll with Mo
     val actual = rangerClient.updateRole(role)
     assert(actual == Right(role.copy(name = "new-name")))
   }
-
-  /*
-  test("updateRole return Left(CreateRangerRoleErr(Empty body))") {
-    val role = RangerRole.empty("name", "descr").copy(id = 1)
-    (client
-      .put[RangerRole, RangerRole](_: String, _: Map[String, String], _: RangerRole, _: Auth)(
-        _: Encoder[RangerRole],
-        _: Decoder[RangerRole]
-      ))
-      .when("https://my-api-url/service/public/v2/api/roles/1", *, role, BasicCredential("x", "y"), *, *)
-      .returns(Right(None))
-
-    val actual = rangerClient.updateRole(role)
-    assert(actual == Left(UpdateRoleEmptyResponseErr(role)))
-  }
-   */
 
   test("updateRole return Left(UpdateRangerRoleErr(ClientErr(401,)))") {
     val role = RangerRole.empty("name", "descr").copy(id = 1)

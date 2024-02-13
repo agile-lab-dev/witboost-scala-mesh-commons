@@ -31,7 +31,8 @@ trait Settings {
       Wart.TraversableOps,
       Wart.ImplicitParameter,
       Wart.ImplicitConversion,
-      Wart.Null
+      Wart.Null,
+      Wart.Enumeration
     )
   )
 

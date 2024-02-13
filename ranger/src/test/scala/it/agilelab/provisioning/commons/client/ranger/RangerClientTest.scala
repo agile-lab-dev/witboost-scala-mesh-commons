@@ -26,4 +26,10 @@ class RangerClientTest extends AnyFunSuite with MockFactory {
     assert(client.isInstanceOf[RangerClientAdapterWithAudit])
   }
 
+  test("parsing kerberos auth type") {
+    assert(RangerAuthType.RangerAuthType.withName("simple") == RangerAuthType.RangerAuthType.Simple)
+    assert(RangerAuthType.RangerAuthType.withName("kerberos") == RangerAuthType.RangerAuthType.Kerberos)
+    assertThrows[NoSuchElementException](RangerAuthType.RangerAuthType.withName("other"))
+  }
+
 }
