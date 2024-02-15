@@ -37,7 +37,7 @@ class ProvisioningDescriptorTest extends AnyFunSuite with ParserSupport {
         |      name: my-dp-comonent-name-1
         |      fullyQualifiedName: my-dp-component-fully-qualified-name
         |      description: my-dp-component-description
-        |      kind: my-dp-component-kind
+        |      kind: workload
         |      workloadType: my-dp-component-type
         |      connectionType: my-dp-component-connection-type
         |      technology: my-dp-component-technology
@@ -52,7 +52,7 @@ class ProvisioningDescriptorTest extends AnyFunSuite with ParserSupport {
         |      name: my-dp-comonent-name-2
         |      fullyQualifiedName: my-dp-component-fully-qualified-name
         |      description: my-dp-component-description
-        |      kind: my-dp-component-kind
+        |      kind: workload
         |      workloadType: my-dp-component-type
         |      connectionType: my-dp-component-connection-type
         |      technology: my-dp-component-technology
@@ -67,7 +67,7 @@ class ProvisioningDescriptorTest extends AnyFunSuite with ParserSupport {
         |      name: my-dp-comonent-name-3
         |      fullyQualifiedName: my-dp-component-fully-qualified-name
         |      description: my-dp-component-description
-        |      kind: my-dp-component-kind
+        |      kind: workload
         |      workloadType: my-dp-component-type
         |      connectionType: my-dp-component-connection-type
         |      technology: my-dp-component-technology
@@ -100,7 +100,7 @@ class ProvisioningDescriptorTest extends AnyFunSuite with ParserSupport {
                 ("name", Json.fromString("my-dp-comonent-name-1")),
                 ("fullyQualifiedName", Json.fromString("my-dp-component-fully-qualified-name")),
                 ("description", Json.fromString("my-dp-component-description")),
-                ("kind", Json.fromString("my-dp-component-kind")),
+                ("kind", Json.fromString("workload")),
                 ("workloadType", Json.fromString("my-dp-component-type")),
                 ("connectionType", Json.fromString("my-dp-component-connection-type")),
                 ("technology", Json.fromString("my-dp-component-technology")),
@@ -119,7 +119,7 @@ class ProvisioningDescriptorTest extends AnyFunSuite with ParserSupport {
                 ("name", Json.fromString("my-dp-comonent-name-2")),
                 ("fullyQualifiedName", Json.fromString("my-dp-component-fully-qualified-name")),
                 ("description", Json.fromString("my-dp-component-description")),
-                ("kind", Json.fromString("my-dp-component-kind")),
+                ("kind", Json.fromString("workload")),
                 ("workloadType", Json.fromString("my-dp-component-type")),
                 ("connectionType", Json.fromString("my-dp-component-connection-type")),
                 ("technology", Json.fromString("my-dp-component-technology")),
@@ -138,7 +138,7 @@ class ProvisioningDescriptorTest extends AnyFunSuite with ParserSupport {
                 ("name", Json.fromString("my-dp-comonent-name-3")),
                 ("fullyQualifiedName", Json.fromString("my-dp-component-fully-qualified-name")),
                 ("description", Json.fromString("my-dp-component-description")),
-                ("kind", Json.fromString("my-dp-component-kind")),
+                ("kind", Json.fromString("workload")),
                 ("workloadType", Json.fromString("my-dp-component-type")),
                 ("connectionType", Json.fromString("my-dp-component-connection-type")),
                 ("technology", Json.fromString("my-dp-component-technology")),
@@ -180,7 +180,7 @@ class ProvisioningDescriptorTest extends AnyFunSuite with ParserSupport {
               ("name", Json.fromString("my-dp-comonent-name-1")),
               ("fullyQualifiedName", Json.fromString("my-dp-component-fully-qualified-name")),
               ("description", Json.fromString("my-dp-component-description")),
-              ("kind", Json.fromString("my-dp-component-kind")),
+              ("kind", Json.fromString("workload")),
               ("workloadType", Json.fromString("my-dp-component-type")),
               ("connectionType", Json.fromString("my-dp-component-connection-type")),
               ("technology", Json.fromString("my-dp-component-technology")),
@@ -199,7 +199,7 @@ class ProvisioningDescriptorTest extends AnyFunSuite with ParserSupport {
               ("name", Json.fromString("my-dp-comonent-name-2")),
               ("fullyQualifiedName", Json.fromString("my-dp-component-fully-qualified-name")),
               ("description", Json.fromString("my-dp-component-description")),
-              ("kind", Json.fromString("my-dp-component-kind")),
+              ("kind", Json.fromString("workload")),
               ("workloadType", Json.fromString("my-dp-component-type")),
               ("connectionType", Json.fromString("my-dp-component-connection-type")),
               ("technology", Json.fromString("my-dp-component-technology")),
@@ -218,7 +218,7 @@ class ProvisioningDescriptorTest extends AnyFunSuite with ParserSupport {
               ("name", Json.fromString("my-dp-comonent-name-3")),
               ("fullyQualifiedName", Json.fromString("my-dp-component-fully-qualified-name")),
               ("description", Json.fromString("my-dp-component-description")),
-              ("kind", Json.fromString("my-dp-component-kind")),
+              ("kind", Json.fromString("workload")),
               ("workloadType", Json.fromString("my-dp-component-type")),
               ("connectionType", Json.fromString("my-dp-component-connection-type")),
               ("technology", Json.fromString("my-dp-component-technology")),
@@ -255,7 +255,7 @@ class ProvisioningDescriptorTest extends AnyFunSuite with ParserSupport {
                 ("name", Json.fromString("my-dp-comonent-name-1")),
                 ("fullyQualifiedName", Json.fromString("my-dp-component-fully-qualified-name")),
                 ("description", Json.fromString("my-dp-component-description")),
-                ("kind", Json.fromString("my-dp-component-kind")),
+                ("kind", Json.fromString("workload")),
                 ("workloadType", Json.fromString("my-dp-component-type")),
                 ("connectionType", Json.fromString("my-dp-component-connection-type")),
                 ("technology", Json.fromString("my-dp-component-technology")),
@@ -274,7 +274,7 @@ class ProvisioningDescriptorTest extends AnyFunSuite with ParserSupport {
                 ("name", Json.fromString("my-dp-comonent-name-2")),
                 ("fullyQualifiedName", Json.fromString("my-dp-component-fully-qualified-name")),
                 ("description", Json.fromString("my-dp-component-description")),
-                ("kind", Json.fromString("my-dp-component-kind")),
+                ("kind", Json.fromString("workload")),
                 ("workloadType", Json.fromString("my-dp-component-type")),
                 ("connectionType", Json.fromString("my-dp-component-connection-type")),
                 ("technology", Json.fromString("my-dp-component-technology")),
@@ -293,7 +293,7 @@ class ProvisioningDescriptorTest extends AnyFunSuite with ParserSupport {
                 ("name", Json.fromString("my-dp-comonent-name-3")),
                 ("fullyQualifiedName", Json.fromString("my-dp-component-fully-qualified-name")),
                 ("description", Json.fromString("my-dp-component-description")),
-                ("kind", Json.fromString("my-dp-component-kind")),
+                ("kind", Json.fromString("workload")),
                 ("workloadType", Json.fromString("my-dp-component-type")),
                 ("connectionType", Json.fromString("my-dp-component-connection-type")),
                 ("technology", Json.fromString("my-dp-component-technology")),
@@ -334,7 +334,7 @@ class ProvisioningDescriptorTest extends AnyFunSuite with ParserSupport {
               ("name", Json.fromString("my-dp-comonent-name-1")),
               ("fullyQualifiedName", Json.fromString("my-dp-component-fully-qualified-name")),
               ("description", Json.fromString("my-dp-component-description")),
-              ("kind", Json.fromString("my-dp-component-kind")),
+              ("kind", Json.fromString("workload")),
               ("workloadType", Json.fromString("my-dp-component-type")),
               ("connectionType", Json.fromString("my-dp-component-connection-type")),
               ("technology", Json.fromString("my-dp-component-technology")),
@@ -353,7 +353,7 @@ class ProvisioningDescriptorTest extends AnyFunSuite with ParserSupport {
               ("name", Json.fromString("my-dp-comonent-name-2")),
               ("fullyQualifiedName", Json.fromString("my-dp-component-fully-qualified-name")),
               ("description", Json.fromString("my-dp-component-description")),
-              ("kind", Json.fromString("my-dp-component-kind")),
+              ("kind", Json.fromString("workload")),
               ("workloadType", Json.fromString("my-dp-component-type")),
               ("connectionType", Json.fromString("my-dp-component-connection-type")),
               ("technology", Json.fromString("my-dp-component-technology")),
@@ -372,7 +372,7 @@ class ProvisioningDescriptorTest extends AnyFunSuite with ParserSupport {
               ("name", Json.fromString("my-dp-comonent-name-3")),
               ("fullyQualifiedName", Json.fromString("my-dp-component-fully-qualified-name")),
               ("description", Json.fromString("my-dp-component-description")),
-              ("kind", Json.fromString("my-dp-component-kind")),
+              ("kind", Json.fromString("workload")),
               ("workloadType", Json.fromString("my-dp-component-type")),
               ("connectionType", Json.fromString("my-dp-component-connection-type")),
               ("technology", Json.fromString("my-dp-component-technology")),
@@ -409,7 +409,7 @@ class ProvisioningDescriptorTest extends AnyFunSuite with ParserSupport {
                 ("name", Json.fromString("my-dp-comonent-name-1")),
                 ("fullyQualifiedName", Json.fromString("my-dp-component-fully-qualified-name")),
                 ("description", Json.fromString("my-dp-component-description")),
-                ("kind", Json.fromString("my-dp-component-kind")),
+                ("kind", Json.fromString("workload")),
                 ("workloadType", Json.fromString("my-dp-component-type")),
                 ("connectionType", Json.fromString("my-dp-component-connection-type")),
                 ("technology", Json.fromString("my-dp-component-technology")),
@@ -428,7 +428,7 @@ class ProvisioningDescriptorTest extends AnyFunSuite with ParserSupport {
                 ("name", Json.fromString("my-dp-comonent-name-2")),
                 ("fullyQualifiedName", Json.fromString("my-dp-component-fully-qualified-name")),
                 ("description", Json.fromString("my-dp-component-description")),
-                ("kind", Json.fromString("my-dp-component-kind")),
+                ("kind", Json.fromString("workload")),
                 ("workloadType", Json.fromString("my-dp-component-type")),
                 ("connectionType", Json.fromString("my-dp-component-connection-type")),
                 ("technology", Json.fromString("my-dp-component-technology")),
@@ -447,7 +447,7 @@ class ProvisioningDescriptorTest extends AnyFunSuite with ParserSupport {
                 ("name", Json.fromString("my-dp-comonent-name-3")),
                 ("fullyQualifiedName", Json.fromString("my-dp-component-fully-qualified-name")),
                 ("description", Json.fromString("my-dp-component-description")),
-                ("kind", Json.fromString("my-dp-component-kind")),
+                ("kind", Json.fromString("workload")),
                 ("workloadType", Json.fromString("my-dp-component-type")),
                 ("connectionType", Json.fromString("my-dp-component-connection-type")),
                 ("technology", Json.fromString("my-dp-component-technology")),
@@ -497,7 +497,7 @@ class ProvisioningDescriptorTest extends AnyFunSuite with ParserSupport {
               ("name", Json.fromString("my-dp-comonent-name-1")),
               ("fullyQualifiedName", Json.fromString("my-dp-component-fully-qualified-name")),
               ("description", Json.fromString("my-dp-component-description")),
-              ("kind", Json.fromString("my-dp-component-kind")),
+              ("kind", Json.fromString("workload")),
               ("workloadType", Json.fromString("my-dp-component-type")),
               ("connectionType", Json.fromString("my-dp-component-connection-type")),
               ("technology", Json.fromString("my-dp-component-technology")),
@@ -516,7 +516,7 @@ class ProvisioningDescriptorTest extends AnyFunSuite with ParserSupport {
               ("name", Json.fromString("my-dp-comonent-name-2")),
               ("fullyQualifiedName", Json.fromString("my-dp-component-fully-qualified-name")),
               ("description", Json.fromString("my-dp-component-description")),
-              ("kind", Json.fromString("my-dp-component-kind")),
+              ("kind", Json.fromString("workload")),
               ("workloadType", Json.fromString("my-dp-component-type")),
               ("connectionType", Json.fromString("my-dp-component-connection-type")),
               ("technology", Json.fromString("my-dp-component-technology")),
@@ -535,7 +535,7 @@ class ProvisioningDescriptorTest extends AnyFunSuite with ParserSupport {
               ("name", Json.fromString("my-dp-comonent-name-3")),
               ("fullyQualifiedName", Json.fromString("my-dp-component-fully-qualified-name")),
               ("description", Json.fromString("my-dp-component-description")),
-              ("kind", Json.fromString("my-dp-component-kind")),
+              ("kind", Json.fromString("workload")),
               ("workloadType", Json.fromString("my-dp-component-type")),
               ("connectionType", Json.fromString("my-dp-component-connection-type")),
               ("technology", Json.fromString("my-dp-component-technology")),
@@ -572,7 +572,7 @@ class ProvisioningDescriptorTest extends AnyFunSuite with ParserSupport {
                 ("name", Json.fromString("my-dp-comonent-name-1")),
                 ("fullyQualifiedName", Json.fromString("my-dp-component-fully-qualified-name")),
                 ("description", Json.fromString("my-dp-component-description")),
-                ("kind", Json.fromString("my-dp-component-kind")),
+                ("kind", Json.fromString("workload")),
                 ("workloadType", Json.fromString("my-dp-component-type")),
                 ("connectionType", Json.fromString("my-dp-component-connection-type")),
                 ("technology", Json.fromString("my-dp-component-technology")),
@@ -591,7 +591,7 @@ class ProvisioningDescriptorTest extends AnyFunSuite with ParserSupport {
                 ("name", Json.fromString("my-dp-comonent-name-2")),
                 ("fullyQualifiedName", Json.fromString("my-dp-component-fully-qualified-name")),
                 ("description", Json.fromString("my-dp-component-description")),
-                ("kind", Json.fromString("my-dp-component-kind")),
+                ("kind", Json.fromString("workload")),
                 ("workloadType", Json.fromString("my-dp-component-type")),
                 ("connectionType", Json.fromString("my-dp-component-connection-type")),
                 ("technology", Json.fromString("my-dp-component-technology")),
@@ -610,7 +610,7 @@ class ProvisioningDescriptorTest extends AnyFunSuite with ParserSupport {
                 ("name", Json.fromString("my-dp-comonent-name-3")),
                 ("fullyQualifiedName", Json.fromString("my-dp-component-fully-qualified-name")),
                 ("description", Json.fromString("my-dp-component-description")),
-                ("kind", Json.fromString("my-dp-component-kind")),
+                ("kind", Json.fromString("workload")),
                 ("workloadType", Json.fromString("my-dp-component-type")),
                 ("connectionType", Json.fromString("my-dp-component-connection-type")),
                 ("technology", Json.fromString("my-dp-component-technology")),
@@ -647,6 +647,7 @@ class ProvisioningDescriptorTest extends AnyFunSuite with ParserSupport {
           Json.fromJsonObject(
             JsonObject(
               ("id", Json.fromString("my-dp-component-id-1")),
+              ("kind", Json.fromString("workload")),
               ("key", Json.fromString("value"))
             )
           )

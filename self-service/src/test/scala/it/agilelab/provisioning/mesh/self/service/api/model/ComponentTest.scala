@@ -1,5 +1,9 @@
 package it.agilelab.provisioning.mesh.self.service.api.model
 
+import cats.implicits.showInterpolator
+import io.circe.Json
+import io.circe.generic.auto._
+import it.agilelab.provisioning.commons.support.ParserSupport
 import it.agilelab.provisioning.mesh.self.service.api.model.Component.{
   DataContract,
   OutputPort,
@@ -9,9 +13,6 @@ import it.agilelab.provisioning.mesh.self.service.api.model.Component.{
 import it.agilelab.provisioning.mesh.self.service.api.model.openmetadata.ColumnConstraint._
 import it.agilelab.provisioning.mesh.self.service.api.model.openmetadata.ColumnDataType._
 import it.agilelab.provisioning.mesh.self.service.api.model.openmetadata.{ Column, ColumnConstraint, ColumnDataType }
-import io.circe.Json
-import io.circe.generic.auto._
-import it.agilelab.provisioning.commons.support.ParserSupport
 import org.scalatest.funsuite.AnyFunSuite
 
 class ComponentTest extends AnyFunSuite with ParserSupport {
@@ -176,7 +177,7 @@ class ComponentTest extends AnyFunSuite with ParserSupport {
         |name: name
         |fullyQualifiedName: fullyQualifiedName
         |description: description
-        |kind: kind
+        |kind: workload
         |workloadType: workloadType
         |connectionType: connectionType
         |technology: technology
@@ -197,7 +198,32 @@ class ComponentTest extends AnyFunSuite with ParserSupport {
       specific = "specific"
     )
 
-    assert(actual == Right(expected))
+    actual match {
+      case Left(error)  => fail(show"$error", error)
+      case Right(value) => assert(expected == value)
+    }
+  }
+
+  test("workload component from yaml fails if required field not present") {
+    val actual = fromYml[Component[String]](
+      """id: id
+        |name: name
+        |fullyQualifiedName: fullyQualifiedName
+        |description: description
+        |kind: workload
+        |workloadType: workloadType
+        |connectionType: connectionType
+        |technology: technology
+        |platform: platform
+        |# version: version
+        |infrastructureTemplateId: infrastructureTemplateId
+        |useCaseTemplateId: useCaseTemplateId
+        |tags: []
+        |readsFrom: []
+        |specific: specific""".stripMargin
+    )
+
+    assert(actual.isLeft)
   }
 
   test("outputPort component from yaml") {
@@ -206,7 +232,7 @@ class ComponentTest extends AnyFunSuite with ParserSupport {
         |name: name
         |fullyQualifiedName: fullyQualifiedName
         |description: description
-        |kind: kind
+        |kind: outputport
         |version: version
         |infrastructureTemplateId: infrastructureTemplateId
         |useCaseTemplateId: useCaseTemplateId
@@ -272,7 +298,43 @@ class ComponentTest extends AnyFunSuite with ParserSupport {
       specific = "specific"
     )
 
-    assert(actual == Right(expected))
+    actual match {
+      case Left(error)  => fail(show"$error", error)
+      case Right(value) => assert(expected == value)
+    }
+  }
+
+  test("outputport component from yaml fails if required field not present") {
+    val actual = fromYml[Component[String]](
+      """id: id
+        |name: name
+        |fullyQualifiedName: fullyQualifiedName
+        |description: description
+        |kind: outputport
+        |version: version
+        |infrastructureTemplateId: infrastructureTemplateId
+        |useCaseTemplateId: useCaseTemplateId
+        |dependsOn: []
+        |platform: platform
+        |technology: technology
+        |outputPortType: outputPortType
+        |creationDate: creationDate
+        |startDate: startDate
+        |processDescription: processDescription
+        |dataSharingAgreements:
+        |   purpose: purpose
+        |   billing: billing
+        |   security: security
+        |   intendedUsage: intendedUsage
+        |   limitations: limitations
+        |   lifeCycle: lifeCycle
+        |   confidentiality: confidentiality
+        |tags: []
+        |semanticLinking: []
+        |specific: specific""".stripMargin
+    )
+
+    assert(actual.isLeft)
   }
 
   test("storageArea component from yaml") {
@@ -281,7 +343,7 @@ class ComponentTest extends AnyFunSuite with ParserSupport {
         |name: name
         |fullyQualifiedName: fullyQualifiedName
         |description: description
-        |kind: kind
+        |kind: storage
         |owners: []
         |infrastructureTemplateId: infrastructureTemplateId
         |useCaseTemplateId: useCaseTemplateId
@@ -300,7 +362,48 @@ class ComponentTest extends AnyFunSuite with ParserSupport {
       specific = "specific"
     )
 
-    assert(actual == Right(expected))
+    actual match {
+      case Left(error)  => fail(show"$error", error)
+      case Right(value) => assert(expected == value)
+    }
+  }
+
+  test("storageArea component from yaml fails if required field is not present") {
+    val actual = fromYml[Component[String]](
+      """id: id
+        |name: name
+        |fullyQualifiedName: fullyQualifiedName
+        |description: description
+        |kind: storage
+        |# owners: []
+        |infrastructureTemplateId: infrastructureTemplateId
+        |useCaseTemplateId: useCaseTemplateId
+        |technology: technology
+        |platform: platform
+        |storageType: storageType
+        |tags: []
+        |specific: specific""".stripMargin
+    )
+
+    assert(actual.isLeft)
+  }
+
+  test("unknown component from yaml fails decoding") {
+    val actual = fromYml[Component[String]](
+      """id: id
+        |name: name
+        |fullyQualifiedName: fullyQualifiedName
+        |description: description
+        |kind: observability
+        |infrastructureTemplateId: infrastructureTemplateId
+        |useCaseTemplateId: useCaseTemplateId
+        |technology: technology
+        |platform: platform
+        |tags: []
+        |specific: specific""".stripMargin
+    )
+
+    assert(actual.isLeft)
   }
 
 }

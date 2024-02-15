@@ -68,7 +68,7 @@ class DefaultProvisionerControllerTest extends AnyFunSuite with MockFactory {
       |      name: my-dp-comonent-name-1
       |      fullyQualifiedName: my-dp-component-fully-qualified-name
       |      description: my-dp-component-description
-      |      kind: my-dp-component-kind
+      |      kind: workload
       |      workloadType: my-dp-component-type
       |      connectionType: my-dp-component-connection-type
       |      technology: my-dp-component-technology
@@ -83,7 +83,7 @@ class DefaultProvisionerControllerTest extends AnyFunSuite with MockFactory {
       |      name: my-dp-comonent-name-2
       |      fullyQualifiedName: my-dp-component-fully-qualified-name
       |      description: my-dp-component-description
-      |      kind: my-dp-component-kind
+      |      kind: workload
       |      workloadType: my-dp-component-type
       |      connectionType: my-dp-component-connection-type
       |      technology: my-dp-component-technology
@@ -98,7 +98,7 @@ class DefaultProvisionerControllerTest extends AnyFunSuite with MockFactory {
       |      name: my-dp-comonent-name-3
       |      fullyQualifiedName: my-dp-component-fully-qualified-name
       |      description: my-dp-component-description
-      |      kind: my-dp-component-kind
+      |      kind: workload
       |      workloadType: my-dp-component-type
       |      connectionType: my-dp-component-connection-type
       |      technology: my-dp-component-technology

@@ -1,10 +1,9 @@
 package it.agilelab.provisioning.mesh.self.service.api.model
 
-import cats.syntax.functor._
-import it.agilelab.provisioning.mesh.self.service.api.model.openmetadata.Column
 import io.circe.generic.auto._
 import io.circe.syntax._
-import io.circe.{ Decoder, Encoder }
+import io.circe.{ Decoder, DecodingFailure, Encoder, HCursor }
+import it.agilelab.provisioning.mesh.self.service.api.model.openmetadata.Column
 
 /** Component sealed trait
   * A hierarchical representation of all possible component.
@@ -14,6 +13,11 @@ import io.circe.{ Decoder, Encoder }
 sealed trait Component[SPECIFIC] extends Product with Serializable
 
 object Component {
+
+  val KIND_FIELD       = "kind"
+  val KIND_OUTPUTPORT  = "outputport"
+  val KIND_STORAGEAREA = "storage"
+  val KIND_WORKLOAD    = "workload"
 
   final case class DataContract(schema: Seq[Column])
 
@@ -60,10 +64,13 @@ object Component {
     * @return [[Decoder]]
     */
   implicit def decodeComponent[SPECIFIC](implicit dv: Decoder[SPECIFIC]): Decoder[Component[SPECIFIC]] =
-    List[Decoder[Component[SPECIFIC]]](
-      Decoder[OutputPort[SPECIFIC]].widen,
-      Decoder[Workload[SPECIFIC]].widen,
-      Decoder[StorageArea[SPECIFIC]].widen
-    ).reduceLeft(_ or _)
+    (c: HCursor) =>
+      c.downField(KIND_FIELD).as[String].flatMap {
+        case KIND_WORKLOAD    => Decoder[Workload[SPECIFIC]].apply(c)
+        case KIND_OUTPUTPORT  => Decoder[OutputPort[SPECIFIC]].apply(c)
+        case KIND_STORAGEAREA => Decoder[StorageArea[SPECIFIC]].apply(c)
+        case kind             =>
+          Left(DecodingFailure(s"'$kind' is not a valid component kind for the received object", c.history))
+      }
 
 }

@@ -40,7 +40,7 @@ class ProvisionRequestTest extends AnyFunSuite with ParserSupport {
         |   name: name
         |   fullyQualifiedName: fullyQualifiedName
         |   description: description
-        |   kind: kind
+        |   kind: workload
         |   workloadType: workloadType
         |   connectionType: connectionType
         |   technology: technology
@@ -111,7 +111,7 @@ class ProvisionRequestTest extends AnyFunSuite with ParserSupport {
         |   name: name
         |   fullyQualifiedName: fullyQualifiedName
         |   description: description
-        |   kind: kind
+        |   kind: outputport
         |   version: version
         |   infrastructureTemplateId: infrastructureTemplateId
         |   useCaseTemplateId: useCaseTemplateId
@@ -225,7 +225,7 @@ class ProvisionRequestTest extends AnyFunSuite with ParserSupport {
         |""".stripMargin
     )
     val expected = Right(
-      ProvisionRequest(
+      ProvisionRequest[String, String](
         DataProduct[String](
           id = "id",
           name = "name",
