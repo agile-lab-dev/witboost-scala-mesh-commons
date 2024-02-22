@@ -10,7 +10,12 @@ import org.apache.ranger.RangerServiceException
 import scala.jdk.CollectionConverters.{ CollectionHasAsScala, MapHasAsJava }
 import scala.util.{ Failure, Success, Try }
 
-/** Default Range Client implementation
+/** Default Range Client implementation.
+  *
+  * The methods calls to create or update objects are synchronized so no two parallel calls are done to Apache Ranger,
+  * as it's been verified that the current implementation locks the internal database at application level
+  * and concurrent write operations on the same task may fail.
+  *
   * @param host a String containing the ranger host; the string must NOT ends with '/'
   * @param http an Http instance
   * @param credential a BasicCredential instance
@@ -73,7 +78,7 @@ class RangerClientAdapter(
       .getOrElse(findPolicy(params))
   }
 
-  /** Create a new RangerPolicy
+  /** Create a new RangerPolicy. Synchronized call
     *
     * @param policy  : RangerPolicy definition
     * @return Right(RangerPolicy) if all works fine
@@ -82,12 +87,12 @@ class RangerClientAdapter(
   override def createPolicy(
     policy: RangerPolicy
   ): Either[RangerClientError, RangerPolicy] =
-    Try(rangerClient.createPolicy(policy)) match {
+    Try(RangerClient.synchronized(rangerClient.createPolicy(policy))) match {
       case Success(p) => Right(p)
       case Failure(e) => Left(CreatePolicyErr(policy, e))
     }
 
-  /** Update an existing RangerPolicy
+  /** Update an existing RangerPolicy. Synchronized call
     *
     * @param policy : RangerPolicy definition
     * @return Right(RangerPolicy) if all works fine
@@ -96,13 +101,19 @@ class RangerClientAdapter(
   override def updatePolicy(
     policy: RangerPolicy
   ): Either[RangerClientError, RangerPolicy] =
-    Try(rangerClient.updatePolicy(policy.id, policy)) match {
+    Try(RangerClient.synchronized(rangerClient.updatePolicy(policy.id, policy))) match {
       case Success(p) => Right(p)
       case Failure(e) => Left(UpdatePolicyErr(policy, e))
     }
 
+  /** Deletes an existing RangerPolicy. Synchronized call
+    *
+    * @param policy  : RangerPolicy definition
+    * @return Right(Unit) if all works fine
+    *         Left(RangerClientError) otherwise
+    */
   override def deletePolicy(policy: RangerPolicy): Either[RangerClientError, Unit] =
-    Try(rangerClient.deletePolicy(policy.id)) match {
+    Try(RangerClient.synchronized(rangerClient.deletePolicy(policy.id))) match {
       case Success(_) => Right()
       case Failure(e) => Left(DeletePolicyErr(policy, e))
     }
@@ -125,7 +136,7 @@ class RangerClientAdapter(
       case Failure(e) => Left(FindSecurityZoneByNameErr(zoneName, e))
     }
 
-  /** Update an existing RangerSecurityZone
+  /** Update an existing RangerSecurityZone. Synchronized call
     * @param zone : RangerSecurityZone definition
     * @return Right(RangerSecurityZone) if all works fine
     *         Left(RangerClientError) otherwise
@@ -133,12 +144,12 @@ class RangerClientAdapter(
   override def updateSecurityZone(
     zone: RangerSecurityZone
   ): Either[RangerClientError, RangerSecurityZone] =
-    Try(rangerClient.updateSecurityZone(zone.id, zone)) match {
+    Try(RangerClient.synchronized(rangerClient.updateSecurityZone(zone.id, zone))) match {
       case Success(sz) => Right(sz)
       case Failure(e)  => Left(UpdateSecurityZoneErr(zone, e))
     }
 
-  /** Create a RangerSecurityZone
+  /** Create a RangerSecurityZone. Synchronized call
     * @param zone: RangerSecurityZone definition
     * @return Right(RangerSecurityZone) if all works fine
     *         Left(RangerClientError) otherwise
@@ -146,7 +157,7 @@ class RangerClientAdapter(
   override def createSecurityZone(
     zone: RangerSecurityZone
   ): Either[RangerClientError, RangerSecurityZone] =
-    Try(rangerClient.createSecurityZone(zone)) match {
+    Try(RangerClient.synchronized(rangerClient.createSecurityZone(zone))) match {
       case Success(sz) => Right(sz)
       case Failure(e)  => Left(CreateSecurityZoneErr(zone, e))
     }
@@ -205,38 +216,38 @@ class RangerClientAdapter(
       case Failure(e) => Left(FindRoleByNameErr(name, e))
     }
 
-  /** Create a new RangerRole
+  /** Create a new RangerRole. Synchronized call
     *
     * @param role : RangerRole definition
     * @return Right(RangerRole) if all works fine
     *         Left(RangerClientError) otherwise
     */
   override def createRole(role: RangerRole): Either[RangerClientError, RangerRole] =
-    Try(rangerClient.createRole("", role)) match {
+    Try(RangerClient.synchronized(rangerClient.createRole("", role))) match {
       case Success(r) => Right(r)
       case Failure(e) => Left(CreateRoleErr(role, e))
     }
 
-  /** Update an existing RangerRole
+  /** Update an existing RangerRole. Synchronized call
     *
     * @param role : RangerRole definition
     * @return Right(RangerRole) if all works fine
     *         Left(RangerClientError) otherwise
     */
   override def updateRole(role: RangerRole): Either[RangerClientError, RangerRole] =
-    Try(rangerClient.updateRole(role.id, role)) match {
+    Try(RangerClient.synchronized(rangerClient.updateRole(role.id, role))) match {
       case Success(r) => Right(r)
       case Failure(e) => Left(UpdateRoleErr(role, e))
     }
 
-  /** Delete an existing RangerRole
+  /** Delete an existing RangerRole. Synchronized call
     *
     * @param role : RangerRole definition
     * @return Right() if all works fine
     *         Left(RangerClientError) otherwise
     */
   override def deleteRole(role: RangerRole): Either[RangerClientError, Unit] =
-    Try(rangerClient.deleteRole(role.id)) match {
+    Try(RangerClient.synchronized(rangerClient.deleteRole(role.id))) match {
       case Success(_) => Right()
       case Failure(e) => Left(DeleteRoleErr(role, e))
     }

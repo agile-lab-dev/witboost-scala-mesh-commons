@@ -47,3 +47,7 @@ SBT Dependencies reference:
     "it.agilelab.provisioning" %% "scala-mesh-ranger" % scalaMeshCommonsVersion
  )
 ```
+
+## Limitations
+
+The methods calls to create or update objects are synchronized so no two parallel calls are done to Apache Ranger, as it's been verified that the current Apache Ranger implementation locks the internal database at application level and concurrent write operations on the same task may fail.
