@@ -2,9 +2,7 @@ package it.agilelab.provisioning.mesh.self.service.api.model.openmetadata
 
 /** Column case class defined according to
   * the open metadata specifications available
-  * from https://docs.open-metadata.org/metadata-standard/schemas/entities/table#column
-  *
-  * Only the 'tags' field differs from the specifications
+  * from https://docs.open-metadata.org/v1.3.x/main-concepts/metadata-standard/schemas/entity/data/table
   */
 final case class Column(
   name: String,
@@ -14,7 +12,7 @@ final case class Column(
   dataTypeDisplay: Option[String],
   description: Option[String],
   fullyQualifiedName: Option[String],
-  tags: Option[Seq[String]],
+  tags: Option[Seq[Tag]],
   constraint: Option[ColumnConstraint],
   ordinalPosition: Option[Int],
   jsonSchema: Option[String],

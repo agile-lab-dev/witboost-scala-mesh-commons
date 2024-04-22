@@ -12,7 +12,14 @@ import it.agilelab.provisioning.mesh.self.service.api.model.Component.{
 }
 import it.agilelab.provisioning.mesh.self.service.api.model.openmetadata.ColumnConstraint._
 import it.agilelab.provisioning.mesh.self.service.api.model.openmetadata.ColumnDataType._
-import it.agilelab.provisioning.mesh.self.service.api.model.openmetadata.{ Column, ColumnConstraint, ColumnDataType }
+import it.agilelab.provisioning.mesh.self.service.api.model.openmetadata.TagLabelType.{
+  Automated,
+  Derived,
+  Manual,
+  Propagated
+}
+import it.agilelab.provisioning.mesh.self.service.api.model.openmetadata.TagState.{ Confirmed, Suggested }
+import it.agilelab.provisioning.mesh.self.service.api.model.openmetadata._
 import org.scalatest.funsuite.AnyFunSuite
 
 class ComponentTest extends AnyFunSuite with ParserSupport {
@@ -128,6 +135,34 @@ class ComponentTest extends AnyFunSuite with ParserSupport {
   ) foreach { case (json: String, columnDataType: ColumnDataType) =>
     test(s"fromJson with $json return $columnDataType") {
       assert(fromJson[ColumnDataType](json) == Right(columnDataType))
+    }
+  }
+
+  Seq(
+    ("\"Manual\"", Manual),
+    ("\"Propagated\"", Propagated),
+    ("\"Automated\"", Automated),
+    ("\"Derived\"", Derived)
+  ) foreach { case (json: String, labelType: TagLabelType) =>
+    test(s"fromJson with $json return $labelType") {
+      assert(fromJson[TagLabelType](json) == Right(labelType))
+    }
+
+    test(s"toJson with $json return $labelType") {
+      assert(toJson[TagLabelType](labelType) == json)
+    }
+  }
+
+  Seq(
+    ("\"Suggested\"", Suggested),
+    ("\"Confirmed\"", Confirmed)
+  ) foreach { case (json: String, tagState: TagState) =>
+    test(s"fromJson with $json return $tagState") {
+      assert(fromJson[TagState](json) == Right(tagState))
+    }
+
+    test(s"toJson with $json return $tagState") {
+      assert(toJson[TagState](tagState) == json)
     }
   }
 
@@ -248,6 +283,17 @@ class ComponentTest extends AnyFunSuite with ParserSupport {
         |     - name: column1
         |       dataType: int
         |       constraint: PRIMARY_KEY
+        |       tags:
+        |         - tagFQN: tagName
+        |           description: tagDescription
+        |           source: Glossary
+        |           labelType: Manual
+        |           state: Confirmed
+        |         - tagFQN: otherTagName
+        |           source: Tag
+        |           labelType: Automated
+        |           state: Suggested
+        |           href: http://example.com
         |     - name: column2
         |       dataType: BIGINT
         |       constraint: NOT_NULL
@@ -291,7 +337,25 @@ class ComponentTest extends AnyFunSuite with ParserSupport {
       version = "version",
       dataContract = DataContract(
         schema = Seq(
-          Column("column1", INT, None, None, None, None, None, None, Some(PRIMARY_KEY), None, None, None),
+          Column(
+            "column1",
+            INT,
+            None,
+            None,
+            None,
+            None,
+            None,
+            Some(
+              Seq(
+                Tag("tagName", Some("tagDescription"), "Glossary", Manual, Confirmed, None),
+                Tag("otherTagName", None, "Tag", Automated, Suggested, Some("http://example.com"))
+              )
+            ),
+            Some(PRIMARY_KEY),
+            None,
+            None,
+            None
+          ),
           Column("column2", BIGINT, None, None, None, None, None, None, Some(NOT_NULL), None, None, None)
         )
       ),
