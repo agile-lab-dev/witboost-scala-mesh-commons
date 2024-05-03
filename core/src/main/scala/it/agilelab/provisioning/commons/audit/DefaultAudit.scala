@@ -16,4 +16,10 @@ class DefaultAudit(logger: Logger) extends Audit {
   override def warning(message: String): Unit =
     logger.warn(message)
 
+  override def debug(message: String): Unit =
+    logger.debug(message)
+
+  override def trace(message: String): Unit =
+    logger.trace(message)
+
 }

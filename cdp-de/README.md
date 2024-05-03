@@ -1,29 +1,26 @@
 # scala-mesh-cdp-de
 
-## Description
-A module that provide a gateway to easily interact with Cdp Data Engineering (CDE) experience.
-This library has two main gateways: the first allows to interact CDE at service level, while the second with CDE at cluster level.
+`scala-mesh-cdp-de` is a module that provides a gateway to easily interact with CDP Data Engineering (CDE) experience. This library has two main gateways: `CdpDeClient` allows to interact CDE at service level, while `CdeClusterClient` with CDE at cluster level.
 
-Through the first gateway you can:
-* find all services in CDE
-* find a service by name
-* describe a service by id
-* describe a service by name
-* find all virtual clusters
-* find a virtual cluster by name
-* describe a virtual cluster
-* describe a virtual cluster by name
+Through `CdpDeClient` you can:
+* Find all services in CDE
+* Find a service by name
+* Describe a service by id
+* Describe a service by name
+* Find all virtual clusters
+* Find a virtual cluster by name
+* Describe a virtual cluster
+* Describe a virtual cluster by name
 
-Through the second gateway you can:
-* get a resource 
-* create a resource
-* upload a file
-* list jobs
-* get a specific job
-* create a job
-* upsert a job
-* list job runs
-
+Through `CdeClusterClient` you can:
+* Get a resource 
+* Create a resource
+* Upload a file
+* List jobs
+* Get a specific job
+* Create a job
+* Upsert a job
+* List job runs
 
 ## Dependencies
 
@@ -33,19 +30,18 @@ Project Dependencies:
 
 Production code dependency:
 
-* **scala-mesh-core**: internal core library that provide useful stuff, parsing, cats extension and so on.
-* **scala-mesh-http**: internal core library that provide useful method to interact with any http api
-* *cdp-sdk-java*: java based sdk to interact with CDP
+* [**scala-mesh-core**](../core): scala-mesh-commons core library which provides parsing functionalities, Scala cats extension among others.
+* [**scala-mesh-http**](../http): internal core library that provide useful method to interact with any http api
+* *cdp-sdk-java*: Java based SDK to interact with CDP
 
 Test code dependency:
 
 * scalatest: framework for unittest in scala
 * scalamock: framework for mock and stub in scala
 
+## Usage
 
-## How to use it
-
-SBT Dependencies reference:
+Add the library to your sbt `libraryDependencies`:
 
 ```
  libraryDependencies ++= Seq(

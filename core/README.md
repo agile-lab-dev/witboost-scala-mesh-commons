@@ -11,27 +11,25 @@ Project Dependencies:
 
 Production code dependency:
 
-* *typesafe-config*: used for functional style on configuration
-* *circe-parser*, *circe-generic*, *circe-yaml*: used for serializing and deserializing objects into and from json/yml
-* *cats-core*: used for fun effects
-* *scala-logging*, *logback-classic*: used as logging system
+* *typesafe-config*: Used for functional style on configuration
+* *circe-parser*, *circe-generic*, *circe-yaml*: Used for serializing and deserializing objects into and from json/yml
+* *cats-core*: Used for functional programming effects
+* *scala-logging*, *logback-classic*: Used as logging system
 
 Test code dependency:
 
 * scalatest: framework for unittest in scala
 * scalamock: framework for mock and stub in scala
 
+## Usage
 
-## How to use it
-
-SBT Dependencies reference:
+Add the library to your sbt `libraryDependencies`:
 
 ```
  libraryDependencies ++= Seq(
     "it.agilelab.provisioning" %% "scala-mesh-core" % scalaMeshCommonsVersion
  )
 ```
-
 
 ### Audit
 
@@ -41,6 +39,8 @@ val audit = Audit.default("my-logger-name")
 audit.info("my info message")
 audit.error("my error message")
 audit.warning("my warning message")
+audit.debug("my debug message")
+audit.trace("my trace message")
 ```
 
 ### Conf
@@ -52,7 +52,7 @@ case class MyCredential(username:String, password:String)
 val conf = Conf.env()
 //Use Conf.envWithAudit() to enable logging on all Conf process
 //val conf = Conf.envWithAudit()
-val myCredential: Either[ConfError,MyCredential] = for {
+val myCredential: Either[ConfError, MyCredential] = for {
   username <- conf.get("USR")
   password <- conf.get("PWD")
 } yield MyCredential(username,password)

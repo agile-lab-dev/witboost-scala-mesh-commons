@@ -1,8 +1,6 @@
 # scala-mesh-principals-mapping
 
-## Description
-
-This library provides a trait definition to map principals between authentication providers
+`scala-mesh-principals-mapping` provides a trait definition to map principals between authentication providers
 
 ## Dependencies
 
@@ -12,16 +10,16 @@ Project Dependencies:
 
 Production code dependency:
 
-* **scala-mesh-core**: internal core library that provide useful stuff, parsing, cats extension and so on.
+* [**scala-mesh-core**](../core): scala-mesh-commons core library which provides parsing functionalities, Scala cats extension among others.
 
 Test code dependency:
 
 * scalatest: framework for unittest in scala
 * scalamock: framework for mock and stub in scala
 
-## How to use it
+## Usage
 
-SBT Dependencies reference:
+Add the library to your sbt `libraryDependencies`:
 
 ```
  libraryDependencies ++= Seq(

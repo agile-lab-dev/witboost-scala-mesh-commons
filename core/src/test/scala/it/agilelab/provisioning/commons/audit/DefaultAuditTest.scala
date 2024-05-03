@@ -33,6 +33,18 @@ class DefaultAuditTest extends AnyFunSuite with MockFactory with OneInstancePerT
       (logger.warn(_: String)).expects(message).once()
       audit.warning(message)
     }
+
+    test(s"debug call logger with $message") {
+      (logger.isDebugEnabled: () => Boolean).expects().returns(true)
+      (logger.debug(_: String)).expects(message).once()
+      audit.debug(message)
+    }
+
+    test(s"trace call logger with $message") {
+      (logger.isTraceEnabled: () => Boolean).expects().returns(true)
+      (logger.trace(_: String)).expects(message).once()
+      audit.trace(message)
+    }
   }
 
 }

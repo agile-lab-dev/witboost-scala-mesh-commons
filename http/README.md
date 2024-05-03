@@ -1,7 +1,7 @@
 # scala-mesh-http
 
 ## Description
-An abstraction to http functionality. Provide useful method to interact with any http api
+An abstraction to http functionality. Provide useful method to interact with any HTTP API
 
 ## Dependencies
 
@@ -11,18 +11,18 @@ Project Dependencies:
 
 Production code dependency:
 
-* **scala-mesh-core**: internal core library that provide useful stuff, parsing, cats extension and so on.
-* sttpClient3-core,sttpClient3-circe,sttpClient3-okhttp-backend: for managing http request response 
+* [**scala-mesh-core**](../core): scala-mesh-commons core library which provides parsing functionalities, Scala cats extension among others.
+* *sttpClient3-core*, *sttpClient3-circe*, *sttpClient3-okhttp-backend*: for managing http request response 
 
 Test code dependency:
 
 * scalatest: framework for unittest in scala
 * scalamock: framework for mock and stub in scala
-* mockserver: framework to setup a rest server to local test http request and resposne
+* mockserver: framework to setup a rest server to local test http request and response
 
-## How to use it
+## Usage
 
-SBT Dependencies reference:
+Add the library to your sbt `libraryDependencies`:
 
 ```
  libraryDependencies ++= Seq(

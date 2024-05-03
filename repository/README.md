@@ -4,19 +4,18 @@
 This library contains a set of scala_2.13 mesh commons classes to interact with repositories.
 
 Through a repository trait you can:
-* find an entity by id
-* find all entities inside a repository (with an optional filter)
-* create an entity
-* delete an entity
-* update an entity
+* Find an entity by id
+* Find all entities inside a repository (with an optional filter)
+* Create an entity
+* Delete an entity
+* Update an entity
 
 Inside this project there are some implementation of Repository:
-* DataProductRepository: to handle data products in a generic repository 
-* DomainDynamoDBRepository: to handle data mesh domains in a DynamoDB table
-* DynamoDBRepository: generic DynamoDB implementation
-* ProvisionStateDynamoDBRepository: to handle provisioner requests state in a DynamoDB table
-* RoleDynamoDBRepository: to handle mesh roles in a DynamoDB table
-
+* `DataProductRepository`: to handle data products in a generic repository 
+* `DomainDynamoDBRepository`: to handle data mesh domains in a DynamoDB table
+* `DynamoDBRepository`: generic DynamoDB implementation
+* `ProvisionStateDynamoDBRepository`: to handle provisioner requests state in a DynamoDB table
+* `RoleDynamoDBRepository`: to handle roles in a DynamoDB table
 
 ## Dependencies
 
@@ -26,18 +25,17 @@ Project Dependencies:
 
 Production code dependency:
 
-* **scala-mesh-core**: internal core library that provide useful stuff, parsing, cats extension and so on.
-* *dynamodb*: java based sdk to interact with AWS DynamoDB
+* [**scala-mesh-core**](../core): scala-mesh-commons core library which provides parsing functionalities, Scala cats extension among others.
+* *dynamodb*: Java based SDK to interact with AWS DynamoDB
 
 Test code dependency:
 
 * scalatest: framework for unittest in scala
 * scalamock: framework for mock and stub in scala
 
+## Usage
 
-## How to use it
-
-SBT Dependencies reference:
+Add the library to your sbt `libraryDependencies`:
 
 ```
  libraryDependencies ++= Seq(

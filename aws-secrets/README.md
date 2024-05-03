@@ -1,9 +1,8 @@
 # scala-mesh-aws-secrets
 
-## Description
-A module that provide a gateway to easily interact with AWS Secrets Manager.
-Through the gateway you can:
-* retrieve the value for a specific secret, given the associated key
+`scala-mesh-aws-secrets` is a module that provides a gateway to easily interact with AWS Secrets Manager. Through the gateway you can:
+
+* Retrieve the value for a specific secret, given the associated key
 
 ## Dependencies
 
@@ -13,18 +12,17 @@ Project Dependencies:
 
 Production code dependency:
 
-* **scala-mesh-core**: internal core library that provide useful stuff, parsing, cats extension and so on.
-* *secretsmanager*: java based sdk to interact with AWS Secrets Manager
+* [**scala-mesh-core**](../core): scala-mesh-commons core library which provides parsing functionalities, Scala cats extension among others.
+* *secretsmanager*: Java based SDK to interact with AWS Secrets Manager
 
 Test code dependency:
 
 * scalatest: framework for unittest in scala
 * scalamock: framework for mock and stub in scala
 
+## Usage
 
-## How to use it
-
-SBT Dependencies reference:
+Add the library to your sbt `libraryDependencies`:
 
 ```
  libraryDependencies ++= Seq(

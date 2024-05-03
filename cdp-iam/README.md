@@ -1,21 +1,19 @@
 # scala-mesh-cdp-iam
 
-## Description
-A module that provide a gateway to easily interact with Cdp Iam functionalities.
+`scala-mesh-cdp-iam` is a module that provides a gateway to easily interact with CDP IAM functionalities.
 
 Through this gateway you can:
-* retrieve a machine user
-* create a machine user
-* set the workload password of a machine user
-* add a machine user to a group
-* check if a machine user belongs to a group
-* retrieve a group
-* create a group
-* list the available CDP resource roles
-* list the resource roles assignments belonging to a group
-* assign a resource role to group
-* unassing a resource role from a group 
-
+* Retrieve a machine user
+* Create a machine user
+* Set the workload password of a machine user
+* Add a machine user to a group
+* Check if a machine user belongs to a group
+* Retrieve a group
+* Create a group
+* List the available CDP resource roles
+* List the resource roles assignments belonging to a group
+* Assign a resource role to group
+* Unassign a resource role from a group 
 
 ## Dependencies
 
@@ -25,18 +23,17 @@ Project Dependencies:
 
 Production code dependency:
 
-* **scala-mesh-core**: internal core library that provide useful stuff, parsing, cats extension and so on.
-* *cdp-sdk-java*: java based sdk to interact with CDP
+* [**scala-mesh-core**](../core): scala-mesh-commons core library which provides parsing functionalities, Scala cats extension among others.
+* *cdp-sdk-java*: Java based SDK to interact with CDP
 
 Test code dependency:
 
 * scalatest: framework for unittest in scala
 * scalamock: framework for mock and stub in scala
 
+## Usage
 
-## How to use it
-
-SBT Dependencies reference:
+Add the library to your sbt `libraryDependencies`:
 
 ```
  libraryDependencies ++= Seq(

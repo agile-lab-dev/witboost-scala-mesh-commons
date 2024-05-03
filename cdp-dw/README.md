@@ -1,14 +1,12 @@
 # scala-mesh-cdp-dw
 
-## Description
-This library provides a gateway to interact with CDP DataWarehouse experience at service level.
+`scala-mesh-cdp-dw` provides a gateway to interact with CDP DataWarehouse (CDW) experience at service level.
 
 Through this gateway you can:
-* find all clusters
-* find a cluster by environment crn
-* find all virtual warehouses
-* find a virtual by name
-
+* Find all clusters
+* Find a cluster by environment crn
+* Find all virtual warehouses
+* Find a virtual warehouse by name
 
 ## Dependencies
 
@@ -18,18 +16,17 @@ Project Dependencies:
 
 Production code dependency:
 
-* **scala-mesh-core**: internal core library that provide useful stuff, parsing, cats extension and so on.
-* *cdp-sdk-java*: java based sdk to interact with CDP
+* [**scala-mesh-core**](../core): scala-mesh-commons core library which provides parsing functionalities, Scala cats extension among others.
+* *cdp-sdk-java*: Java based SDK to interact with CDP
 
 Test code dependency:
 
 * scalatest: framework for unittest in scala
 * scalamock: framework for mock and stub in scala
 
+## Usage
 
-## How to use it
-
-SBT Dependencies reference:
+Add the library to your sbt `libraryDependencies`:
 
 ```
  libraryDependencies ++= Seq(

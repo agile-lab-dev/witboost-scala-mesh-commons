@@ -1,10 +1,9 @@
 # scala-mesh-aws-lambda-handlers
 
-## Description
-A module that provide some lambda handler trait in scala idiomatic way.
-Through the gateway you can:
-* create a lambda that handle StreamEvent (Read inputStream to a String, then call the handle method and write the output to the OutputStream)
-* create a Lambda RequestHandler based on ApiGatewayProxy integration (to call a lambda through AWS ApiGateway)
+`scala-mesh-aws-lambda-handlers` is a module that provides some lambda handler trait in scala idiomatic way. Through the gateway you can:
+
+* Create a lambda that handles StreamEvent (Read inputStream to a String, then call the handle method and write the output to the OutputStream)
+* Create a Lambda RequestHandler based on ApiGatewayProxy integration (to call a lambda through AWS ApiGateway)
 
 ## Dependencies
 
@@ -14,9 +13,9 @@ Project Dependencies:
 
 Production code dependency:
 
-* **scala-mesh-core**: internal core library that provide useful stuff, parsing, cats extension and so on.
-* *aws-lambda-java-events*: java based sdk that provide all lambda java events
-* *aws-lambda-java-core*: java based sdk that provide all lambda interfaces
+* [**scala-mesh-core**](../core): scala-mesh-commons core library which provides parsing functionalities, Scala cats extension among others.
+* *aws-lambda-java-events*: Java based SDK that provide all lambda Java events
+* *aws-lambda-java-core*: Java based SDK that provide all lambda interfaces
 
 Test code dependency:
 
@@ -24,9 +23,9 @@ Test code dependency:
 * scalamock: framework for mock and stub in scala
 
 
-## How to use it
+## Usage
 
-SBT Dependencies reference:
+Add the library to your sbt `libraryDependencies`:
 
 ```
  libraryDependencies ++= Seq(

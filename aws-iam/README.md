@@ -1,11 +1,10 @@
 # scala-mesh-aws-iam
 
-## Description
-A module that provide a gateway to easily interact with IAM and IAM Policy.
-Through the gateway you can:
-* create a policy for a specific role
-* delete a policy for a specific role
-* check if a specific policy exists for a specific role
+`scala-mesh-aws-iam` is a module that provides a gateway to easily interact with AWS IAM and IAM Policies. Through the gateway you can:
+
+* Create a policy for a specific role
+* Delete a policy for a specific role
+* Check if a specific policy exists for a specific role
 
 Moreover, the library provides IAM policy model classes to convert policies in JSON-formatted strings.
 
@@ -17,18 +16,17 @@ Project Dependencies:
 
 Production code dependency:
 
-* **scala-mesh-core**: internal core library that provide useful stuff, parsing, cats extension and so on.
-* *iam*: java based sdk to interact with AWS IAM
+* [**scala-mesh-core**](../core): scala-mesh-commons core library which provides parsing functionalities, Scala cats extension among others.
+* *iam*: Java based SDK to interact with AWS IAM
 
 Test code dependency:
 
-* scalatest: framework for unittest in scala
-* scalamock: framework for mock and stub in scala
+* **scalatest**: Framework for unittest in scala
+* **scalamock**: Framework for mock and stub in scala
 
+## Usage
 
-## How to use it
-
-SBT Dependencies reference:
+Add the library to your sbt `libraryDependencies`:
 
 ```
  libraryDependencies ++= Seq(

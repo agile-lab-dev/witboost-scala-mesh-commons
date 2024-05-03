@@ -23,6 +23,15 @@ trait Audit {
     */
   def warning(message: String): Unit
 
+  /** Debug message on logging system
+    * @param message string message value
+    */
+  def debug(message: String): Unit
+
+  /** Trace message on logging system
+    * @param message string message value
+    */
+  def trace(message: String): Unit
 }
 
 object Audit {

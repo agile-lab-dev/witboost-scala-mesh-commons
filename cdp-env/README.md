@@ -1,12 +1,10 @@
 # scala-mesh-cdp-env
 
-## Description
-This library provides a gateway to interact with CDP Environment experience at service level.
+`scala-mesh-cdp-env` provides a gateway to interact with CDP Environment experience at service level.
 
 Through this gateway you can:
-* list the available environments
-* describe an environment by name
-
+* List the available environments
+* Describe an environment by name
 
 ## Dependencies
 
@@ -16,18 +14,17 @@ Project Dependencies:
 
 Production code dependency:
 
-* **scala-mesh-core**: internal core library that provide useful stuff, parsing, cats extension and so on.
-* *cdp-sdk-java*: java based sdk to interact with CDP
+* [**scala-mesh-core**](../core): scala-mesh-commons core library which provides parsing functionalities, Scala cats extension among others.
+* *cdp-sdk-java*: Java based SDK to interact with CDP
 
 Test code dependency:
 
 * scalatest: framework for unittest in scala
 * scalamock: framework for mock and stub in scala
 
+## Usage
 
-## How to use it
-
-SBT Dependencies reference:
+Add the library to your sbt `libraryDependencies`:
 
 ```
  libraryDependencies ++= Seq(

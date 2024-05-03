@@ -15,8 +15,8 @@ Project Dependencies:
 
 Production code dependency:
 
-* **scala-mesh-core**: internal core library that provide useful stuff, parsing, cats extension and so on.
-* **scala-mesh-principals-mapping**: library with the trait definition of the mapper interface
+* [**scala-mesh-core**](../core): scala-mesh-commons core library which provides parsing functionalities, Scala cats extension among others.
+* [**scala-mesh-principals-mapping**](../principals-mapping): library with the trait definition of the mapper interface
 
 
 Test code dependency:
@@ -24,9 +24,9 @@ Test code dependency:
 * scalatest: framework for unittest in scala
 * scalamock: framework for mock and stub in scala
 
-## How to use it
+## Usage
 
-SBT Dependencies reference:
+Add the library to your sbt `libraryDependencies`:
 
 ```
  libraryDependencies ++= Seq(

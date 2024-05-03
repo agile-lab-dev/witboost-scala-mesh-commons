@@ -1,8 +1,6 @@
 # scala-mesh-ranger
 
-## Description
-
-This library provides a gateway to interact with Apache Ranger APIs using the [ranger-intg](https://github.com/apache/ranger/tree/master/intg/src/main/java) library provided by Apache Ranger.
+`scala-mesh-ranger` provides a gateway to interact with Apache Ranger APIs using the [ranger-intg](https://github.com/apache/ranger/tree/master/intg/src/main/java) library provided by Apache Ranger.
 
 Through this gateway you can:
 * Find a policy by id
@@ -28,19 +26,17 @@ Project Dependencies:
 
 Production code dependency:
 
-* **ranger-intg 2.4.0**: Ranger integration Java client.
-* **scala-mesh-core**: internal core library that provide useful stuff, parsing, cats extension and so on.
-* **scala-mesh-http**: internal core library that provide useful method to interact with any http api
+* [**scala-mesh-core**](../core): scala-mesh-commons core library which provides parsing functionalities, Scala cats extension among others.
+* *ranger-intg 2.4.0*: Ranger integration Java client.
 
 Test code dependency:
 
 * scalatest: framework for unittest in scala
 * scalamock: framework for mock and stub in scala
 
+## Usage
 
-## How to use it
-
-SBT Dependencies reference:
+Add the library to your sbt `libraryDependencies`:
 
 ```
  libraryDependencies ++= Seq(

@@ -1,9 +1,8 @@
 # scala-mesh-aws-lambda
 
-## Description
-A module that provide a gateway to easily interact with AWS Lambda.
-Through the gateway you can:
-* asynchronously call a lambda function
+`scala-mesh-aws-lambda` is a module that provides a gateway to easily interact with AWS Lambda. Through the gateway you can:
+
+* Asynchronously call a lambda function
 
 ## Dependencies
 
@@ -13,18 +12,17 @@ Project Dependencies:
 
 Production code dependency:
 
-* **scala-mesh-core**: internal core library that provide useful stuff, parsing, cats extension and so on.
-* *lambda*: java based sdk to interact with AWS Lambda
+* [**scala-mesh-core**](../core): scala-mesh-commons core library which provides parsing functionalities, Scala cats extension among others.
+* *lambda*: Java based SDK to interact with AWS Lambda
 
 Test code dependency:
 
 * scalatest: framework for unittest in scala
 * scalamock: framework for mock and stub in scala
 
+## Usage
 
-## How to use it
-
-SBT Dependencies reference:
+Add the library to your sbt `libraryDependencies`:
 
 ```
  libraryDependencies ++= Seq(
