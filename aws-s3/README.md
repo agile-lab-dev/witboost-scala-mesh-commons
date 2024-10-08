@@ -41,6 +41,6 @@ Add the library to your sbt `libraryDependencies`:
 
 ```
  libraryDependencies ++= Seq(
-    "it.agilelab.provisioning" %% "scala-mesh-aws-s3" % scalaMeshCommonsVersion
+    "com.witboost.provisioning" %% "scala-mesh-aws-s3" % scalaMeshCommonsVersion
  )
 ```

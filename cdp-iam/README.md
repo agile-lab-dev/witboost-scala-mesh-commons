@@ -37,6 +37,6 @@ Add the library to your sbt `libraryDependencies`:
 
 ```
  libraryDependencies ++= Seq(
-    "it.agilelab.provisioning" %% "scala-mesh-cdp-iam" % scalaMeshCommonsVersion
+    "com.witboost.provisioning" %% "scala-mesh-cdp-iam" % scalaMeshCommonsVersion
  )
 ```

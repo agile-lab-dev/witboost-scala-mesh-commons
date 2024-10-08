@@ -40,7 +40,7 @@ Add the library to your sbt `libraryDependencies`:
 
 ```
  libraryDependencies ++= Seq(
-    "it.agilelab.provisioning" %% "scala-mesh-ranger" % scalaMeshCommonsVersion
+    "com.witboost.provisioning" %% "scala-mesh-ranger" % scalaMeshCommonsVersion
  )
 ```
 

@@ -3,7 +3,7 @@ include:
     ref: 'main'
     file: 'common/witboost.helm.gitlab-ci.yml'
 
-image: registry.gitlab.com/agilefactory/witboost.mesh/provisioning/cdp/cicd/scala-sbt
+image: sbtscala/scala-sbt:eclipse-temurin-jammy-17.0.9_9_1.9.7_2.13.12
 
 stages:
   - setup
@@ -63,3 +63,14 @@ publish:
     - tags
     - /(^release\/([0-9]+)\.([0-9]+))/
 
+publishCentral:
+  stage: publish
+  before_script:
+    - apt-get update
+    - apt-get install gnupg -y
+  script:
+    - echo -n "$MAVEN_GPG_KEY" | base64 -d | gpg --batch --import
+    - export ARTIFACT_VERSION=${VERSION}
+    - sbt publishSigned sonatypeCentralUpload # TODO sonatypeCentralRelease would automatically release it
+  only:
+    - tags

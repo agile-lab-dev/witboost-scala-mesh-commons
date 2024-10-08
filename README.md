@@ -2,7 +2,7 @@
 
 [![pipeline status](https://gitlab.com/AgileFactory/Witboost.Mesh/Provisioning/CDP-refresh/witboost.mesh.provisioning.commons/badges/master/pipeline.svg)](https://gitlab.com/AgileFactory/Witboost.Mesh/Provisioning/CDP-refresh/witboost.mesh.provisioning.commons/-/commits/master) [![coverage report](https://gitlab.com/AgileFactory/Witboost.Mesh/Provisioning/CDP-refresh/witboost.mesh.provisioning.commons/badges/master/coverage.svg)](https://gitlab.com/AgileFactory/Witboost.Mesh/Provisioning/CDP-refresh/witboost.mesh.provisioning.commons/-/commits/master)
 
-SBT multi-module project that provide a set of scala_2.13 mesh commons classes, for interacting with Amazon Web Services (AWS) services, Cloudera Data Platform (CDP) Public services, Apache Ranger and common functionalities to implement Scala Witboost Specific Provisioners (Tech Adapters).
+SBT multi-module project that provide a set of scala_2.13 mesh commons classes, for interacting with Amazon Web Services (AWS) services, Cloudera Data Platform (CDP) Public services, Apache Ranger and common functionalities to implement Scala Witboost Tech Adapters (formerly Specific Provisioners).
 
 <p align="center">
     <a href="https://www.witboost.com">
@@ -55,23 +55,23 @@ To use the scala-mesh-commons libraries, add the required libraries to the sbt `
 
 ```
  libraryDependencies ++= Seq(    
-    "it.agilelab.provisioning" %% "scala-mesh-core" % scalaMeshCoreVersion
-    "it.agilelab.provisioning" %% "scala-mesh-http" % scalaMeshCoreVersion
-    "it.agilelab.provisioning" %% "scala-mesh-aws-s3" % scalaMeshCoreVersion
-    "it.agilelab.provisioning" %% "scala-mesh-aws-iam" % scalaMeshCoreVersion
-    "it.agilelab.provisioning" %% "scala-mesh-aws-lambda" % scalaMeshCoreVersion
-    "it.agilelab.provisioning" %% "scala-mesh-aws-secrets" % scalaMeshCoreVersion
-    "it.agilelab.provisioning" %% "scala-mesh-aws-lambda-handlers" % scalaMeshCoreVersion
-    "it.agilelab.provisioning" %% "scala-mesh-cdp-de" % scalaMeshCoreVersion
-    "it.agilelab.provisioning" %% "scala-mesh-cdp-dl" % scalaMeshCoreVersion
-    "it.agilelab.provisioning" %% "scala-mesh-cdp-dw" % scalaMeshCoreVersion
-    "it.agilelab.provisioning" %% "scala-mesh-cdp-env" % scalaMeshCoreVersion
-    "it.agilelab.provisioning" %% "scala-mesh-ranger" % scalaMeshCoreVersion
-    "it.agilelab.provisioning" %% "scala-mesh-repository" % scalaMeshCoreVersion
-    "it.agilelab.provisioning" %% "scala-mesh-self-service" % scalaMeshCoreVersion
-    "it.agilelab.provisioning" %% "scala-mesh-self-service-lambda" % scalaMeshCoreVersion
-    "it.agilelab.provisioning" %% "scala-mesh-principals-mapping" % scalaMeshCoreVersion
-    "it.agilelab.provisioning" %% "scala-mesh-principals-mapping-samples" % scalaMeshCoreVersion
+    "com.witboost.provisioning" %% "scala-mesh-core" % scalaMeshCoreVersion
+    "com.witboost.provisioning" %% "scala-mesh-http" % scalaMeshCoreVersion
+    "com.witboost.provisioning" %% "scala-mesh-aws-s3" % scalaMeshCoreVersion
+    "com.witboost.provisioning" %% "scala-mesh-aws-iam" % scalaMeshCoreVersion
+    "com.witboost.provisioning" %% "scala-mesh-aws-lambda" % scalaMeshCoreVersion
+    "com.witboost.provisioning" %% "scala-mesh-aws-secrets" % scalaMeshCoreVersion
+    "com.witboost.provisioning" %% "scala-mesh-aws-lambda-handlers" % scalaMeshCoreVersion
+    "com.witboost.provisioning" %% "scala-mesh-cdp-de" % scalaMeshCoreVersion
+    "com.witboost.provisioning" %% "scala-mesh-cdp-dl" % scalaMeshCoreVersion
+    "com.witboost.provisioning" %% "scala-mesh-cdp-dw" % scalaMeshCoreVersion
+    "com.witboost.provisioning" %% "scala-mesh-cdp-env" % scalaMeshCoreVersion
+    "com.witboost.provisioning" %% "scala-mesh-ranger" % scalaMeshCoreVersion
+    "com.witboost.provisioning" %% "scala-mesh-repository" % scalaMeshCoreVersion
+    "com.witboost.provisioning" %% "scala-mesh-self-service" % scalaMeshCoreVersion
+    "com.witboost.provisioning" %% "scala-mesh-self-service-lambda" % scalaMeshCoreVersion
+    "com.witboost.provisioning" %% "scala-mesh-principals-mapping" % scalaMeshCoreVersion
+    "com.witboost.provisioning" %% "scala-mesh-principals-mapping-samples" % scalaMeshCoreVersion
  )
 ```
 

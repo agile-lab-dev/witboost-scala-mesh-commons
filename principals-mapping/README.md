@@ -23,6 +23,6 @@ Add the library to your sbt `libraryDependencies`:
 
 ```
  libraryDependencies ++= Seq(
-    "it.agilelab.provisioning" %% "scala-mesh-principals-mapping" % scalaMeshCommonsVersion
+    "com.witboost.provisioning" %% "scala-mesh-principals-mapping" % scalaMeshCommonsVersion
  )
 ```
