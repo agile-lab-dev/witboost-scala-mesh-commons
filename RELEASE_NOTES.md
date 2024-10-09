@@ -12,7 +12,6 @@ All notable changes to this project will be documented in this file.
   > ##### New features and improvements
   > 
   > * Includes publishing information and step on CI to publish to Sonatype Central on tags
-  > * Upgraded sbt version from 1.4.9 to 1.9.8
   > 
   > ##### Breaking changes
   > 
